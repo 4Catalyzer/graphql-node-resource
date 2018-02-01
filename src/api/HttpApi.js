@@ -10,6 +10,7 @@ import querystring from 'querystring';
 
 import HttpError from './HttpError';
 import request from './request';
+import translateKeys from './translateKeys';
 import type { Data, Request } from './request';
 
 const PAGINATION_ARG_KEYS = Object.keys(forwardConnectionArgs);
@@ -24,7 +25,6 @@ export type ValidationResult = {
 
 export type HttpApiOptions = {
   authorization?: string,
-  getHeaders: Request => { [string]: string },
   apiBase: string,
   origin: string,
   externalOrigin: string,
@@ -39,19 +39,11 @@ export default class HttpApi {
   _externalOrigin: string;
   _loader: DataLoader<*, *>;
 
-  deserialize = (data) => data;
-
-  serialize = (data) => translateKeys(data, snakeCase);
+  serializeKey = snakeCase;
 
   constructor(
     req: Request,
-    {
-      authorization,
-      apiBase,
-      getHeaders,
-      origin,
-      externalOrigin,
-    }: HttpApiOptions,
+    { authorization, apiBase, origin, externalOrigin }: HttpApiOptions,
   ) {
     this.authorization = authorization || '';
     this.request = req;
@@ -70,9 +62,9 @@ export default class HttpApi {
     );
   }
 
-  getResponseData({ data meta }) {
-    const translatedData: any = this.deserialize(data);
-    if (meta) translatedData.meta = this.deserialize(meta);
+  getResponseData({ data, meta }: { data?: mixed, meta?: mixed }) {
+    const translatedData: any = data;
+    if (meta) translatedData.meta = meta;
     return translatedData;
   }
 
@@ -168,15 +160,19 @@ export default class HttpApi {
   async fetch<T>(method: string, path: string, data?: Data): Promise<?T> {
     const json = await request({
       method,
-      data: this.serialize(data),
       url: this._getUrl(path, false),
       headers: this.getHeaders(),
+      data: (translateKeys(data, this.serializeKey): any),
+      files: this.request.files.map(({ fieldname, ...file }) => ({
+        ...file,
+        fieldname: this.serializeKey(fieldname),
+      })),
     });
 
-    return this.getResponseData(json)
+    return this.getResponseData(json);
   }
 
-  post(path: string, data?: Data): Promise<Object> {
+  post(path: string, data?: Data): Promise<?Object> {
     return this.fetch('POST', path, data);
   }
 

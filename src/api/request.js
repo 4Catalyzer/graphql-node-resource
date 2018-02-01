@@ -2,12 +2,9 @@
 
 import type { $Request } from 'express';
 import FormData from 'form-data';
-import snakeCase from 'lodash/snakeCase';
 import fetch from 'node-fetch';
 
-import getResponseData from './getResponseData';
 import HttpError from './HttpError';
-import translateKeys from './translateKeys';
 
 type File = {
   fieldname: string,
@@ -27,16 +24,13 @@ export type RequestOptions = {
   method: string,
   url: string,
   data?: ?Data,
+  files?: File[],
   headers?: { [string]: string },
 };
 
 type Init = {
   method: string,
-  headers: {
-    Authorization: ?string,
-    Accept: string,
-    'Content-Type'?: string,
-  },
+  headers: { [string]: string },
   body?: string | FormData,
 };
 
@@ -45,6 +39,7 @@ export default async function request<T>({
   url,
   data,
   headers,
+  files: reqFiles,
 }: RequestOptions): Promise<?T> {
   const init: Init = {
     method,
@@ -55,21 +50,20 @@ export default async function request<T>({
   };
 
   if (data) {
-    const reqFiles = req.files;
-
     if (data.files && reqFiles) {
       const { files, ...fields } = data;
       const formData = new FormData();
 
       Object.keys(fields).forEach(fieldName =>
-        formData.append(snakeCase(fieldName), fields[fieldName]),
+        formData.append(fieldName, fields[fieldName]),
       );
 
       files.forEach(fieldName => {
+        if (!reqFiles) return; // Flow doesn't count the check above
         reqFiles
           .filter(file => file.fieldname === fieldName)
           .forEach(({ buffer, originalname }) =>
-            formData.append(snakeCase(fieldName), buffer, {
+            formData.append(fieldName, buffer, {
               filename: originalname,
             }),
           );
@@ -78,9 +72,7 @@ export default async function request<T>({
       init.body = formData;
     } else {
       init.headers['Content-Type'] = 'application/json';
-      init.body = JSON.stringify({
-        data: translateKeys(data, snakeCase),
-      });
+      init.body = JSON.stringify({ data });
     }
   }
   const response = await fetch(url, init);
