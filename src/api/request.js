@@ -27,9 +27,7 @@ export type RequestOptions = {
   method: string,
   url: string,
   data?: ?Data,
-  request: Request,
-  authorization?: string,
-  getHeaders: Request => { [string]: string },
+  headers?: { [string]: string },
 };
 
 type Init = {
@@ -46,16 +44,13 @@ export default async function request<T>({
   method,
   url,
   data,
-  getHeaders,
-  authorization,
-  request: req,
+  headers,
 }: RequestOptions): Promise<?T> {
   const init: Init = {
     method,
     headers: {
-      Authorization: authorization,
       Accept: 'application/json',
-      ...getHeaders(request),
+      ...headers,
     },
   };
 
@@ -98,16 +93,10 @@ export default async function request<T>({
   }
 
   if (!response.ok) {
-    const requestData = { ...init };
-    if (typeof requestData.body === 'string') {
-      requestData.body = JSON.parse(requestData.body);
-    }
-
     const error = new HttpError(response);
     await error.init();
 
     throw error;
   }
-  const body = await response.json();
-  return getResponseData(body);
+  return response.json();
 }

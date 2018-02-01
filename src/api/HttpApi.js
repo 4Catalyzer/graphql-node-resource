@@ -1,7 +1,6 @@
 /* @flow */
 /* eslint-disable no-underscore-dangle */
 
-import url from 'url';
 import DataLoader from 'dataloader';
 import { connectionFromArray, forwardConnectionArgs } from 'graphql-relay';
 import omit from 'lodash/omit';
@@ -9,9 +8,9 @@ import pick from 'lodash/pick';
 import snakeCase from 'lodash/snakeCase';
 import querystring from 'querystring';
 
-import HttpError from './utils/HttpError';
-import request from './utils/request';
-import type { Data, Request } from './utils/request';
+import HttpError from './HttpError';
+import request from './request';
+import type { Data, Request } from './request';
 
 const PAGINATION_ARG_KEYS = Object.keys(forwardConnectionArgs);
 
@@ -33,12 +32,16 @@ export type HttpApiOptions = {
 
 export default class HttpApi {
   authorization: string;
-  _getHeaders: Request => { [string]: string };
-  _request: Request;
+  request: Request;
+
   _origin: string;
   _apiBase: string;
   _externalOrigin: string;
   _loader: DataLoader<*, *>;
+
+  deserialize = (data) => data;
+
+  serialize = (data) => translateKeys(data, snakeCase);
 
   constructor(
     req: Request,
@@ -51,8 +54,8 @@ export default class HttpApi {
     }: HttpApiOptions,
   ) {
     this.authorization = authorization || '';
+    this.request = req;
 
-    this._getHeaders = getHeaders;
     this._origin = origin;
     this._externalOrigin = externalOrigin;
     this._apiBase = apiBase;
@@ -65,6 +68,18 @@ export default class HttpApi {
         ),
       ),
     );
+  }
+
+  getResponseData({ data meta }) {
+    const translatedData: any = this.deserialize(data);
+    if (meta) translatedData.meta = this.deserialize(meta);
+    return translatedData;
+  }
+
+  getHeaders() {
+    return {
+      Authorization: this.authorization,
+    };
   }
 
   async get<T>(path: string, args?: Args): Promise<?T> {
@@ -88,13 +103,12 @@ export default class HttpApi {
         pageSize: first,
       }),
     );
+
     if (!items) {
       return null;
     }
 
-    // XXX Remove items.links when all endpoints use modern pagination
     if (items.meta) {
-      // new style pagination
       const { cursors, hasNextPage } = items.meta;
 
       // These connections only paginate forward, so the existence of a prev
@@ -110,26 +124,6 @@ export default class HttpApi {
           hasNextPage,
           endCursor: cursors[cursors.length - 1],
           hasPreviousPage,
-        },
-      };
-    } else if (items.links) {
-      // old style pagination
-      const { links } = items;
-      const u = links.next && url.parse(links.next, true);
-      if (links.next && (!u || !u.query || !u.query.cursor)) {
-        throw new Error(`invalid items.next format: ${u}`);
-      }
-      const endCursor = links.next && u.query.cursor;
-      const edges = items.map(node => ({ node, cursor: '@@nil' }));
-      if (endCursor) {
-        edges[edges.length - 1].cursor = endCursor;
-      }
-      return {
-        edges,
-        pageInfo: {
-          hasNextPage: !!endCursor,
-          endCursor,
-          hasPreviousPage: false, // only paginate forward
         },
       };
     }
@@ -171,25 +165,31 @@ export default class HttpApi {
     };
   }
 
-  async post(path: string, data?: Data): Promise<Object> {
-    const item = await this._request('POST', path, data);
-    if (!item) {
-      throw new Error('POST returned no data');
-    }
+  async fetch<T>(method: string, path: string, data?: Data): Promise<?T> {
+    const json = await request({
+      method,
+      data: this.serialize(data),
+      url: this._getUrl(path, false),
+      headers: this.getHeaders(),
+    });
 
-    return item;
+    return this.getResponseData(json)
+  }
+
+  post(path: string, data?: Data): Promise<Object> {
+    return this.fetch('POST', path, data);
   }
 
   put(path: string, data?: Data): Promise<?Object> {
-    return this._request('PUT', path, data);
+    return this.fetch('PUT', path, data);
   }
 
   patch(path: string, data?: Data): Promise<?Object> {
-    return this._request('PATCH', path, data);
+    return this.fetch('PATCH', path, data);
   }
 
   delete(path: string): Promise<?Object> {
-    return this._request('DELETE', path);
+    return this.fetch('DELETE', path);
   }
 
   makePath(path: string, args?: Args): string {
@@ -263,22 +263,11 @@ export default class HttpApi {
     this._getUrl(this.makePath(path, args), true);
 
   _get<T>(path: string): Promise<?T> {
-    return this._request('GET', path);
+    return this.fetch('GET', path);
   }
 
   _getUrl(path: string, external: boolean) {
     const origin = external ? this._externalOrigin : this._origin;
     return `${origin}${this._apiBase}${path}`;
-  }
-
-  _request<T>(method: string, path: string, data?: Data): Promise<?T> {
-    return request({
-      data,
-      method,
-      url: this._getUrl(path, false),
-      request: this._request,
-      authorization: this.authorization,
-      getHeaders: this._getHeaders,
-    });
   }
 }

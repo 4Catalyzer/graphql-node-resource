@@ -17,6 +17,7 @@ import {
 } from 'graphql-relay';
 import camelCase from 'lodash/camelCase';
 import kebabCase from 'lodash/kebabCase';
+import snakeCase from 'lodash/snakeCase';
 import pluralize from 'pluralize';
 import invariant from 'invariant';
 
@@ -104,7 +105,7 @@ export function defaultResolve(
   context: Context,
   info: GraphQLResolveInfo,
 ): mixed {
-  return getNodeValue(obj, info.fieldName, context, info);
+  return getNodeValue(obj, snakeCase(info.fieldName), context, info);
 }
 
 export function createResolve<K: {}>(
