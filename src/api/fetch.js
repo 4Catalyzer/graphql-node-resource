@@ -1,6 +1,5 @@
 /* @flow */
 
-import type { $Request } from 'express';
 import FormData from 'form-data';
 import fetch from 'node-fetch';
 
@@ -12,18 +11,10 @@ type File = {
   buffer: Buffer,
 };
 
-export type Request = $Request & {
-  files?: File[],
-};
-
-export type Data = mixed & {
-  files?: string[],
-};
-
 export type RequestOptions = {
   method: string,
   url: string,
-  data?: ?Data,
+  data?: ?mixed,
   files?: File[],
   headers?: { [string]: string },
 };
@@ -39,7 +30,7 @@ export default async function request<T>({
   url,
   data,
   headers,
-  files: reqFiles,
+  files,
 }: RequestOptions): Promise<?T> {
   const init: Init = {
     method,
@@ -50,23 +41,15 @@ export default async function request<T>({
   };
 
   if (data) {
-    if (data.files && reqFiles) {
-      const { files, ...fields } = data;
+    if (files) {
       const formData = new FormData();
 
-      Object.keys(fields).forEach(fieldName =>
-        formData.append(fieldName, fields[fieldName]),
+      Object.entries(data).forEach(([name, value]) =>
+        formData.append(name, value),
       );
 
-      files.forEach(fieldName => {
-        if (!reqFiles) return; // Flow doesn't count the check above
-        reqFiles
-          .filter(file => file.fieldname === fieldName)
-          .forEach(({ buffer, originalname }) =>
-            formData.append(fieldName, buffer, {
-              filename: originalname,
-            }),
-          );
+      files.forEach(({ fieldname, buffer, originalname }) => {
+        formData.append(fieldname, buffer, originalname);
       });
 
       init.body = formData;
@@ -90,5 +73,6 @@ export default async function request<T>({
 
     throw error;
   }
-  return response.json();
+
+  return response;
 }

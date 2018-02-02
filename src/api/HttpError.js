@@ -1,6 +1,6 @@
 /* @flow */
 
-export type JsonApiErrorPayload = {
+export type JsonApiError = {
   detail?: string,
   code: string,
   source?: {
@@ -12,12 +12,12 @@ export type JsonApiErrorPayload = {
 export default class HttpError extends Error {
   response: Response;
   status: number;
-  errors: Array<JsonApiErrorPayload> = [];
+  errors: Array<JsonApiError> = [];
   body: ?string = null;
   extensions: ?{
     upstream: {
       status: number,
-      errors: JsonApiErrorPayload[],
+      errors: JsonApiError[],
     },
   };
 

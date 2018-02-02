@@ -5,18 +5,19 @@ import DataLoader from 'dataloader';
 import { connectionFromArray, forwardConnectionArgs } from 'graphql-relay';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
-import snakeCase from 'lodash/snakeCase';
 import querystring from 'querystring';
 
 import HttpError from './HttpError';
-import request from './request';
-import translateKeys from './translateKeys';
-import type { Data, Request } from './request';
 
 const PAGINATION_ARG_KEYS = Object.keys(forwardConnectionArgs);
 
 export type Args = { [key: string]: mixed };
-export type { Data };
+export type Data = ?mixed;
+
+export type QueryString = {
+  parse<T>(query: string): T,
+  stringify(obj: Object): string,
+};
 
 export type ValidationResult = {
   valid: boolean,
@@ -24,54 +25,30 @@ export type ValidationResult = {
 };
 
 export type HttpApiOptions = {
-  authorization?: string,
   apiBase: string,
   origin: string,
   externalOrigin: string,
 };
 
 export default class HttpApi {
-  authorization: string;
-  request: Request;
-
   _origin: string;
   _apiBase: string;
   _externalOrigin: string;
   _loader: DataLoader<*, *>;
 
-  serializeKey = snakeCase;
+  qs: QueryString = querystring;
 
-  constructor(
-    req: Request,
-    { authorization, apiBase, origin, externalOrigin }: HttpApiOptions,
-  ) {
-    this.authorization = authorization || '';
-    this.request = req;
-
+  constructor({ apiBase, origin, externalOrigin }: HttpApiOptions) {
     this._origin = origin;
     this._externalOrigin = externalOrigin;
     this._apiBase = apiBase;
 
     this._loader = new DataLoader(paths =>
       Promise.all(
-        paths.map(path =>
-          // Don't fail the entire batch on a single failed request.
-          this._get(path).catch(e => e),
-        ),
+        // Don't fail the entire batch on a single failed request.
+        paths.map(path => this.request('GET', path).catch(e => e)),
       ),
     );
-  }
-
-  getResponseData({ data, meta }: { data?: mixed, meta?: mixed }) {
-    const translatedData: any = data;
-    if (meta) translatedData.meta = meta;
-    return translatedData;
-  }
-
-  getHeaders() {
-    return {
-      Authorization: this.authorization,
-    };
   }
 
   async get<T>(path: string, args?: Args): Promise<?T> {
@@ -119,7 +96,11 @@ export default class HttpApi {
         },
       };
     }
-    throw new Error('unexpected items format');
+
+    throw new Error(
+      'Unexpected format. `GET` should return an array of items with a ' +
+        '`meta` property containing an array of cursors and `hasNextPage`',
+    );
   }
 
   async getUnpaginatedConnection(path: string, args: Args): Promise<mixed> {
@@ -129,7 +110,7 @@ export default class HttpApi {
     // XXX Need to cast the result of the get to a list
     const items = await this.get(this.makePath(path, apiArgs));
     if (!Array.isArray(items)) {
-      throw new Error('Runtime Casting Exception');
+      throw new Error('Unexpected form');
     }
     return connectionFromArray(items, paginationArgs);
   }
@@ -157,35 +138,25 @@ export default class HttpApi {
     };
   }
 
-  async fetch<T>(method: string, path: string, data?: Data): Promise<?T> {
-    const json = await request({
-      method,
-      url: this._getUrl(path, false),
-      headers: this.getHeaders(),
-      data: (translateKeys(data, this.serializeKey): any),
-      files: this.request.files.map(({ fieldname, ...file }) => ({
-        ...file,
-        fieldname: this.serializeKey(fieldname),
-      })),
-    });
-
-    return this.getResponseData(json);
+  // eslint-disable-next-line no-unused-vars
+  async request<T>(method: string, path: string, data?: Data): Promise<?T> {
+    throw new Error('Not Implemented');
   }
 
   post(path: string, data?: Data): Promise<?Object> {
-    return this.fetch('POST', path, data);
+    return this.request('POST', path, data);
   }
 
   put(path: string, data?: Data): Promise<?Object> {
-    return this.fetch('PUT', path, data);
+    return this.request('PUT', path, data);
   }
 
   patch(path: string, data?: Data): Promise<?Object> {
-    return this.fetch('PATCH', path, data);
+    return this.request('PATCH', path, data);
   }
 
   delete(path: string): Promise<?Object> {
-    return this.fetch('DELETE', path);
+    return this.request('DELETE', path);
   }
 
   makePath(path: string, args?: Args): string {
@@ -194,21 +165,11 @@ export default class HttpApi {
     }
 
     const [pathBase, searchBase] = path.split('?');
-    const query = querystring.parse(searchBase);
 
-    Object.entries(args).forEach(([key, value]) => {
-      const translatedKey = snakeCase(key);
+    // TODO: Is this needed can we just insist queries are passed in as objects?
+    const query = searchBase ? this.qs.parse(searchBase) : null;
+    const search = this.qs.stringify({ ...query, ...args });
 
-      if (value == null) {
-        // Setting key to undefined is not sufficient with Node's querystring.
-        delete query[translatedKey];
-        return;
-      }
-
-      query[translatedKey] = Array.isArray(value) ? value.join(',') : value;
-    });
-
-    const search = querystring.stringify(query);
     if (!search) {
       return pathBase;
     }
@@ -229,7 +190,7 @@ export default class HttpApi {
   ) {
     return new DataLoader(async keys => {
       // No need to cache the GET; the DataLoader will cache it.
-      const items = await this._get(getPath((keys: any)));
+      const items = await this.request('GET', getPath((keys: any)));
       if (!items) {
         return [];
       }
@@ -249,17 +210,14 @@ export default class HttpApi {
     });
   }
 
-  getExternalSignedUrl = (path: string, args: Args) =>
-    this._getUrl(this.makePath(path, args), true);
-
-  getUrl = (path: string, args: Args): string =>
-    this._getUrl(this.makePath(path, args), false);
-
-  getExternalUrl = (path: string, args: Args): string =>
-    this._getUrl(this.makePath(path, args), true);
-
-  _get<T>(path: string): Promise<?T> {
-    return this.fetch('GET', path);
+  getExternalSignedUrl(path: string, args: Args) {
+    return this._getUrl(this.makePath(path, args), true);
+  }
+  getUrl(path: string, args: Args): string {
+    return this._getUrl(this.makePath(path, args), false);
+  }
+  getExternalUrl(path: string, args: Args): string {
+    return this._getUrl(this.makePath(path, args), true);
   }
 
   _getUrl(path: string, external: boolean) {
