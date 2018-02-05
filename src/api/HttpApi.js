@@ -1,5 +1,4 @@
 /* @flow */
-/* eslint-disable no-underscore-dangle */
 
 import DataLoader from 'dataloader';
 import { connectionFromArray, forwardConnectionArgs } from 'graphql-relay';

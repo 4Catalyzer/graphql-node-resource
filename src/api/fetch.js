@@ -60,13 +60,6 @@ export default async function request<T>({
   }
   const response = await fetch(url, init);
 
-  if (
-    response.status === 204 ||
-    (response.status === 404 && method === 'GET')
-  ) {
-    return null;
-  }
-
   if (!response.ok) {
     const error = new HttpError(response);
     await error.init();
