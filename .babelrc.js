@@ -4,7 +4,7 @@ module.exports = {
       '@4c/4catalyzer',
       {
         target: 'node',
-        useBuiltIns: 'usage',
+        modules: process.env.BABEL_ENV !== 'esm' ? 'commonjs' : false
       },
     ],
     '@babel/flow',

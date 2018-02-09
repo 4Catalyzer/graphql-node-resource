@@ -11,10 +11,11 @@
     "node": ">= 8.3.0"
   },
   "scripts": {
-    "build": "babel src -d lib --ignore __tests__",
+    "build":
+      "babel src -d lib --ignore __tests__ && BABEL_ENV=esm babel src --out-dir es --ignore __tests__",
     "check": "flow check",
     "lint":
-      "eslint . && prettier --list-different --ignore-path .ignore '**/*.{json,css,md}'",
+      "npm run check && eslint . && prettier --list-different --ignore-path .ignore '**/*.{json,css,md}'",
     "format":
       "eslint . --fix && prettier --write --ignore-path .eslintignore '**/*.{json,css,md}'",
     "precommit": "lint-staged"
