@@ -7,6 +7,9 @@
   "repository": "https://github.com/4Catalyzer/graphql-server.git",
   "author": "4Catalyzer",
   "license": "MIT",
+  "engines": {
+    "node": ">= 8.3.0"
+  },
   "scripts": {
     "build": "babel src -d lib --ignore __tests__",
     "check": "flow check",

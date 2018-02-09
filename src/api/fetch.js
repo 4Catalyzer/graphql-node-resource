@@ -1,7 +1,7 @@
 /* @flow */
 
 import FormData from 'form-data';
-import fetch from 'node-fetch';
+import _fetch from 'node-fetch';
 
 import HttpError from './HttpError';
 
@@ -25,7 +25,7 @@ type Init = {
   body?: string | FormData,
 };
 
-export default async function request<T>({
+export default async function fetch<T>({
   method,
   url,
   data,
@@ -55,10 +55,10 @@ export default async function request<T>({
       init.body = formData;
     } else {
       init.headers['Content-Type'] = 'application/json';
-      init.body = JSON.stringify({ data });
+      init.body = JSON.stringify(data);
     }
   }
-  const response = await fetch(url, init);
+  const response = await _fetch(url, init);
 
   if (!response.ok) {
     const error = new HttpError(response);

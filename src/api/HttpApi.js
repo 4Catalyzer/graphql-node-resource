@@ -4,6 +4,7 @@ import DataLoader from 'dataloader';
 import { connectionFromArray, forwardConnectionArgs } from 'graphql-relay';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
+import invariant from 'invariant';
 import querystring from 'querystring';
 
 import HttpError from './HttpError';
@@ -76,30 +77,29 @@ export default class HttpApi {
       return null;
     }
 
-    if (items.meta) {
-      const { cursors, hasNextPage } = items.meta;
-
-      // These connections only paginate forward, so the existence of a prev
-      // page doesn't make any difference, but this is the correct value.
-      const hasPreviousPage = !!after;
-
-      return {
-        edges: items.map((item, i) => ({
-          node: item,
-          cursor: cursors[i],
-        })),
-        pageInfo: {
-          hasNextPage,
-          endCursor: cursors[cursors.length - 1],
-          hasPreviousPage,
-        },
-      };
-    }
-
-    throw new Error(
+    invariant(
+      items.meta,
       'Unexpected format. `GET` should return an array of items with a ' +
         '`meta` property containing an array of cursors and `hasNextPage`',
     );
+
+    const { cursors, hasNextPage } = items.meta;
+
+    // These connections only paginate forward, so the existence of a prev
+    // page doesn't make any difference, but this is the correct value.
+    const hasPreviousPage = !!after;
+
+    return {
+      edges: items.map((item, i) => ({
+        node: item,
+        cursor: cursors[i],
+      })),
+      pageInfo: {
+        hasNextPage,
+        endCursor: cursors[cursors.length - 1],
+        hasPreviousPage,
+      },
+    };
   }
 
   async getUnpaginatedConnection(path: string, args: Args): Promise<mixed> {
@@ -108,9 +108,11 @@ export default class HttpApi {
 
     // XXX Need to cast the result of the get to a list
     const items = await this.get(this.makePath(path, apiArgs));
-    if (!Array.isArray(items)) {
-      throw new Error('Unexpected form');
-    }
+    invariant(
+      Array.isArray(items),
+      `Expected \`GET\` to return an array of items, got: ${typeof items} instead`,
+    );
+
     return connectionFromArray(items, paginationArgs);
   }
 
@@ -212,9 +214,11 @@ export default class HttpApi {
   getExternalSignedUrl(path: string, args: Args) {
     return this._getUrl(this.makePath(path, args), true);
   }
+
   getUrl(path: string, args: Args): string {
     return this._getUrl(this.makePath(path, args), false);
   }
+
   getExternalUrl(path: string, args: Args): string {
     return this._getUrl(this.makePath(path, args), true);
   }
