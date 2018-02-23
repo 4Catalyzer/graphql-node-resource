@@ -1,18 +1,12 @@
 {
-  "extends": [
-    "4catalyzer-flow",
-    "prettier",
-    "prettier/flowtype"
-  ],
-  "plugins": [
-    "prettier"
-  ],
+  "extends": ["4catalyzer-flow", "prettier", "prettier/flowtype"],
+  "plugins": ["prettier"],
   "rules": {
     "prettier/prettier": "error"
   },
   "overrides": [
     {
-      "files": ["**/__tests__/**", "test/**"],
+      "files": ["**/__tests__/**", "**/__mocks__/**", "test/**"],
       "plugins": ["jest"],
       "env": {
         "jest/globals": true
@@ -22,6 +16,8 @@
         "no-await-in-loop": "off",
         "no-console": "off",
         "import/no-dynamic-require": "off",
+        "import/no-extraneous-dependencies": "off",
+        "flowtype/require-valid-file-annotation": "off",
         "jest/no-disabled-tests": "warn",
         "jest/no-focused-tests": "error",
         "jest/no-identical-title": "error",

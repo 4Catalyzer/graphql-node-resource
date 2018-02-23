@@ -46,7 +46,9 @@ export default class HttpApi {
     this._loader = new DataLoader(paths =>
       Promise.all(
         // Don't fail the entire batch on a single failed request.
-        paths.map(path => this.request('GET', path).catch(e => e)),
+        paths.map(path =>
+          this.request('GET', this._getUrl(path, false)).catch(e => e),
+        ),
       ),
     );
   }
@@ -140,24 +142,24 @@ export default class HttpApi {
   }
 
   // eslint-disable-next-line no-unused-vars
-  async request<T>(method: string, path: string, data?: Data): Promise<?T> {
+  async request<T>(method: string, reqUrl: string, data?: Data): Promise<?T> {
     throw new Error('Not Implemented');
   }
 
   post(path: string, data?: Data): Promise<?Object> {
-    return this.request('POST', path, data);
+    return this.request('POST', this._getUrl(path, false), data);
   }
 
   put(path: string, data?: Data): Promise<?Object> {
-    return this.request('PUT', path, data);
+    return this.request('PUT', this._getUrl(path, false), data);
   }
 
   patch(path: string, data?: Data): Promise<?Object> {
-    return this.request('PATCH', path, data);
+    return this.request('PATCH', this._getUrl(path, false), data);
   }
 
   delete(path: string): Promise<?Object> {
-    return this.request('DELETE', path);
+    return this.request('DELETE', this._getUrl(path, false));
   }
 
   makePath(path: string, args?: Args): string {
