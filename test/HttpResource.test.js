@@ -20,7 +20,7 @@ describe('HttpResource', () => {
     const resource = new HttpResource(mockContext, { endpoint: 'salads' });
     const data = { spicy: true };
 
-    mockedFetch.get('https://gateway/v1/salads/5/', {
+    mockedFetch.get('https://gateway/v1/salads/5', {
       status: 200,
       body: { data },
     });
@@ -32,7 +32,7 @@ describe('HttpResource', () => {
     const resource = new HttpResource(mockContext, { endpoint: 'salads' });
     const data = [{ spicy: true }];
 
-    mockedFetch.get('https://gateway/v1/salads/', {
+    mockedFetch.get('https://gateway/v1/salads', {
       status: 200,
       body: { data },
     });
@@ -44,7 +44,7 @@ describe('HttpResource', () => {
     const resource = new HttpResource(mockContext, { endpoint: 'salads' });
     const data = [{ spicy: true }, { spicy: true }, { spicy: true }];
 
-    mockedFetch.get('https://gateway/v1/salads/', {
+    mockedFetch.get('https://gateway/v1/salads', {
       status: 200,
       body: { data },
     });
@@ -58,7 +58,7 @@ describe('HttpResource', () => {
     const resource = new HttpResource(mockContext, { endpoint: 'salads' });
     const data = { spicy: true };
 
-    mockedFetch.post('https://gateway/v1/salads/', {
+    mockedFetch.post('https://gateway/v1/salads', {
       status: 200,
       body: { data },
     });
@@ -70,7 +70,7 @@ describe('HttpResource', () => {
     const resource = new HttpResource(mockContext, { endpoint: 'salads' });
     const data = { spicy: true };
 
-    mockedFetch.patch('https://gateway/v1/salads/5/', {
+    mockedFetch.patch('https://gateway/v1/salads/5', {
       status: 200,
       body: { data },
     });
@@ -81,7 +81,7 @@ describe('HttpResource', () => {
   it('should delete', async () => {
     const resource = new HttpResource(mockContext, { endpoint: 'salads' });
 
-    mockedFetch.delete('https://gateway/v1/salads/5/', {
+    mockedFetch.delete('https://gateway/v1/salads/5', {
       status: 204,
     });
 

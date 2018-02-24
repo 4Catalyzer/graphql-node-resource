@@ -25,7 +25,7 @@ describe('PaginatedHttpResource', () => {
       cursors: data.map((_, i) => String(i)),
     };
 
-    mockedFetch.get('https://gateway/v1/salads/?cursor=&limit=2&pageSize=2', {
+    mockedFetch.get('https://gateway/v1/salads?cursor=&limit=2&pageSize=2', {
       status: 200,
       body: { data, meta },
     });

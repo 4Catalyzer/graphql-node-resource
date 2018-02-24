@@ -17,7 +17,7 @@
     "tdd": "jest --watch",
     "test": "npm run lint && jest",
     "lint":
-      "npm run check && eslint . && prettier --list-different --ignore-path .ignore '**/*.{json,css,md}'",
+      "npm run check && eslint . && prettier --list-different --ignore-path .eslintignore '**/*.{json,css,md}'",
     "format":
       "eslint . --fix && prettier --write --ignore-path .eslintignore '**/*.{json,css,md}'",
     "precommit": "lint-staged"
