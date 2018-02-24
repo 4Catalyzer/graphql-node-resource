@@ -1,0 +1,5 @@
+lib/
+es/
+flow-typed/**
+**/node_modules/**
+**/fixtures/**
