@@ -85,9 +85,10 @@ export default class HttpApi {
         '`meta` property containing an array of cursors and `hasNextPage`',
     );
 
-    const { cursors, hasNextPage } = items.meta;
+    const { cursors, hasNextPage, ...meta } = items.meta;
+    const lastIndex = items.length - 1;
 
-    // These connections only paginate forward, so the existence of a prev
+    // These connections only paginate forward, so the existence of a previous
     // page doesn't make any difference, but this is the correct value.
     const hasPreviousPage = !!after;
 
@@ -97,10 +98,12 @@ export default class HttpApi {
         cursor: cursors[i],
       })),
       pageInfo: {
-        hasNextPage,
-        endCursor: cursors[cursors.length - 1],
+        startCursor: items[0] ? cursors[0] : null,
+        endCursor: items[lastIndex] ? cursors[lastIndex] : null,
         hasPreviousPage,
+        hasNextPage,
       },
+      meta,
     };
   }
 
