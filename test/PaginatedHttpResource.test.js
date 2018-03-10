@@ -38,8 +38,10 @@ describe('PaginatedHttpResource', () => {
       pageInfo: {
         hasPreviousPage: false,
         hasNextPage: true,
+        startCursor: '0',
         endCursor: '1',
       },
+      meta: {},
     });
   });
 });
