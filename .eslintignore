@@ -1,5 +1,6 @@
-lib/
 es/
-flow-typed/**
-**/node_modules/**
+flow-typed/
+lib/
+node_modules/
 **/fixtures/**
+package.json
