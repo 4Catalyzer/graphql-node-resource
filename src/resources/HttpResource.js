@@ -1,9 +1,12 @@
 /* @flow */
 
 import type HttpApi, { Args, Data } from '../api/HttpApi';
-import type { Context } from '../types/NodeType';
 import urlJoin from '../utils/urlJoin';
 import Resource from './Resource';
+
+type HttpContext = {
+  httpApi: HttpApi,
+};
 
 export type Endpoint = string | ((id?: string) => string);
 
@@ -11,11 +14,11 @@ export type HttpResourceOptions = {
   endpoint: Endpoint,
 };
 
-export default class HttpResource extends Resource {
+export default class HttpResource extends Resource<HttpContext> {
   api: HttpApi;
   _endpoint: Endpoint;
 
-  constructor(context: Context, { endpoint }: HttpResourceOptions) {
+  constructor(context: HttpContext, { endpoint }: HttpResourceOptions) {
     super(context);
 
     this.api = context.httpApi;

@@ -21,14 +21,8 @@ import pluralize from 'pluralize';
 import invariant from 'invariant';
 
 import asType from '../utils/asType';
-import type HttpApi from '../api/HttpApi';
 import resolveThunk from '../utils/resolveThunk';
 import Resource from '../resources/Resource';
-import HttpResource from '../resources/HttpResource';
-
-export type Context = {
-  httpApi: HttpApi,
-};
 
 // graphql overrides
 
@@ -36,7 +30,7 @@ type ObjStub = {
   id: string,
 };
 
-type NodeTypeConfig<R: Resource> = GraphQLObjectTypeConfig<
+type NodeTypeConfig<Context, R: Resource<Context>> = GraphQLObjectTypeConfig<
   ObjStub,
   Context,
 > & {
@@ -45,11 +39,17 @@ type NodeTypeConfig<R: Resource> = GraphQLObjectTypeConfig<
   resourceConfig?: mixed,
 };
 
-export type NodeFieldResolver = GraphQLFieldResolver<ObjStub, Context>;
-export type NodeFieldConfig = GraphQLFieldConfig<ObjStub, Context>;
-export type NodeFieldConfigMap = GraphQLFieldConfigMap<ObjStub, Context>;
+export type NodeFieldResolver<Context> = GraphQLFieldResolver<
+  ObjStub,
+  Context,
+>;
+export type NodeFieldConfig<Context> = GraphQLFieldConfig<ObjStub, Context>;
+export type NodeFieldConfigMap<Context> = GraphQLFieldConfigMap<
+  ObjStub,
+  Context,
+>;
 
-type FieldNameResolver = (
+type FieldNameResolver<Context> = (
   fieldName: string,
   obj: ObjStub,
   args: mixed,
@@ -57,13 +57,13 @@ type FieldNameResolver = (
   info: GraphQLResolveInfo,
 ) => string;
 
-type CreateNodeTypeArgs = {
-  fieldNameResolver?: FieldNameResolver,
+type CreateNodeTypeArgs<Context> = {
+  fieldNameResolver?: FieldNameResolver<Context>,
 };
 
-export default function createNodeType({
+export default function createNodeType<Context>({
   fieldNameResolver = d => d,
-}: CreateNodeTypeArgs) {
+}: CreateNodeTypeArgs<Context>) {
   // eslint-disable-next-line no-use-before-define
   const TYPES: Map<string, NodeType<any>> = new Map();
 
@@ -86,7 +86,7 @@ export default function createNodeType({
   function getNodeResource(
     context: Context,
     info: GraphQLResolveInfo,
-  ): HttpResource {
+  ): Resource<Context> {
     const parentType = asType(info.parentType, NodeType); // eslint-disable-line no-use-before-define
     return parentType.getResource(context);
   }
@@ -180,9 +180,12 @@ export default function createNodeType({
     };
   }
 
-  const Resources: WeakMap<Context, Map<string, Resource>> = new WeakMap();
+  const Resources: WeakMap<
+    Context,
+    Map<string, Resource<Context>>,
+  > = new WeakMap();
 
-  class NodeType<R: Resource> extends GraphQLObjectType {
+  class NodeType<R: Resource<Context>> extends GraphQLObjectType {
     Connection: GraphQLObjectType;
     Edge: GraphQLObjectType;
 
@@ -198,7 +201,7 @@ export default function createNodeType({
       Resource: NodeResource,
       resourceConfig,
       ...config
-    }: NodeTypeConfig<R>) {
+    }: NodeTypeConfig<Context, R>) {
       // eslint-disable-next-line no-param-reassign
       localIdFieldName = getLocalIdFieldName(name, localIdFieldName);
 
@@ -253,7 +256,7 @@ export default function createNodeType({
         Context,
       >,
       objFields: K,
-    ): NodeFieldResolver {
+    ): NodeFieldResolver<Context> {
       const objKeys = Object.keys(objFields);
 
       return async function augmentedResolve(obj, args, context, info) {

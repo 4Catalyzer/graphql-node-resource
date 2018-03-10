@@ -1,8 +1,6 @@
 /* @flow */
 
-import type { Context } from '../types/NodeType';
-
-export default class Resource {
+export default class Resource<Context> {
   context: Context;
 
   // eslint-disable-next-line no-unused-vars
