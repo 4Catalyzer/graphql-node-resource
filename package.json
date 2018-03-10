@@ -11,12 +11,15 @@
     "node": ">= 8.3.0"
   },
   "scripts": {
-    "build": "babel src -d lib --ignore __tests__ && BABEL_ENV=esm babel src --out-dir es --ignore __tests__",
+    "build":
+      "babel src -d lib --ignore __tests__ && BABEL_ENV=esm babel src --out-dir es --ignore __tests__",
     "check": "flow check",
     "tdd": "jest --watch",
     "test": "npm run lint && jest",
-    "lint": "npm run check && eslint . && prettier --list-different --ignore-path .eslintignore '**/*.{json,css,md}'",
-    "format": "eslint . --fix && prettier --write --ignore-path .eslintignore '**/*.{json,css,md}'",
+    "lint":
+      "npm run check && eslint . && prettier --list-different --ignore-path .eslintignore '**/*.{json,css,md}'",
+    "format":
+      "eslint . --fix && prettier --write --ignore-path .eslintignore '**/*.{json,css,md}'",
     "precommit": "lint-staged"
   },
   "prettier": {
@@ -25,10 +28,7 @@
     "trailingComma": "all"
   },
   "lint-staged": {
-    "*.js": [
-      "eslint --fix",
-      "git add"
-    ],
+    "*.js": ["eslint --fix", "git add"],
     "*.{json,css,md}": [
       "prettier --write --ignore-path .eslintignore",
       "git add"
