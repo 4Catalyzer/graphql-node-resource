@@ -4,7 +4,7 @@ import type HttpApi, { Args, Data } from '../api/HttpApi';
 import urlJoin from '../utils/urlJoin';
 import Resource from './Resource';
 
-export type HttpContext = {
+type HttpContext = {
   httpApi: HttpApi,
 };
 
