@@ -30,10 +30,10 @@ type ObjStub = {
   id: string,
 };
 
-type NodeTypeConfig<Context, R: Resource<Context>> = GraphQLObjectTypeConfig<
-  ObjStub,
+export type NodeTypeConfig<
   Context,
-> & {
+  R: Resource<Context>,
+> = GraphQLObjectTypeConfig<ObjStub, Context> & {
   localIdFieldName?: ?string,
   Resource: Class<R>,
   resourceConfig?: mixed,
@@ -57,15 +57,75 @@ type FieldNameResolver<Context> = (
   info: GraphQLResolveInfo,
 ) => string;
 
+function getLocalIdFieldName(name, localIdFieldName) {
+  if (localIdFieldName !== undefined) return localIdFieldName;
+
+  return `${camelCase(name)}Id`;
+}
+
 type CreateNodeTypeArgs<Context> = {
   fieldNameResolver?: FieldNameResolver<Context>,
 };
 
+function getDefaultResourceConfig(name) {
+  return {
+    endpoint: pluralize(kebabCase(name)),
+  };
+}
+
+export class NodeTypeBase<C, R: Resource<C>> extends GraphQLObjectType {
+  Connection: GraphQLObjectType;
+  Edge: GraphQLObjectType;
+
+  localIdFieldName: ?string;
+  resourceConfig: mixed;
+  NodeResource: Class<R>;
+
+  constructor({
+    localIdFieldName,
+    Resource: NodeResource,
+    resourceConfig,
+    ...config
+  }: NodeTypeConfig<C, R>) {
+    super(config);
+
+    const { connectionType, edgeType } = connectionDefinitions({
+      nodeType: this,
+    });
+
+    this.Connection = connectionType;
+    this.Edge = edgeType;
+
+    this.localIdFieldName = localIdFieldName;
+    this.NodeResource = NodeResource;
+    this.resourceConfig =
+      resourceConfig || getDefaultResourceConfig(this.name);
+
+    this.registerNodeType();
+  }
+
+  registerNodeType() {
+    throw new Error('not implemented');
+  }
+
+  getResource(context: C): R {
+    throw new Error('not implemented');
+  }
+}
+
+export type CreatedNodeType<C> = {
+  prepareConfig: <R: Resource<C>>(
+    config: NodeTypeConfig<C, R>,
+  ) => NodeTypeConfig<C, R>,
+  registerNodeType: <R: Resource<C>>(nodeType: NodeTypeBase<C, R>) => void,
+  getResource: <R: Resource<C>>(nodeType: NodeTypeBase<C, R>, context: C) => R,
+};
+
 export default function createNodeType<Context>({
   fieldNameResolver = d => d,
-}: CreateNodeTypeArgs<Context>) {
+}: CreateNodeTypeArgs<Context>): CreatedNodeType<Context> {
   // eslint-disable-next-line no-use-before-define
-  const TYPES: Map<string, NodeType<any>> = new Map();
+  const TYPES: Map<string, NodeTypeBase<Context, any>> = new Map();
 
   const { nodeInterface, nodeField, nodesField } = nodeDefinitions(
     async (globalId, context) => {
@@ -87,7 +147,7 @@ export default function createNodeType<Context>({
     context: Context,
     info: GraphQLResolveInfo,
   ): Resource<Context> {
-    const parentType = asType(info.parentType, NodeType); // eslint-disable-line no-use-before-define
+    const parentType = asType(info.parentType, NodeTypeBase); // eslint-disable-line no-use-before-define
     return parentType.getResource(context);
   }
 
@@ -129,12 +189,6 @@ export default function createNodeType<Context>({
       info,
     );
 
-  function getLocalIdFieldName(name, localIdFieldName) {
-    if (localIdFieldName !== undefined) return localIdFieldName;
-
-    return `${camelCase(name)}Id`;
-  }
-
   function makeFields(
     fields,
     localIdFieldName,
@@ -174,78 +228,61 @@ export default function createNodeType<Context>({
     };
   }
 
-  function getDefaultResourceConfig(name) {
-    return {
-      endpoint: pluralize(kebabCase(name)),
-    };
-  }
-
   const Resources: WeakMap<
     Context,
     Map<string, Resource<Context>>,
   > = new WeakMap();
 
-  class NodeType<R: Resource<Context>> extends GraphQLObjectType {
-    Connection: GraphQLObjectType;
-    Edge: GraphQLObjectType;
+  function prepareConfig<R: Resource<Context>>(
+    config: NodeTypeConfig<Context, R>,
+  ): NodeTypeConfig<Context, R> {
+    const localIdFieldName = getLocalIdFieldName(
+      config.name,
+      config.localIdFieldName,
+    );
 
-    localIdFieldName: ?string;
-    resourceConfig: mixed;
-    NodeResource: Class<R>;
-
-    constructor({
-      name,
-      interfaces,
+    return {
+      ...config,
       localIdFieldName,
-      fields,
-      Resource: NodeResource,
-      resourceConfig,
-      ...config
-    }: NodeTypeConfig<Context, R>) {
+      interfaces: () => [
+        ...(resolveThunk(config.interfaces) || []),
+        nodeInterface,
+      ],
+      fields: makeFields(config.fields, localIdFieldName),
+    };
+  }
+
+  function registerNodeType<R: Resource<Context>>(
+    nodeType: NodeTypeBase<Context, R>,
+  ) {
+    TYPES.set(nodeType.name, nodeType);
+  }
+
+  function getResource<R: Resource<Context>>(
+    nodeType: NodeTypeBase<Context, R>,
+    context: Context,
+  ): R {
+    let resources = Resources.get(context);
+    if (!resources) {
       // eslint-disable-next-line no-param-reassign
-      localIdFieldName = getLocalIdFieldName(name, localIdFieldName);
-
-      super({
-        ...config,
-        name,
-        interfaces: () => [...(resolveThunk(interfaces) || []), nodeInterface],
-        fields: makeFields(fields, localIdFieldName),
-      });
-
-      const { connectionType, edgeType } = connectionDefinitions({
-        nodeType: this,
-      });
-
-      this.Connection = connectionType;
-      this.Edge = edgeType;
-
-      this.localIdFieldName = localIdFieldName;
-      this.NodeResource = NodeResource;
-      this.resourceConfig = resourceConfig || getDefaultResourceConfig(name);
-
-      TYPES.set(name, this);
+      resources = new Map();
+      Resources.set(context, resources);
     }
 
-    getResource(context: Context): R {
-      let resources = Resources.get(context);
-      if (!resources) {
-        // eslint-disable-next-line no-param-reassign
-        resources = new Map();
-        Resources.set(context, resources);
-      }
-
-      let resource = resources.get(this.name);
-      if (!resource) {
-        resource = new this.NodeResource(context, this.resourceConfig);
-        resources.set(this.name, resource);
-      }
-
-      return asType(resource, this.NodeResource);
+    let resource = resources.get(this.name);
+    if (!resource) {
+      resource = new this.NodeResource(context, this.resourceConfig);
+      resources.set(this.name, resource);
     }
+
+    return asType(resource, this.NodeResource);
   }
 
   return {
-    NodeType,
+    prepareConfig,
+    registerNodeType,
+    getResource,
+
     getNodeResource,
     nodeField,
     nodesField,
