@@ -80,7 +80,7 @@ export default function createNodeType({
       return { $type: type, ...item };
     },
 
-    obj => TYPES[obj.$type],
+    obj => TYPES.get(obj.$type),
   );
 
   function getNodeResource(
