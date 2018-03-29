@@ -73,7 +73,7 @@ export default function createNodeType({
       const resolvesType = TYPES.get(type);
 
       invariant(resolvesType, 'There is no matching type');
-      const item = resolvesType.getResource(context).get(id);
+      const item = await resolvesType.getResource(context).get(id);
 
       if (!item) return null;
 
