@@ -1,6 +1,6 @@
 {
   "name": "@4c/graphql-node-resource",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "main": "lib/index.js",
   "modules": "es/index.js",
   "jsnext:main": "es/index.js",
