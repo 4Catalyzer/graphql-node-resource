@@ -11,28 +11,35 @@
     "node": ">= 8.3.0"
   },
   "scripts": {
-    "build": "babel src -d lib --ignore __tests__ && BABEL_ENV=esm babel src --out-dir es --ignore __tests__",
+    "build":
+      "babel src -d lib --ignore __tests__ && BABEL_ENV=esm babel src --out-dir es --ignore __tests__",
     "check": "flow check",
     "tdd": "jest --watch",
     "test": "npm run lint && jest",
-    "lint": "npm run check && eslint . && prettier --list-different --ignore-path .eslintignore '**/*.{json,css,md}'",
-    "format": "eslint . --fix && prettier --write --ignore-path .eslintignore '**/*.{json,css,md}'",
-    "precommit": "lint-staged"
+    "lint":
+      "npm run check && eslint . && prettier --list-different --ignore-path .eslintignore '**/*.{json,css,md}'",
+    "format":
+      "eslint . --fix && prettier --write --ignore-path .eslintignore '**/*.{json,css,md}'",
+    "precommit": "lint-staged",
+    "prepublishOnly": "npm run build",
+    "semantic-release": "semantic-release",
+    "travis-deploy-once": "travis-deploy-once"
   },
+  "files": ["lib", "es"],
   "prettier": {
     "printWidth": 79,
     "singleQuote": true,
     "trailingComma": "all"
   },
   "lint-staged": {
-    "*.js": [
-      "eslint --fix",
-      "git add"
-    ],
+    "*.js": ["eslint --fix", "git add"],
     "*.{json,css,md}": [
       "prettier --write --ignore-path .eslintignore",
       "git add"
     ]
+  },
+  "release": {
+    "extends": ["@4c/semantic-release-config"]
   },
   "devDependencies": {
     "@4c/babel-preset-4catalyzer": "^1.2.1",
@@ -55,12 +62,15 @@
     "husky": "^0.14.3",
     "jest": "^22.4.2",
     "lint-staged": "^7.0.0",
-    "prettier": "^1.11.1"
+    "prettier": "^1.11.1",
+    "semantic-release": "^15.1.5",
+    "travis-deploy-once": "^4.4.1"
   },
   "peerDependencies": {
     "graphql": ">=0.12.3"
   },
   "dependencies": {
+    "@4c/semantic-release-config": "^1.0.1",
     "dataloader": "^1.4.0",
     "express": "^4.16.2",
     "form-data": "^2.3.2",
