@@ -1,6 +1,6 @@
 {
   "name": "@4c/graphql-node-resource",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "main": "lib/index.js",
   "modules": "es/index.js",
   "jsnext:main": "es/index.js",
@@ -11,23 +11,25 @@
     "node": ">= 8.3.0"
   },
   "scripts": {
-    "build":
-      "babel src -d lib --ignore __tests__ && BABEL_ENV=esm babel src --out-dir es --ignore __tests__",
+    "build": "babel src -d lib --ignore __tests__ && BABEL_ENV=esm babel src --out-dir es --ignore __tests__",
     "check": "flow check",
     "tdd": "jest --watch",
     "test": "npm run lint && jest --coverage",
-    "lint":
-      "npm run check && eslint . && prettier --list-different --ignore-path .eslintignore '**/*.{json,css,md}'",
-    "format":
-      "eslint . --fix && prettier --write --ignore-path .eslintignore '**/*.{json,css,md}'",
+    "lint": "npm run check && eslint . && prettier --list-different --ignore-path .eslintignore '**/*.{json,css,md}'",
+    "format": "eslint . --fix && prettier --write --ignore-path .eslintignore '**/*.{json,css,md}'",
     "precommit": "lint-staged",
     "prepublishOnly": "npm run build",
     "semantic-release": "semantic-release",
     "travis-deploy-once": "travis-deploy-once"
   },
-  "files": ["lib", "es"],
+  "files": [
+    "lib",
+    "es"
+  ],
   "jest": {
-    "collectCoverageFrom": ["src/**"]
+    "collectCoverageFrom": [
+      "src/**"
+    ]
   },
   "prettier": {
     "printWidth": 79,
@@ -35,14 +37,19 @@
     "trailingComma": "all"
   },
   "lint-staged": {
-    "*.js": ["eslint --fix", "git add"],
+    "*.js": [
+      "eslint --fix",
+      "git add"
+    ],
     "*.{json,css,md}": [
       "prettier --write --ignore-path .eslintignore",
       "git add"
     ]
   },
   "release": {
-    "extends": ["@4c/semantic-release-config"]
+    "extends": [
+      "@4c/semantic-release-config"
+    ]
   },
   "devDependencies": {
     "@4c/babel-preset-4catalyzer": "^1.2.1",
