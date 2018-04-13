@@ -21,14 +21,8 @@ import pluralize from 'pluralize';
 import invariant from 'invariant';
 
 import asType from '../utils/asType';
-import type HttpApi from '../api/HttpApi';
 import resolveThunk from '../utils/resolveThunk';
 import Resource from '../resources/Resource';
-import HttpResource from '../resources/HttpResource';
-
-export type Context = {
-  httpApi: HttpApi,
-};
 
 // graphql overrides
 
@@ -36,7 +30,7 @@ type ObjStub = {
   id: string,
 };
 
-type NodeTypeConfig<R: Resource> = GraphQLObjectTypeConfig<
+type NodeTypeConfig<Context, R: Resource<Context>> = GraphQLObjectTypeConfig<
   ObjStub,
   Context,
 > & {
@@ -45,11 +39,17 @@ type NodeTypeConfig<R: Resource> = GraphQLObjectTypeConfig<
   resourceConfig?: mixed,
 };
 
-export type NodeFieldResolver = GraphQLFieldResolver<ObjStub, Context>;
-export type NodeFieldConfig = GraphQLFieldConfig<ObjStub, Context>;
-export type NodeFieldConfigMap = GraphQLFieldConfigMap<ObjStub, Context>;
+export type NodeFieldResolver<Context> = GraphQLFieldResolver<
+  ObjStub,
+  Context,
+>;
+export type NodeFieldConfig<Context> = GraphQLFieldConfig<ObjStub, Context>;
+export type NodeFieldConfigMap<Context> = GraphQLFieldConfigMap<
+  ObjStub,
+  Context,
+>;
 
-type FieldNameResolver = (
+type FieldNameResolver<Context> = (
   fieldName: string,
   obj: ObjStub,
   args: mixed,
@@ -57,15 +57,32 @@ type FieldNameResolver = (
   info: GraphQLResolveInfo,
 ) => string;
 
-type CreateNodeTypeArgs = {
-  fieldNameResolver?: FieldNameResolver,
+type CreateNodeTypeArgs<Context> = {
+  fieldNameResolver?: FieldNameResolver<Context>,
 };
 
-export default function createNodeType({
+class NodeType<C, R: Resource<C>> extends GraphQLObjectType {
+  Connection: GraphQLObjectType;
+  Edge: GraphQLObjectType;
+
+  localIdFieldName: ?string;
+
+  getResource(context: C): R {
+    throw new Error('not implemented');
+  }
+}
+
+export type CreatedNodeType<C> = {
+  createNodeType: <R: Resource<C>>(
+    config: NodeTypeConfig<C, R>,
+  ) => NodeType<C, R>,
+};
+
+export default function createNodeType<Context>({
   fieldNameResolver = d => d,
-}: CreateNodeTypeArgs) {
+}: CreateNodeTypeArgs<Context>): CreatedNodeType<Context> {
   // eslint-disable-next-line no-use-before-define
-  const TYPES: Map<string, NodeType<any>> = new Map();
+  const TYPES: Map<string, NodeType<any, any>> = new Map();
 
   const { nodeInterface, nodeField, nodesField } = nodeDefinitions(
     async (globalId, context) => {
@@ -86,9 +103,8 @@ export default function createNodeType({
   function getNodeResource(
     context: Context,
     info: GraphQLResolveInfo,
-  ): HttpResource {
-    const parentType = asType(info.parentType, NodeType); // eslint-disable-line no-use-before-define
-    return parentType.getResource(context);
+  ): Resource<Context> {
+    return (info.parentType: any).getResource(context);
   }
 
   function getLocalId(obj, context: Context, info: GraphQLResolveInfo) {
@@ -180,50 +196,45 @@ export default function createNodeType({
     };
   }
 
-  const Resources: WeakMap<Context, Map<string, Resource>> = new WeakMap();
+  const Resources: WeakMap<
+    Context,
+    Map<string, Resource<Context>>,
+  > = new WeakMap();
 
-  class NodeType<R: Resource> extends GraphQLObjectType {
-    Connection: GraphQLObjectType;
-    Edge: GraphQLObjectType;
+  function createNodeType<R: Resource<Context>>({
+    name,
+    interfaces,
+    localIdFieldName,
+    fields,
+    Resource: NodeResource,
+    resourceConfig,
+    ...config
+  }: NodeTypeConfig<Context, R>): NodeType<Context, R> {
+    // eslint-disable-next-line no-param-reassign
+    localIdFieldName = getLocalIdFieldName(name, localIdFieldName);
 
-    localIdFieldName: ?string;
-    resourceConfig: mixed;
-    NodeResource: Class<R>;
-
-    constructor({
+    const nodeType = new GraphQLObjectType({
+      ...config,
       name,
-      interfaces,
-      localIdFieldName,
-      fields,
-      Resource: NodeResource,
-      resourceConfig,
-      ...config
-    }: NodeTypeConfig<R>) {
-      // eslint-disable-next-line no-param-reassign
-      localIdFieldName = getLocalIdFieldName(name, localIdFieldName);
+      interfaces: () => [...(resolveThunk(interfaces) || []), nodeInterface],
+      fields: makeFields(fields, localIdFieldName),
+    });
 
-      super({
-        ...config,
-        name,
-        interfaces: () => [...(resolveThunk(interfaces) || []), nodeInterface],
-        fields: makeFields(fields, localIdFieldName),
-      });
+    const { connectionType, edgeType } = connectionDefinitions({ nodeType });
 
-      const { connectionType, edgeType } = connectionDefinitions({
-        nodeType: this,
-      });
+    const augmentedNodeType: any = nodeType;
 
-      this.Connection = connectionType;
-      this.Edge = edgeType;
+    augmentedNodeType.Connection = connectionType;
+    augmentedNodeType.Edge = edgeType;
 
-      this.localIdFieldName = localIdFieldName;
-      this.NodeResource = NodeResource;
-      this.resourceConfig = resourceConfig || getDefaultResourceConfig(name);
+    augmentedNodeType.localIdFieldName = localIdFieldName;
 
-      TYPES.set(name, this);
-    }
+    // eslint-disable-next-line no-param-reassign
+    resourceConfig = resourceConfig || getDefaultResourceConfig(name);
 
-    getResource(context: Context): R {
+    TYPES.set(name, augmentedNodeType);
+
+    augmentedNodeType.getResource = (context: Context): R => {
       let resources = Resources.get(context);
       if (!resources) {
         // eslint-disable-next-line no-param-reassign
@@ -231,18 +242,20 @@ export default function createNodeType({
         Resources.set(context, resources);
       }
 
-      let resource = resources.get(this.name);
+      let resource = resources.get(name);
       if (!resource) {
-        resource = new this.NodeResource(context, this.resourceConfig);
-        resources.set(this.name, resource);
+        resource = new NodeResource(context, resourceConfig);
+        resources.set(name, resource);
       }
 
-      return asType(resource, this.NodeResource);
-    }
+      return asType(resource, NodeResource);
+    };
+
+    return augmentedNodeType;
   }
 
   return {
-    NodeType,
+    createNodeType,
     getNodeResource,
     nodeField,
     nodesField,
@@ -253,7 +266,7 @@ export default function createNodeType({
         Context,
       >,
       objFields: K,
-    ): NodeFieldResolver {
+    ): NodeFieldResolver<Context> {
       const objKeys = Object.keys(objFields);
 
       return async function augmentedResolve(obj, args, context, info) {
