@@ -25,13 +25,13 @@ type Init = {
   body?: string | FormData,
 };
 
-export default async function fetch<T>({
+export default async function fetch({
   method,
   url,
   data,
   headers,
   files,
-}: RequestOptions): Promise<?T> {
+}: RequestOptions): Promise<Response> {
   const init: Init = {
     method,
     headers: {

@@ -16,19 +16,15 @@ import {
   nodeDefinitions,
 } from 'graphql-relay';
 import camelCase from 'lodash/camelCase';
-import kebabCase from 'lodash/kebabCase';
+import snakeCase from 'lodash/snakeCase';
 import pluralize from 'pluralize';
 import invariant from 'invariant';
 
 import asType from '../utils/asType';
-import type HttpApi from '../api/HttpApi';
 import resolveThunk from '../utils/resolveThunk';
 import Resource from '../resources/Resource';
-import HttpResource from '../resources/HttpResource';
 
-export type Context = {
-  httpApi: HttpApi,
-};
+type Context = any;
 
 // graphql overrides
 
@@ -36,7 +32,7 @@ type ObjStub = {
   id: string,
 };
 
-type NodeTypeConfig<R: Resource> = GraphQLObjectTypeConfig<
+type NodeTypeConfig<R: Resource<*>> = GraphQLObjectTypeConfig<
   ObjStub,
   Context,
 > & {
@@ -45,25 +41,35 @@ type NodeTypeConfig<R: Resource> = GraphQLObjectTypeConfig<
   resourceConfig?: mixed,
 };
 
-export type NodeFieldResolver = GraphQLFieldResolver<ObjStub, Context>;
-export type NodeFieldConfig = GraphQLFieldConfig<ObjStub, Context>;
-export type NodeFieldConfigMap = GraphQLFieldConfigMap<ObjStub, Context>;
+export type NodeFieldResolver<TContext> = GraphQLFieldResolver<
+  ObjStub,
+  TContext,
+>;
+export type NodeFieldConfig<TContext> = GraphQLFieldConfig<ObjStub, TContext>;
+export type NodeFieldConfigMap<TContext> = GraphQLFieldConfigMap<
+  ObjStub,
+  TContext,
+>;
 
-type FieldNameResolver = (
+type FieldNameResolver<TContext> = (
   fieldName: string,
   obj: ObjStub,
   args: mixed,
-  context: Context,
+  context: TContext,
   info: GraphQLResolveInfo,
 ) => string;
 
 type CreateNodeTypeArgs = {
-  fieldNameResolver?: FieldNameResolver,
+  fieldNameResolver?: FieldNameResolver<*>,
+  getDefaultResourceConfig?: (name: string) => mixed,
 };
 
 export default function createNodeType({
   fieldNameResolver = d => d,
-}: CreateNodeTypeArgs) {
+  getDefaultResourceConfig = name => ({
+    endpoint: pluralize(snakeCase(name)),
+  }),
+}: CreateNodeTypeArgs = {}) {
   // eslint-disable-next-line no-use-before-define
   const TYPES: Map<string, NodeType<any>> = new Map();
 
@@ -86,8 +92,9 @@ export default function createNodeType({
   function getNodeResource(
     context: Context,
     info: GraphQLResolveInfo,
-  ): HttpResource {
-    const parentType = asType(info.parentType, NodeType); // eslint-disable-line no-use-before-define
+  ): Resource<*> {
+    // eslint-disable-next-line no-use-before-define
+    const parentType = asType(info.parentType, NodeType);
     return parentType.getResource(context);
   }
 
@@ -174,15 +181,9 @@ export default function createNodeType({
     };
   }
 
-  function getDefaultResourceConfig(name) {
-    return {
-      endpoint: pluralize(kebabCase(name)),
-    };
-  }
+  const Resources: WeakMap<Context, Map<string, Resource<*>>> = new WeakMap();
 
-  const Resources: WeakMap<Context, Map<string, Resource>> = new WeakMap();
-
-  class NodeType<R: Resource> extends GraphQLObjectType {
+  class NodeType<R: Resource<*>> extends GraphQLObjectType {
     Connection: GraphQLObjectType;
     Edge: GraphQLObjectType;
 
@@ -253,7 +254,7 @@ export default function createNodeType({
         Context,
       >,
       objFields: K,
-    ): NodeFieldResolver {
+    ): NodeFieldResolver<Context> {
       const objKeys = Object.keys(objFields);
 
       return async function augmentedResolve(obj, args, context, info) {

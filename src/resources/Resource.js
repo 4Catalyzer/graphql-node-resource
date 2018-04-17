@@ -1,12 +1,10 @@
 /* @flow */
 
-import type { Context } from '../types/NodeType';
-
-export default class Resource {
-  context: Context;
+export default class Resource<TContext> {
+  context: TContext;
 
   // eslint-disable-next-line no-unused-vars
-  constructor(context: Context, config: any) {
+  constructor(context: TContext, config: any) {
     this.context = context;
   }
 
