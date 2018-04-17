@@ -59,13 +59,8 @@ export default class HttpApi {
     );
   }
 
-  async get<T>(path: string, args?: Args): Promise<?T> {
-    const item = await this._loader.load(this.makePath(path, args));
-    if (item instanceof Error) {
-      throw item;
-    }
-
-    return item;
+  get<T>(path: string, args?: Args): Promise<?T> {
+    return this._loader.load(this.makePath(path, args));
   }
 
   async getPaginatedConnection<T>(
@@ -97,7 +92,6 @@ export default class HttpApi {
     // These connections only paginate forward, so the existence of a previous
     // page doesn't make any difference, but this is the correct value.
     const hasPreviousPage = !!after;
-
     return {
       edges: items.map((item, i) => ({
         node: item,
@@ -197,7 +191,7 @@ export default class HttpApi {
 
   createArgLoader(path: string, key: string) {
     return this.createLoader(
-      keys => this.makePath(path, { [key]: keys }),
+      keys => this.getUrl(path, { [key]: keys }),
       item => item[key],
     );
   }
@@ -210,7 +204,7 @@ export default class HttpApi {
       // No need to cache the GET; the DataLoader will cache it.
       const items = await this.request('GET', getPath((keys: any)));
       if (!items) {
-        return [];
+        return Array(keys.length).fill(null);
       }
 
       const itemsByKey = {};

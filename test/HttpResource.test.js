@@ -4,19 +4,35 @@ import mockedFetch from 'node-fetch';
 import { connectionFromArray } from 'graphql-relay';
 
 import HttpResource from '../src/resources/HttpResource';
-import { MockHttpApi, type MockContext } from './helpers';
+import { TestHttpApi, type MockContext } from './helpers';
 
 describe('HttpResource', () => {
   let mockContext;
 
   beforeEach(() => {
     mockContext = {
-      httpApi: new MockHttpApi(),
+      httpApi: new TestHttpApi(),
     };
   });
 
   afterEach(() => {
     mockedFetch.restore();
+  });
+
+  it('should accept a function as the endpoint', async () => {
+    const resource = new HttpResource(mockContext, {
+      endpoint: id => `salads/${id || ''}`,
+    });
+
+    expect(resource.getPath('1')).toEqual('salads/1');
+  });
+
+  it('should return sub path', async () => {
+    const resource = new HttpResource(mockContext, {
+      endpoint: 'salads',
+    });
+
+    expect(resource.getSubPath('1', 'foo')).toEqual('/salads/1/foo');
   });
 
   it('should get', async () => {
@@ -82,6 +98,18 @@ describe('HttpResource', () => {
     expect(await resource.update('5', data)).toEqual(data);
   });
 
+  it('should set', async () => {
+    const resource = new HttpResource(mockContext, { endpoint: 'salads' });
+    const data = { spicy: true };
+
+    mockedFetch.put('https://gateway/v1/salads/5', {
+      status: 200,
+      body: { data },
+    });
+
+    expect(await resource.set('5', data)).toEqual(data);
+  });
+
   it('should delete', async () => {
     const resource = new HttpResource(mockContext, { endpoint: 'salads' });
 
@@ -94,7 +122,7 @@ describe('HttpResource', () => {
 
   it('should handle subclassing', async () => {
     class MyHttpResource extends HttpResource<MockContext> {
-      api: MockHttpApi;
+      api: TestHttpApi;
 
       foo() {
         return this.api.foo();

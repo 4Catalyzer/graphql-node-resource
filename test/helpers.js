@@ -10,7 +10,7 @@ function getData({ data, meta } = {}) {
   return data;
 }
 
-export class MockHttpApi extends HttpApi {
+export class TestHttpApi extends HttpApi {
   constructor() {
     super({
       apiBase: '/v1',
@@ -29,5 +29,5 @@ export class MockHttpApi extends HttpApi {
 }
 
 export type MockContext = {
-  httpApi: MockHttpApi,
+  httpApi: TestHttpApi,
 };

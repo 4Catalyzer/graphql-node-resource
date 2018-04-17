@@ -3,13 +3,13 @@
 import mockedFetch from 'node-fetch';
 
 import PaginatedHttpResource from '../src/resources/PaginatedHttpResource';
-import { MockHttpApi } from './helpers';
+import { TestHttpApi } from './helpers';
 
 describe('PaginatedHttpResource', () => {
   let mockContext;
   beforeEach(() => {
     mockContext = {
-      httpApi: new MockHttpApi(),
+      httpApi: new TestHttpApi(),
     };
   });
 
@@ -45,5 +45,49 @@ describe('PaginatedHttpResource', () => {
       },
       meta: {},
     });
+  });
+
+  it('should handle empty lists', async () => {
+    const resource = new PaginatedHttpResource(mockContext, {
+      endpoint: 'salads',
+    });
+    const data = [];
+    const meta = {
+      hasNextPage: true,
+      cursors: data.map((_, i) => String(i)),
+    };
+
+    mockedFetch.get('https://gateway/v1/salads?cursor=&limit=2&pageSize=2', {
+      status: 200,
+      body: { data, meta },
+    });
+
+    expect(await resource.getConnection({ first: 2 })).toEqual({
+      edges: data.map((node, idx) => ({
+        cursor: String(idx),
+        node,
+      })),
+      pageInfo: {
+        hasPreviousPage: false,
+        hasNextPage: true,
+        startCursor: null,
+        endCursor: null,
+      },
+      meta: {},
+    });
+  });
+
+  it('should get null if nothing is returned', async () => {
+    const resource = new PaginatedHttpResource(mockContext, {
+      endpoint: 'salads',
+    });
+    const data = null;
+
+    mockedFetch.get('https://gateway/v1/salads?cursor=&limit=2&pageSize=2', {
+      status: 200,
+      body: { data },
+    });
+
+    expect(await resource.getConnection({ first: 2 })).toEqual(null);
   });
 });

@@ -8,3 +8,4 @@ mock.config.Request = Request;
 mock.config.Response = Response;
 
 export default mock.sandbox();
+export { Headers, Request, Response };
