@@ -4,14 +4,14 @@ import mockedFetch from 'node-fetch';
 import { connectionFromArray } from 'graphql-relay';
 
 import HttpResource from '../src/resources/HttpResource';
-import { MockApi } from './helpers';
+import { MockHttpApi, type MockContext } from './helpers';
 
 describe('HttpResource', () => {
   let mockContext;
 
   beforeEach(() => {
     mockContext = {
-      httpApi: new MockApi(),
+      httpApi: new MockHttpApi(),
     };
   });
 
@@ -52,9 +52,10 @@ describe('HttpResource', () => {
       body: { data },
     });
 
-    expect(await resource.getConnection({ first: 2 })).toEqual(
-      connectionFromArray(data, { first: 2 }),
-    );
+    expect(await resource.getConnection({ first: 2 })).toEqual({
+      ...connectionFromArray(data, { first: 2 }),
+      meta: {},
+    });
   });
 
   it('should create', async () => {
@@ -83,6 +84,26 @@ describe('HttpResource', () => {
 
   it('should delete', async () => {
     const resource = new HttpResource(mockContext, { endpoint: 'salads' });
+
+    mockedFetch.delete('https://gateway/v1/salads/5', {
+      status: 204,
+    });
+
+    expect(await resource.delete('5')).toEqual(null);
+  });
+
+  it('should handle subclassing', async () => {
+    class MyHttpResource extends HttpResource<MockContext> {
+      api: MockHttpApi;
+
+      foo() {
+        return this.api.foo();
+      }
+    }
+
+    const resource = new MyHttpResource((mockContext: any), {
+      endpoint: 'salads',
+    });
 
     mockedFetch.delete('https://gateway/v1/salads/5', {
       status: 204,

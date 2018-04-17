@@ -3,13 +3,13 @@
 import mockedFetch from 'node-fetch';
 
 import PaginatedHttpResource from '../src/resources/PaginatedHttpResource';
-import { MockApi } from './helpers';
+import { MockHttpApi } from './helpers';
 
 describe('PaginatedHttpResource', () => {
   let mockContext;
   beforeEach(() => {
     mockContext = {
-      httpApi: new MockApi(),
+      httpApi: new MockHttpApi(),
     };
   });
 

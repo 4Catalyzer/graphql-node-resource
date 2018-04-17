@@ -7,7 +7,7 @@ import Resource from './Resource';
 export type Endpoint = string | ((id?: string) => string);
 
 export type HttpContext = {
-  httpApi: HttpApi,
+  +httpApi: HttpApi,
 };
 
 export type HttpResourceOptions = {
@@ -17,7 +17,8 @@ export type HttpResourceOptions = {
 export default class HttpResource<TContext: HttpContext> extends Resource<
   TContext,
 > {
-  api: HttpApi;
+  +api: HttpApi;
+
   _endpoint: Endpoint;
 
   constructor(context: TContext, { endpoint }: HttpResourceOptions) {

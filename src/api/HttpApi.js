@@ -2,12 +2,14 @@
 
 import DataLoader from 'dataloader';
 import { connectionFromArray, forwardConnectionArgs } from 'graphql-relay';
+import type { Connection } from 'graphql-relay';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 import invariant from 'invariant';
 import querystring from 'querystring';
 
 import HttpError from './HttpError';
+import urlJoin from '../utils/urlJoin';
 
 const PAGINATION_ARG_KEYS = Object.keys(forwardConnectionArgs);
 
@@ -22,6 +24,10 @@ export type QueryString = {
 export type ValidationResult = {
   valid: boolean,
   errors: ?Array<mixed>,
+};
+
+export type PaginationResult<T> = Connection<T> & {
+  meta: {},
 };
 
 export type HttpApiOptions = {
@@ -62,10 +68,10 @@ export default class HttpApi {
     return item;
   }
 
-  async getPaginatedConnection(
+  async getPaginatedConnection<T>(
     path: string,
     { after, first, ...args }: Args,
-  ): Promise<mixed> {
+  ): Promise<?PaginationResult<T>> {
     const items = await this.get(
       this.makePath(path, {
         ...args,
@@ -107,7 +113,10 @@ export default class HttpApi {
     };
   }
 
-  async getUnpaginatedConnection(path: string, args: Args): Promise<mixed> {
+  async getUnpaginatedConnection<T>(
+    path: string,
+    args: Args,
+  ): Promise<?PaginationResult<T>> {
     const apiArgs = omit(args, PAGINATION_ARG_KEYS);
     const paginationArgs = pick(args, PAGINATION_ARG_KEYS);
 
@@ -118,7 +127,10 @@ export default class HttpApi {
       `Expected \`GET\` to return an array of items, got: ${typeof items} instead`,
     );
 
-    return connectionFromArray(items, paginationArgs);
+    return {
+      ...connectionFromArray(items, paginationArgs),
+      meta: {},
+    };
   }
 
   async getValidationResult(
@@ -216,20 +228,16 @@ export default class HttpApi {
     });
   }
 
-  getExternalSignedUrl(path: string, args: Args) {
-    return this._getUrl(this.makePath(path, args), true);
-  }
-
   getUrl(path: string, args: Args): string {
     return this._getUrl(this.makePath(path, args), false);
   }
 
-  getExternalUrl(path: string, args: Args): string {
+  getExternalUrl(path: string, args?: Args): string {
     return this._getUrl(this.makePath(path, args), true);
   }
 
   _getUrl(path: string, external: boolean) {
     const origin = external ? this._externalOrigin : this._origin;
-    return `${origin}${this._apiBase}${path}`;
+    return `${origin}${urlJoin(this._apiBase, path)}`;
   }
 }
