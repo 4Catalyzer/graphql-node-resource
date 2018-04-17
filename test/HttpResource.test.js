@@ -1,3 +1,5 @@
+/* @flow */
+
 import mockedFetch from 'node-fetch';
 import { connectionFromArray } from 'graphql-relay';
 
@@ -6,6 +8,7 @@ import { MockApi } from './helpers';
 
 describe('HttpResource', () => {
   let mockContext;
+
   beforeEach(() => {
     mockContext = {
       httpApi: new MockApi(),

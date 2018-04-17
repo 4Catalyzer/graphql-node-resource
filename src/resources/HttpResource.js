@@ -1,21 +1,26 @@
 /* @flow */
 
 import type HttpApi, { Args, Data } from '../api/HttpApi';
-import type { Context } from '../types/NodeType';
 import urlJoin from '../utils/urlJoin';
 import Resource from './Resource';
 
 export type Endpoint = string | ((id?: string) => string);
 
+export type HttpContext = {
+  httpApi: HttpApi,
+};
+
 export type HttpResourceOptions = {
   endpoint: Endpoint,
 };
 
-export default class HttpResource extends Resource {
+export default class HttpResource<TContext: HttpContext> extends Resource<
+  TContext,
+> {
   api: HttpApi;
   _endpoint: Endpoint;
 
-  constructor(context: Context, { endpoint }: HttpResourceOptions) {
+  constructor(context: TContext, { endpoint }: HttpResourceOptions) {
     super(context);
 
     this.api = context.httpApi;

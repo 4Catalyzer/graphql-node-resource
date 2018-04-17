@@ -1,5 +1,9 @@
+/* @flow */
+
 import HttpApi from '../src/api/HttpApi';
 import apiFetch from '../src/api/fetch';
+
+import type { Data } from '../src/api/HttpApi';
 
 function getData({ data, meta } = {}) {
   if (meta) data.meta = meta; // eslint-disable-line no-param-reassign
@@ -14,9 +18,13 @@ export class MockApi extends HttpApi {
       externalOrigin: 'https://example.com',
     });
   }
-  async request(method, url, data?) {
+  async request(method: string, url: string, data?: Data) {
     const resp = await apiFetch({ method, url, data: { data } });
     if (resp.status === 204) return null;
     return getData(await resp.json());
   }
 }
+
+export type MockContext = {
+  httpApi: HttpApi,
+};
