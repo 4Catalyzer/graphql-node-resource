@@ -4,7 +4,7 @@ import mockedFetch from 'node-fetch';
 import { connectionFromArray } from 'graphql-relay';
 
 import HttpResource from '../src/resources/HttpResource';
-import { TestHttpApi, type MockContext } from './helpers';
+import { TestHttpApi } from './helpers';
 
 describe('HttpResource', () => {
   let mockContext;
@@ -121,7 +121,7 @@ describe('HttpResource', () => {
   });
 
   it('should handle subclassing', async () => {
-    class MyHttpResource extends HttpResource<TestHttpApi, MockContext> {
+    class MyHttpResource extends HttpResource<TestHttpApi> {
       foo() {
         return this.api.foo();
       }

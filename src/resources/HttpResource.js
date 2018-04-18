@@ -14,15 +14,14 @@ export type HttpResourceOptions = {
   endpoint: Endpoint,
 };
 
-export default class HttpResource<
-  TApi: HttpApi = HttpApi,
-  TContext: HttpContext<TApi> = HttpContext<HttpApi>,
-> extends Resource<TContext> {
+export default class HttpResource<TApi: HttpApi = HttpApi> extends Resource<
+  HttpContext<TApi>,
+> {
   +api: TApi;
 
   _endpoint: Endpoint;
 
-  constructor(context: TContext, { endpoint }: HttpResourceOptions) {
+  constructor(context: HttpContext<TApi>, { endpoint }: HttpResourceOptions) {
     super(context);
 
     this.api = context.httpApi;
