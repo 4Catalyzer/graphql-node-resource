@@ -121,15 +121,13 @@ describe('HttpResource', () => {
   });
 
   it('should handle subclassing', async () => {
-    class MyHttpResource extends HttpResource<MockContext> {
-      api: TestHttpApi;
-
+    class MyHttpResource extends HttpResource<TestHttpApi, MockContext> {
       foo() {
         return this.api.foo();
       }
     }
 
-    const resource = new MyHttpResource((mockContext: any), {
+    const resource = new MyHttpResource(mockContext, {
       endpoint: 'salads',
     });
 
