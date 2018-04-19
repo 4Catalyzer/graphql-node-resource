@@ -14,7 +14,7 @@ export default class Resource<TContext> {
   }
 
   // TODO: Once we have a concept of a model, this should go on there.
-  makeId({ id }: Object): string {
+  makeId({ id }: any): string {
     return id;
   }
 }
