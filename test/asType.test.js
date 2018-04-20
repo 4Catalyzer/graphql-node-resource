@@ -2,7 +2,7 @@
 
 import asType from '../src/utils/asType';
 
-describe('urlJoin', () => {
+describe('asType', () => {
   it('should cast type', () => {
     class Foo {}
     const value = new Foo();

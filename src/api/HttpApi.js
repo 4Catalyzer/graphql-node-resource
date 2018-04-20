@@ -8,8 +8,9 @@ import pick from 'lodash/pick';
 import invariant from 'invariant';
 import querystring from 'querystring';
 
-import HttpError from './HttpError';
 import urlJoin from '../utils/urlJoin';
+import HttpError from './HttpError';
+import type { HttpMethod } from './fetch';
 
 const PAGINATION_ARG_KEYS = Object.keys(forwardConnectionArgs);
 
@@ -150,8 +151,11 @@ export default class HttpApi {
     };
   }
 
-  // eslint-disable-next-line no-unused-vars
-  async request<T>(method: string, reqUrl: string, data?: Data): Promise<?T> {
+  async request<T>(
+    method: HttpMethod,
+    reqUrl: string,
+    data?: Data, // eslint-disable-line no-unused-vars
+  ): Promise<?T> {
     throw new Error('Not Implemented');
   }
 

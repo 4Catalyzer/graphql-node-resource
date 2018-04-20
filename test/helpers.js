@@ -1,7 +1,7 @@
 /* @flow */
 
-import HttpApi from '../src/api/HttpApi';
-import apiFetch from '../src/api/fetch';
+import { HttpApi, HttpResource, utils } from '../src';
+import apiFetch, { type HttpMethod } from '../src/api/fetch';
 
 import type { Data } from '../src/api/HttpApi';
 
@@ -18,11 +18,12 @@ export class TestHttpApi extends HttpApi {
       externalOrigin: 'https://example.com',
     });
   }
-  async request(method: string, url: string, data?: Data) {
+  async request(method: HttpMethod, url: string, data?: Data) {
     const resp = await apiFetch({ method, url, data: { data } });
     if (resp.status === 204) return null;
     return getData(await resp.json());
   }
+
   foo() {
     return 'foobar';
   }
@@ -31,3 +32,9 @@ export class TestHttpApi extends HttpApi {
 export type MockContext = {
   httpApi: TestHttpApi,
 };
+
+export class TestHttpResource extends HttpResource<TestHttpApi> {
+  getWidgetPath(widgetId: string, id: string) {
+    return utils.urlJoin('widgets', widgetId, this.getPath(id));
+  }
+}

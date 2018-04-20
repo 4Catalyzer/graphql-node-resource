@@ -1,6 +1,6 @@
 /* @flow */
 
-import Resource from '../src/resources/Resource';
+import { Resource } from '../src';
 
 describe('Resource', () => {
   it('should get make id', async () => {

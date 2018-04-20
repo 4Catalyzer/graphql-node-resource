@@ -2,7 +2,7 @@ import camelCase from 'lodash/camelCase';
 
 import translateKeys from '../src/utils/translateKeys';
 
-describe('urlJoin', () => {
+describe('translateKeys', () => {
   it('should translate keys', () => {
     const date = new Date();
     expect(

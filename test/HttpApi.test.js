@@ -1,10 +1,9 @@
 /** @flow */
 
 import mockedFetch from 'node-fetch';
-import HttpApi from '../src/api/HttpApi';
+import { HttpApi, HttpError } from '../src';
 
 import { TestHttpApi } from './helpers';
-import HttpError from '../src/api/HttpError';
 
 describe('HttpApi', () => {
   afterEach(() => {
