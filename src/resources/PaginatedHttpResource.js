@@ -3,7 +3,7 @@
 import HttpResource from './HttpResource';
 import type HttpApi, { Args } from '../api/HttpApi';
 
-export default class PaginatedHttpResourceHttpResource<
+export default class PaginatedHttpResource<
   TApi: HttpApi = HttpApi,
 > extends HttpResource<TApi> {
   getConnectionBase(path: string, args: Args) {

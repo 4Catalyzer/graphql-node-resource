@@ -11,26 +11,26 @@
     "node": ">= 8.3.0"
   },
   "scripts": {
-    "build": "babel src -d lib --ignore __tests__ && BABEL_ENV=esm babel src --out-dir es --ignore __tests__ && npm run build:flow",
-    "build:flow": "for file in $(find ./src -name '*.js' -not -path '*/__tests__*'); do cp \"$file\" `echo \"$file\" | sed 's/\\/src\\//\\/lib\\//g'`.flow; cp \"$file\" `echo \"$file\" | sed 's/\\/src\\//\\/es\\//g'`.flow; done",
+    "build":
+      "babel src -d lib --ignore __tests__ && BABEL_ENV=esm babel src --out-dir es --ignore __tests__ && npm run build:flow",
+    "build:flow":
+      "for file in $(find ./src -name '*.js' -not -path '*/__tests__*'); do cp \"$file\" `echo \"$file\" | sed 's/\\/src\\//\\/lib\\//g'`.flow; cp \"$file\" `echo \"$file\" | sed 's/\\/src\\//\\/es\\//g'`.flow; done",
     "check": "flow check",
     "tdd": "jest --watch",
     "test": "npm run lint && jest --coverage",
-    "lint": "npm run check && eslint . && prettier --list-different --ignore-path .eslintignore '**/*.{json,css}'",
-    "format": "eslint . --fix && prettier --write --ignore-path .eslintignore '**/*.{json,css,md}'",
+    "lint":
+      "npm run check && eslint . && prettier --list-different --ignore-path .eslintignore '**/*.{json,css}'",
+    "format":
+      "eslint . --fix && prettier --write --ignore-path .eslintignore '**/*.{json,css,md}'",
     "precommit": "lint-staged",
     "prepublishOnly": "npm run build",
     "semantic-release": "semantic-release",
     "travis-deploy-once": "travis-deploy-once"
   },
-  "files": [
-    "lib",
-    "es"
-  ],
+  "files": ["lib", "es"],
   "jest": {
-    "collectCoverageFrom": [
-      "src/**"
-    ]
+    "testEnvironment": "node",
+    "collectCoverageFrom": ["src/**"]
   },
   "prettier": {
     "printWidth": 79,
@@ -38,19 +38,14 @@
     "trailingComma": "all"
   },
   "lint-staged": {
-    "*.js": [
-      "eslint --fix",
-      "git add"
-    ],
+    "*.js": ["eslint --fix", "git add"],
     "*.{json,css,md}": [
       "prettier --write --ignore-path .eslintignore",
       "git add"
     ]
   },
   "release": {
-    "extends": [
-      "@4c/semantic-release-config"
-    ]
+    "extends": ["@4c/semantic-release-config"]
   },
   "devDependencies": {
     "@4c/semantic-release-config": "^1.0.1",
