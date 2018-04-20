@@ -1,3 +1,17 @@
+<a name="0.4.0"></a>
+# [0.4.0](https://github.com/4Catalyzer/graphql-server/compare/v0.3.0...v0.4.0) (2018-04-20)
+
+
+### Bug Fixes
+
+* correct class name on PaginatedHttpResource ([6b5984a](https://github.com/4Catalyzer/graphql-server/commit/6b5984a))
+
+
+### Features
+
+* add main export ([ae37549](https://github.com/4Catalyzer/graphql-server/commit/ae37549))
+* better HttpError messages ([c85a6c3](https://github.com/4Catalyzer/graphql-server/commit/c85a6c3))
+
 <a name="0.3.0"></a>
 # [0.3.0](https://github.com/4Catalyzer/graphql-server/compare/v0.2.0...v0.3.0) (2018-04-19)
 
