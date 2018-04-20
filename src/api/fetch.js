@@ -13,11 +13,14 @@ type File = {
 
 export type HttpMethod =
   | 'GET'
+  | 'HEAD'
   | 'POST'
   | 'PUT'
-  | 'PATCH'
   | 'DELETE'
-  | 'OPTIONS';
+  | 'CONNECT'
+  | 'OPTIONS'
+  | 'TRACE'
+  | 'PATCH';
 
 export type RequestOptions = {
   method: HttpMethod,

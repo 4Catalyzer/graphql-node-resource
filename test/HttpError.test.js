@@ -1,7 +1,7 @@
 /** @flow */
 
 import { Response } from 'node-fetch';
-import HttpError from '../src/api/HttpError';
+import { HttpError } from '../src';
 
 describe('HttpError', () => {
   it('should add status', () => {
@@ -16,6 +16,10 @@ describe('HttpError', () => {
       }),
     );
     await err.init();
+
+    expect(err.message).toEqual(
+      "HttpError(409): The network resource returned the following errors:\n\n[ 'bar', 'baz' ]",
+    );
     expect(err.errors).toEqual(['bar', 'baz']);
   });
 
@@ -26,7 +30,11 @@ describe('HttpError', () => {
       }),
     );
     await err.init();
+
     expect(err.body).toEqual('{,}');
+    expect(err.message).toEqual(
+      'HttpError(409): The network resource returned the following message:\n\n{,}',
+    );
     expect(err.errors).toEqual([]);
   });
 });
