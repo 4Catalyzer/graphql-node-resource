@@ -11,8 +11,16 @@ type File = {
   buffer: Buffer,
 };
 
+export type HttpMethod =
+  | 'GET'
+  | 'POST'
+  | 'PUT'
+  | 'PATCH'
+  | 'DELETE'
+  | 'OPTIONS';
+
 export type RequestOptions = {
-  method: string,
+  method: HttpMethod,
   url: string,
   data?: ?mixed,
   files?: File[],

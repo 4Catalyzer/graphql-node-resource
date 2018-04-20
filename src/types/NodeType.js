@@ -51,7 +51,7 @@ export type NodeFieldConfigMap<TContext> = GraphQLFieldConfigMap<
   TContext,
 >;
 
-type FieldNameResolver<TContext> = (
+export type FieldNameResolver<TContext> = (
   fieldName: string,
   obj: ObjStub,
   args: mixed,
@@ -59,7 +59,7 @@ type FieldNameResolver<TContext> = (
   info: GraphQLResolveInfo,
 ) => string;
 
-type CreateNodeTypeArgs = {
+export type CreateNodeTypeArgs = {
   fieldNameResolver?: FieldNameResolver<*>,
   getDefaultResourceConfig?: (name: string) => mixed,
 };
