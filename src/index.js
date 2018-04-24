@@ -37,7 +37,6 @@ export type {
   Args,
   Data,
   QueryString,
-  ValidationResult,
   PaginationResult,
   HttpApiOptions,
 } from './api/HttpApi';

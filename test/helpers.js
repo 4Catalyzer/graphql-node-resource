@@ -1,6 +1,6 @@
 /* @flow */
 
-import { HttpApi, HttpResource, utils } from '../src';
+import { HttpApi, HttpResource, utils, HttpError } from '../src';
 import apiFetch, { type HttpMethod } from '../src/api/fetch';
 
 import type { Data } from '../src/api/HttpApi';
@@ -21,6 +21,8 @@ export class TestHttpApi extends HttpApi {
   async request(method: HttpMethod, url: string, data?: Data) {
     const resp = await apiFetch({ method, url, data: { data } });
     if (resp.status === 204) return null;
+
+    if (!resp.ok) throw await new HttpError(resp).init();
     return getData(await resp.json());
   }
 

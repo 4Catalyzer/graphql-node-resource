@@ -3,9 +3,7 @@
 import FormData from 'form-data';
 import _fetch from 'node-fetch';
 
-import HttpError from './HttpError';
-
-type File = {
+export type File = {
   fieldname: string,
   originalname: string,
   buffer: Buffer,
@@ -36,13 +34,11 @@ type Init = {
   body?: string | FormData,
 };
 
-export default async function fetch({
-  method,
-  url,
-  data,
-  headers,
-  files,
-}: RequestOptions): Promise<Response> {
+export default async function fetch(
+  reqOptions: RequestOptions,
+): Promise<Response> {
+  const { method, url, data, headers, files } = reqOptions;
+
   const init: Init = {
     method,
     headers: {
@@ -69,14 +65,5 @@ export default async function fetch({
       init.body = JSON.stringify(data);
     }
   }
-  const response = await _fetch(url, init);
-
-  if (!response.ok) {
-    const error = new HttpError(response);
-    await error.init();
-
-    throw error;
-  }
-
-  return response;
+  return _fetch(url, init);
 }

@@ -9,7 +9,6 @@ import invariant from 'invariant';
 import querystring from 'querystring';
 
 import urlJoin from '../utils/urlJoin';
-import HttpError from './HttpError';
 import type { HttpMethod } from './fetch';
 
 const PAGINATION_ARG_KEYS = Object.keys(forwardConnectionArgs);
@@ -125,29 +124,6 @@ export default class HttpApi {
     return {
       ...connectionFromArray(items, paginationArgs),
       meta: {},
-    };
-  }
-
-  async getValidationResult(
-    path: string,
-    args: Args,
-  ): Promise<ValidationResult> {
-    try {
-      await this.get(path, args);
-    } catch (e) {
-      if (e instanceof HttpError && (e.status === 422 || e.status === 409)) {
-        return {
-          valid: false,
-          errors: e.errors,
-        };
-      }
-
-      throw e;
-    }
-
-    return {
-      valid: true,
-      errors: null,
     };
   }
 
