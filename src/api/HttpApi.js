@@ -21,11 +21,6 @@ export type QueryString = {
   stringify(obj: Object): string,
 };
 
-export type ValidationResult = {
-  valid: boolean,
-  errors: ?Array<mixed>,
-};
-
 export type PaginationResult<T> = Connection<T> & {
   meta: {},
 };

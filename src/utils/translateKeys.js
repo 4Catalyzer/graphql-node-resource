@@ -3,7 +3,7 @@
 export default function translateKeys(
   data: mixed,
   translate: (key: string) => string,
-) {
+): mixed {
   if (Array.isArray(data)) {
     return data.map(value => translateKeys(value, translate));
   }

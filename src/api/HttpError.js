@@ -31,7 +31,7 @@ export default class HttpError extends Error {
     this.message = `HttpError(${this.status}): A network request failed`;
   }
 
-  async init(): this {
+  async init(): Promise<this> {
     try {
       this.body = await this.response.text();
       this.errors = JSON.parse(this.body).errors || [];

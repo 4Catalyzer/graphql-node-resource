@@ -49,7 +49,7 @@ describe('fetch', () => {
       files: [
         {
           fieldname: 'file',
-          buffer: new Buffer('Content!'),
+          buffer: Buffer.from('Content!'),
           originalname: 'file',
         },
       ],
