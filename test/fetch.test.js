@@ -3,7 +3,7 @@
 import mockedFetch, { Response } from 'node-fetch';
 import FormData from 'form-data';
 
-import { fetch, HttpError } from '../src';
+import { fetch } from '../src';
 
 describe('fetch', () => {
   afterEach(() => {
@@ -31,17 +31,6 @@ describe('fetch', () => {
     expect(resp instanceof Response).toEqual(true);
   });
 
-  it('should return an HttpError for failed requests', async () => {
-    mockedFetch.get('https://example.com/foo', { body: {}, status: 401 });
-
-    await expect(
-      fetch({
-        method: 'GET',
-        url: 'https://example.com/foo',
-      }),
-    ).rejects.toThrow(HttpError);
-  });
-
   it('should handle files', async () => {
     mockedFetch.get(
       'https://example.com/foo',
@@ -60,7 +49,7 @@ describe('fetch', () => {
       files: [
         {
           fieldname: 'file',
-          buffer: new Buffer('Content!'),
+          buffer: Buffer.from('Content!'),
           originalname: 'file',
         },
       ],

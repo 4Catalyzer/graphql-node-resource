@@ -54,47 +54,6 @@ describe('HttpApi', () => {
     await expect(api.get('foo/1')).rejects.toThrow(HttpError);
   });
 
-  it('should return valid for successful get', async () => {
-    const api = new TestHttpApi();
-
-    mockedFetch.get('https://gateway/v1/valid_foo', {
-      body: { errors: ['foo'] },
-      status: 200,
-    });
-
-    expect(await api.getValidationResult('valid_foo', {})).toEqual({
-      valid: true,
-      errors: null,
-    });
-  });
-
-  it('should return invalid for errors', async () => {
-    const api = new TestHttpApi();
-
-    mockedFetch.get('https://gateway/v1/valid_foo', {
-      body: { errors: ['foo'] },
-      status: 422,
-    });
-
-    expect(await api.getValidationResult('valid_foo', {})).toEqual({
-      valid: false,
-      errors: ['foo'],
-    });
-  });
-
-  it('should rethrow other errors', async () => {
-    const api = new TestHttpApi();
-
-    mockedFetch.get('https://gateway/v1/valid_foo', {
-      body: { errors: ['foo'], detail: 'foo' },
-      status: 403,
-    });
-
-    await expect(api.getValidationResult('valid_foo', {})).rejects.toEqual(
-      expect.any(HttpError),
-    );
-  });
-
   it('should create an arg loader', async () => {
     const api = new TestHttpApi();
 
