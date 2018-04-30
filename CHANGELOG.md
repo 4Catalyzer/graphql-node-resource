@@ -1,3 +1,11 @@
+<a name="0.5.0"></a>
+# [0.5.0](https://github.com/4Catalyzer/graphql-server/compare/v0.4.0...v0.5.0) (2018-04-30)
+
+
+### Features
+
+* don't throw errors in fetch ([b42e58f](https://github.com/4Catalyzer/graphql-server/commit/b42e58f))
+
 <a name="0.4.0"></a>
 # [0.4.0](https://github.com/4Catalyzer/graphql-server/compare/v0.3.0...v0.4.0) (2018-04-20)
 
