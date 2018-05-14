@@ -12,7 +12,7 @@ import mockedFetch from 'node-fetch';
 import { createNodeType, HttpResource } from '../src';
 import { TestHttpApi, TestHttpResource, type MockContext } from './helpers';
 
-export default describe('NodeType', () => {
+describe('NodeType', () => {
   const nodeId = Buffer.from('Widget:1').toString('base64');
 
   let schema;
@@ -39,7 +39,7 @@ export default describe('NodeType', () => {
       },
     });
 
-    mockedFetch.get('https://gateway/v1/userinios/2', {
+    mockedFetch.get('https://gateway/v1/users/2', {
       status: 200,
       body: {
         data: { id: '2', name: 'Johan Schmidt', favoriteColor: 'blue' },
@@ -65,17 +65,23 @@ export default describe('NodeType', () => {
       name: 'User',
       fields: () => ({
         name: { type: GraphQLString },
-        color: {
+        resolvedFavoriteColor: {
           type: GraphQLString,
           resolve: createResolve(({ favoriteColor }) => favoriteColor, {
             favoriteColor: String,
           }),
         },
+        resolvedUserId: {
+          type: GraphQLString,
+          resolve: createResolve(({ id }) => id, {
+            id: String,
+          }),
+        },
       }),
       Resource: TestHttpResource,
-      localIdFieldName: 'useriniosId',
+      localIdFieldName: 'userId',
       resourceConfig: {
-        endpoint: 'userinios',
+        endpoint: 'users',
       },
     });
 
@@ -128,7 +134,7 @@ export default describe('NodeType', () => {
     expect(result.node).toEqual({ name: 'Floofh' });
   });
 
-  it('should add infered local ids', async () => {
+  it('should add inferred local ids', async () => {
     mockResponses();
     const result = await runQuery(
       `
@@ -171,8 +177,9 @@ export default describe('NodeType', () => {
             ...on Widget {
               user {
                 name
-                color
-                useriniosId
+                resolvedFavoriteColor
+                resolvedUserId
+                userId
               }
             }
           }
@@ -181,7 +188,12 @@ export default describe('NodeType', () => {
     );
 
     expect(result.node).toEqual({
-      user: { name: 'Johan Schmidt', color: 'blue', useriniosId: '2' },
+      user: {
+        name: 'Johan Schmidt',
+        resolvedFavoriteColor: 'blue',
+        resolvedUserId: '2',
+        userId: '2',
+      },
     });
   });
 
