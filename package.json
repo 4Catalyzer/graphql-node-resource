@@ -2,7 +2,7 @@
   "name": "@4c/graphql-node-resource",
   "version": "0.6.0",
   "main": "lib/index.js",
-  "modules": "es/index.js",
+  "module": "es/index.js",
   "jsnext:main": "es/index.js",
   "repository": "https://github.com/4Catalyzer/graphql-server.git",
   "author": "4Catalyzer",

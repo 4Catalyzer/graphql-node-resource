@@ -105,19 +105,52 @@ export default function createNodeType({
     return id;
   }
 
-  async function getNodeValue(
+  function getNodeObject(obj, context, info) {
+    const resource = getNodeResource(context, info);
+    return resource.get(resource.makeId(obj));
+  }
+
+  async function getAsyncNodeValue(obj, fieldName, context, info) {
+    const fullObj = await getNodeObject(obj, context, info);
+    return fullObj && (fullObj: { [key: string]: mixed })[fieldName];
+  }
+
+  function getNodeValue(
     obj: ObjStub,
     fieldName: string,
     context: Context,
     info: GraphQLResolveInfo,
   ) {
-    if (obj[fieldName] !== undefined) {
-      return obj[fieldName];
+    if (obj[fieldName] === undefined) {
+      return getAsyncNodeValue(obj, fieldName, context, info);
     }
 
-    const resource = getNodeResource(context, info);
-    const fullObj = await resource.get(resource.makeId(obj));
-    return fullObj && (fullObj: { [key: string]: mixed })[fieldName];
+    return obj[fieldName];
+  }
+
+  async function asyncResolve(resolve, obj, args, context, info) {
+    const fullObj = await getNodeObject(obj, context, info);
+    return fullObj && resolve(fullObj, args, context, info);
+  }
+
+  function createResolve<K: {}>(
+    resolve: GraphQLFieldResolver<
+      ObjStub & $ObjMap<K, <V>(Class<V>) => ?V>,
+      Context,
+    >,
+    objFields: K,
+  ): NodeFieldResolver<Context> {
+    const fieldNames = Object.keys(objFields);
+
+    return function augmentedResolve(obj, args, context, info) {
+      for (const fieldName of fieldNames) {
+        if (obj[fieldName] === undefined) {
+          return asyncResolve(resolve, obj, args, context, info);
+        }
+      }
+
+      return resolve(obj, args, context, info);
+    };
   }
 
   const resolveLocalId = (obj, args, context, info) =>
@@ -247,28 +280,6 @@ export default function createNodeType({
     getNodeResource,
     nodeField,
     nodesField,
-
-    createResolve<K: {}>(
-      resolve: GraphQLFieldResolver<
-        ObjStub & $ObjMap<K, <V>(Class<V>) => ?V>,
-        Context,
-      >,
-      objFields: K,
-    ): NodeFieldResolver<Context> {
-      const objKeys = Object.keys(objFields);
-
-      return async function augmentedResolve(obj, args, context, info) {
-        const augmentedObj = { ...obj };
-
-        const objValues = await Promise.all(
-          objKeys.map(objKey => getNodeValue(obj, objKey, context, info)),
-        );
-        objKeys.forEach((objKey, i) => {
-          augmentedObj[objKey] = objValues[i];
-        });
-
-        return resolve(augmentedObj, args, context, info);
-      };
-    },
+    createResolve,
   };
 }
