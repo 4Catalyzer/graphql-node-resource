@@ -1,7 +1,7 @@
 /* @flow */
 /* eslint-disable no-underscore-dangle */
 
-import { GraphQLObjectType, GraphQLNonNull, GraphQLString } from 'graphql';
+import { GraphQLObjectType, GraphQLString } from 'graphql';
 import type {
   GraphQLFieldConfig,
   GraphQLFieldConfigMap,
@@ -153,7 +153,7 @@ export default function createNodeType({
 
       if (localIdFieldName) {
         idFields[localIdFieldName] = {
-          type: new GraphQLNonNull(GraphQLString),
+          type: GraphQLString,
           resolve: resolveLocalId,
         };
       }
