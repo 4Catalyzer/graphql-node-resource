@@ -1,3 +1,11 @@
+<a name="0.6.2"></a>
+## [0.6.2](https://github.com/4Catalyzer/graphql-server/compare/v0.6.1...v0.6.2) (2018-05-14)
+
+
+### Bug Fixes
+
+* Make args optional on getUrl ([e61da9e](https://github.com/4Catalyzer/graphql-server/commit/e61da9e))
+
 <a name="0.6.1"></a>
 ## [0.6.1](https://github.com/4Catalyzer/graphql-server/compare/v0.6.0...v0.6.1) (2018-05-14)
 
