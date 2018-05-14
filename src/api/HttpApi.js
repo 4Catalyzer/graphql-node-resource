@@ -48,7 +48,7 @@ export default class HttpApi {
       Promise.all(
         // Don't fail the entire batch on a single failed request.
         paths.map(path =>
-          this.request('GET', this._getUrl(path, false)).catch(e => e),
+          this.request('GET', this._getUrl(path)).catch(e => e),
         ),
       ),
     );
@@ -131,19 +131,19 @@ export default class HttpApi {
   }
 
   post(path: string, data?: Data): Promise<?Object> {
-    return this.request('POST', this._getUrl(path, false), data);
+    return this.request('POST', this._getUrl(path), data);
   }
 
   put(path: string, data?: Data): Promise<?Object> {
-    return this.request('PUT', this._getUrl(path, false), data);
+    return this.request('PUT', this._getUrl(path), data);
   }
 
   patch(path: string, data?: Data): Promise<?Object> {
-    return this.request('PATCH', this._getUrl(path, false), data);
+    return this.request('PATCH', this._getUrl(path), data);
   }
 
   delete(path: string): Promise<?Object> {
-    return this.request('DELETE', this._getUrl(path, false));
+    return this.request('DELETE', this._getUrl(path));
   }
 
   makePath(path: string, args?: Args): string {
@@ -197,16 +197,15 @@ export default class HttpApi {
     });
   }
 
-  getUrl(path: string, args: Args): string {
-    return this._getUrl(this.makePath(path, args), false);
+  getUrl(path: string, args?: Args): string {
+    return this._getUrl(this.makePath(path, args));
   }
 
   getExternalUrl(path: string, args?: Args): string {
-    return this._getUrl(this.makePath(path, args), true);
+    return this._getUrl(this.makePath(path, args), this._externalOrigin);
   }
 
-  _getUrl(path: string, external: boolean) {
-    const origin = external ? this._externalOrigin : this._origin;
+  _getUrl(path: string, origin: string = this._origin) {
     return `${origin}${urlJoin(this._apiBase, path)}`;
   }
 }
