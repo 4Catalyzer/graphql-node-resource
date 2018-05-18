@@ -18,6 +18,7 @@ export class TestHttpApi extends HttpApi {
       externalOrigin: 'https://example.com',
     });
   }
+
   async request(method: HttpMethod, url: string, data?: Data) {
     const resp = await apiFetch({ method, url, data: { data } });
     if (resp.status === 204) return null;
