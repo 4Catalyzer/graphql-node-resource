@@ -1,5 +1,6 @@
 /** @flow */
 
+import range from 'lodash/range';
 import mockedFetch from 'node-fetch';
 import { HttpApi, HttpError } from '../src';
 
@@ -86,6 +87,35 @@ describe('HttpApi', () => {
 
     const loader = api.createArgLoader('dressings', 'saladId');
 
-    expect(await loader.load('1')).toEqual(null);
+    expect(await loader.load('1')).toEqual([]);
+  });
+
+  it('should chunk arg loader requests', async () => {
+    const api = new TestHttpApi();
+
+    const keys = range(api.numKeysPerChunk + 5).map(String);
+
+    const params = keys.map(key => `saladId=${key}`);
+    const chunk1Params = params.slice(0, api.numKeysPerChunk);
+    const chunk2Params = params.slice(api.numKeysPerChunk);
+
+    const data = keys.map(saladId => ({ saladId }));
+    const chunk1Data = data.slice(0, api.numKeysPerChunk);
+    const chunk2Data = data.slice(api.numKeysPerChunk);
+
+    mockedFetch.get(`https://gateway/v1/dressings?${chunk1Params.join('&')}`, {
+      body: { data: chunk1Data },
+      status: 200,
+    });
+    mockedFetch.get(`https://gateway/v1/dressings?${chunk2Params.join('&')}`, {
+      body: { data: chunk2Data },
+      status: 200,
+    });
+
+    const loader = api.createArgLoader('dressings', 'saladId');
+
+    expect(await Promise.all(keys.map(key => loader.load(key)))).toEqual(
+      data.map(item => [item]),
+    );
   });
 });

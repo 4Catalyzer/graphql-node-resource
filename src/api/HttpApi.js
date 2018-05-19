@@ -3,6 +3,8 @@
 import DataLoader from 'dataloader';
 import { connectionFromArray, forwardConnectionArgs } from 'graphql-relay';
 import type { Connection } from 'graphql-relay';
+import chunk from 'lodash/chunk';
+import flatten from 'lodash/flatten';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 import invariant from 'invariant';
@@ -38,6 +40,7 @@ export default class HttpApi {
   _loader: DataLoader<*, *>;
 
   qs: QueryString = querystring;
+  numKeysPerChunk: number = 25;
 
   constructor({ apiBase, origin, externalOrigin }: HttpApiOptions) {
     this._origin = origin;
@@ -177,10 +180,12 @@ export default class HttpApi {
   ) {
     return new DataLoader(async keys => {
       // No need to cache the GET; the DataLoader will cache it.
-      const items = await this.request('GET', getPath((keys: any)));
-      if (!items) {
-        return Array(keys.length).fill(null);
-      }
+      const chunkedItems = await Promise.all(
+        chunk(keys, this.numKeysPerChunk).map(chunkKeys =>
+          this.request('GET', getPath((chunkKeys: any))),
+        ),
+      );
+      const items = flatten(chunkedItems).filter(Boolean);
 
       const itemsByKey = {};
       keys.forEach(key => {
