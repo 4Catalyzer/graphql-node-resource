@@ -1,3 +1,11 @@
+<a name="0.7.0"></a>
+# [0.7.0](https://github.com/4Catalyzer/graphql-server/compare/v0.6.2...v0.7.0) (2018-05-19)
+
+
+### Features
+
+* Chunk requests in loaders ([29e09fb](https://github.com/4Catalyzer/graphql-server/commit/29e09fb))
+
 <a name="0.6.2"></a>
 ## [0.6.2](https://github.com/4Catalyzer/graphql-server/compare/v0.6.1...v0.6.2) (2018-05-14)
 
