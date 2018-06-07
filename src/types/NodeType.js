@@ -278,6 +278,7 @@ export default function createNodeType({
   return {
     NodeType,
     getNodeResource,
+    getNodeValue,
     nodeField,
     nodesField,
     createResolve,
