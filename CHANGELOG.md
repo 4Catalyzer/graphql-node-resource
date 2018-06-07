@@ -1,3 +1,11 @@
+<a name="0.7.1"></a>
+## [0.7.1](https://github.com/4Catalyzer/graphql-server/compare/v0.7.0...v0.7.1) (2018-06-07)
+
+
+### Bug Fixes
+
+* Expose getNodeValue ([685be04](https://github.com/4Catalyzer/graphql-server/commit/685be04))
+
 <a name="0.7.0"></a>
 # [0.7.0](https://github.com/4Catalyzer/graphql-server/compare/v0.6.2...v0.7.0) (2018-05-19)
 
