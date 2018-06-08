@@ -1,3 +1,11 @@
+<a name="0.8.0"></a>
+# [0.8.0](https://github.com/4Catalyzer/graphql-server/compare/v0.7.1...v0.8.0) (2018-06-08)
+
+
+### Features
+
+* Omit local ID fields by default ([49e7d26](https://github.com/4Catalyzer/graphql-server/commit/49e7d26))
+
 <a name="0.7.1"></a>
 ## [0.7.1](https://github.com/4Catalyzer/graphql-server/compare/v0.7.0...v0.7.1) (2018-06-07)
 
