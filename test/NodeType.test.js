@@ -52,7 +52,9 @@ describe('NodeType', () => {
       httpApi: new TestHttpApi(),
     };
 
-    const { nodeField, nodesField, ...rest } = createNodeType();
+    const { nodeField, nodesField, ...rest } = createNodeType({
+      localIdFieldMode: 'deprecated',
+    });
     ({ NodeType, createResolve } = rest);
 
     class WidgetResource extends TestHttpResource {

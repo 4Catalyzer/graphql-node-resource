@@ -61,11 +61,13 @@ export type FieldNameResolver<TContext> = (
 
 export type CreateNodeTypeArgs = {
   fieldNameResolver?: FieldNameResolver<*>,
+  localIdFieldMode: 'include' | 'omit' | 'deprecated',
   getDefaultResourceConfig?: (name: string) => mixed,
 };
 
 export default function createNodeType({
   fieldNameResolver = d => d,
+  localIdFieldMode = 'omit',
   getDefaultResourceConfig = name => ({
     endpoint: pluralize(snakeCase(name)),
   }),
@@ -184,9 +186,14 @@ export default function createNodeType({
         id: globalIdField(null, getLocalId),
       };
 
+      // This will only be set if localIdFieldMode is not 'omit'.
       if (localIdFieldName) {
         idFields[localIdFieldName] = {
           type: GraphQLString,
+          deprecationReason:
+            localIdFieldMode === 'deprecated'
+              ? 'local IDs are deprecated; use "handle" if available or "id" for the global ID'
+              : null,
           resolve: resolveLocalId,
         };
       }
@@ -233,8 +240,15 @@ export default function createNodeType({
       resourceConfig,
       ...config
     }: NodeTypeConfig<R>) {
-      // eslint-disable-next-line no-param-reassign
-      localIdFieldName = getLocalIdFieldName(name, localIdFieldName);
+      if (localIdFieldMode !== 'omit') {
+        // eslint-disable-next-line no-param-reassign
+        localIdFieldName = getLocalIdFieldName(name, localIdFieldName);
+      } else {
+        invariant(
+          !localIdFieldName,
+          "must not specify localIdFieldName when localIdFieldMode is 'omit'",
+        );
+      }
 
       super({
         ...config,
