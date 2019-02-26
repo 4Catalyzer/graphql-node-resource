@@ -32,14 +32,12 @@ type ObjStub = {
   id: string,
 };
 
-type NodeTypeConfig<R: Resource<*>> = GraphQLObjectTypeConfig<
-  ObjStub,
-  Context,
-> & {
+type NodeTypeConfig<R: Resource<*>> = {|
+  ...GraphQLObjectTypeConfig<ObjStub, Context>,
   localIdFieldName?: ?string,
   Resource: Class<R>,
   resourceConfig?: mixed,
-};
+|};
 
 export type NodeFieldResolver<TContext> = GraphQLFieldResolver<
   ObjStub,
