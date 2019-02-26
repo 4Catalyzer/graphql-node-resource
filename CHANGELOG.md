@@ -1,3 +1,16 @@
+<a name="1.0.0"></a>
+# [1.0.0](https://github.com/4Catalyzer/graphql-server/compare/v0.8.1...v1.0.0) (2019-02-26)
+
+
+### Bug Fixes
+
+* Fix peer dependency ranges ([#23](https://github.com/4Catalyzer/graphql-server/issues/23)) ([797408e](https://github.com/4Catalyzer/graphql-server/commit/797408e))
+
+
+### BREAKING CHANGES
+
+* Require new GraphQL versions
+
 <a name="0.8.1"></a>
 ## [0.8.1](https://github.com/4Catalyzer/graphql-server/compare/v0.8.0...v0.8.1) (2019-02-26)
 
