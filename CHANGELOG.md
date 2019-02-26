@@ -1,3 +1,11 @@
+<a name="0.8.1"></a>
+## [0.8.1](https://github.com/4Catalyzer/graphql-server/compare/v0.8.0...v0.8.1) (2019-02-26)
+
+
+### Bug Fixes
+
+* Fix GraphQL.js v14.x compatibility ([#22](https://github.com/4Catalyzer/graphql-server/issues/22)) ([68f91d0](https://github.com/4Catalyzer/graphql-server/commit/68f91d0))
+
 <a name="0.8.0"></a>
 # [0.8.0](https://github.com/4Catalyzer/graphql-server/compare/v0.7.1...v0.8.0) (2018-06-08)
 
