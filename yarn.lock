@@ -2578,15 +2578,17 @@ escodegen@^1.9.0:
   optionalDependencies:
     source-map "~0.5.6"
 
-eslint-config-4catalyzer-flow@^0.4.1:
-  version "0.4.1"
-  resolved "https://registry.yarnpkg.com/eslint-config-4catalyzer-flow/-/eslint-config-4catalyzer-flow-0.4.1.tgz#d4ccd5193c7fc5f9ae4d0e2771e7bb3d4c1be410"
+eslint-config-4catalyzer-flow@^0.4.4:
+  version "0.4.4"
+  resolved "https://registry.yarnpkg.com/eslint-config-4catalyzer-flow/-/eslint-config-4catalyzer-flow-0.4.4.tgz#a2c00d35c62d77a1b511bd4249e5735eb1f050e4"
+  integrity sha1-osANNcYtd6G1Eb1CSeVzXrHwUOQ=
   dependencies:
-    eslint-config-4catalyzer "^0.4.1"
+    eslint-config-4catalyzer "^0.4.4"
 
-eslint-config-4catalyzer@^0.4.1:
-  version "0.4.1"
-  resolved "https://registry.yarnpkg.com/eslint-config-4catalyzer/-/eslint-config-4catalyzer-0.4.1.tgz#98cf0f675b9b834c6c04a19ffd54283c3a7b7828"
+eslint-config-4catalyzer@^0.4.4:
+  version "0.4.4"
+  resolved "https://registry.yarnpkg.com/eslint-config-4catalyzer/-/eslint-config-4catalyzer-0.4.4.tgz#0de9723e93fe018ae200d5ca7cd66b4bdfcc0416"
+  integrity sha1-DelyPpP+AYriANXKfNZrS9/MBBY=
   dependencies:
     eslint-config-airbnb-base "^12.1.0"
 
