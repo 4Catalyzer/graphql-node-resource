@@ -35,11 +35,15 @@ export type HttpApiOptions = {
 
 export default class HttpApi {
   _origin: string;
+
   _apiBase: string;
+
   _externalOrigin: string;
+
   _loader: DataLoader<*, *>;
 
   qs: QueryString = querystring;
+
   numKeysPerChunk: number = 25;
 
   constructor({ apiBase, origin, externalOrigin }: HttpApiOptions) {
@@ -125,10 +129,11 @@ export default class HttpApi {
     };
   }
 
+  // eslint-disable-next-line require-await
   async request<T>(
-    method: HttpMethod,
-    reqUrl: string,
-    data?: Data, // eslint-disable-line no-unused-vars
+    _method: HttpMethod,
+    _reqUrl: string,
+    _data?: Data,
   ): Promise<?T> {
     throw new Error('Not Implemented');
   }
@@ -178,7 +183,7 @@ export default class HttpApi {
     getPath: (keys: string[]) => string,
     getKey: (obj: T) => string,
   ) {
-    return new DataLoader(async keys => {
+    return new DataLoader<*, *>(async keys => {
       // No need to cache the GET; the DataLoader will cache it.
       const chunkedItems = await Promise.all(
         chunk(keys, this.numKeysPerChunk).map(chunkKeys =>

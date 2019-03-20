@@ -66,6 +66,6 @@ export default class HttpResource<TApi: HttpApi = HttpApi> extends Resource<
   }
 
   getConnectionBase(path: string, args: Args) {
-    return this.api.getUnpaginatedConnection(path, args);
+    return this.api.getUnpaginatedConnection<Object>(path, args);
   }
 }

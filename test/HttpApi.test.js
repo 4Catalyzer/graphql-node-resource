@@ -21,7 +21,7 @@ describe('HttpApi', () => {
     ).rejects.toThrow('Not Implemented');
   });
 
-  it('should parse query string', async () => {
+  it('should parse query string', () => {
     const api = new TestHttpApi();
 
     expect(api.makePath('foo/1?bar=1', { baz: 'quz' })).toEqual(
@@ -29,7 +29,7 @@ describe('HttpApi', () => {
     );
   });
 
-  it('should getExternalUrl', async () => {
+  it('should getExternalUrl', () => {
     const api = new TestHttpApi();
 
     expect(api.getExternalUrl('foo/1', { bar: 1 })).toEqual(

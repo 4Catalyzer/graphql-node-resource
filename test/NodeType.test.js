@@ -199,7 +199,7 @@ describe('NodeType', () => {
     });
   });
 
-  it('should createNode', async () => {
+  it('should createNode', () => {
     const type = new NodeType({
       name: 'Foo',
       fields: () => ({

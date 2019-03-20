@@ -19,7 +19,7 @@ describe('HttpResource', () => {
     mockedFetch.restore();
   });
 
-  it('should accept a function as the endpoint', async () => {
+  it('should accept a function as the endpoint', () => {
     const resource = new HttpResource(mockContext, {
       endpoint: id => `salads/${id || ''}`,
     });
@@ -27,7 +27,7 @@ describe('HttpResource', () => {
     expect(resource.getPath('1')).toEqual('salads/1');
   });
 
-  it('should return sub path', async () => {
+  it('should return sub path', () => {
     const resource = new HttpResource(mockContext, {
       endpoint: 'salads',
     });

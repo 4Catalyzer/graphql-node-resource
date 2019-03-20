@@ -34,9 +34,7 @@ type Init = {
   body?: string | FormData,
 };
 
-export default async function fetch(
-  reqOptions: RequestOptions,
-): Promise<Response> {
+export default function fetch(reqOptions: RequestOptions): Promise<Response> {
   const { method, url, data, headers, files } = reqOptions;
 
   const init: Init = {
@@ -65,5 +63,6 @@ export default async function fetch(
       init.body = JSON.stringify(data);
     }
   }
+
   return _fetch(url, init);
 }
