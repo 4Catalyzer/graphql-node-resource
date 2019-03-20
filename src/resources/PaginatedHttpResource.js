@@ -7,6 +7,6 @@ export default class PaginatedHttpResource<
   TApi: HttpApi = HttpApi,
 > extends HttpResource<TApi> {
   getConnectionBase(path: string, args: Args) {
-    return this.api.getPaginatedConnection(path, args);
+    return this.api.getPaginatedConnection<Object>(path, args);
   }
 }

@@ -13,9 +13,13 @@ export type JsonApiError = {
 
 export default class HttpError extends Error {
   response: Response;
+
   status: number;
+
   errors: Array<JsonApiError> = [];
+
   body: string = '';
+
   extensions: ?{
     upstream: {
       status: number,

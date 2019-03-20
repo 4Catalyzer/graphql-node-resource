@@ -73,7 +73,7 @@ export default function createNodeType({
   // eslint-disable-next-line no-use-before-define
   const TYPES: Map<string, NodeType<any>> = new Map();
 
-  const { nodeInterface, nodeField, nodesField } = nodeDefinitions(
+  const { nodeInterface, nodeField, nodesField } = nodeDefinitions<Context>(
     async (globalId, context) => {
       const { type, id } = fromGlobalId(globalId);
       const resolvesType = TYPES.get(type);
@@ -223,10 +223,13 @@ export default function createNodeType({
 
   class NodeType<R: Resource<*>> extends GraphQLObjectType {
     Connection: GraphQLObjectType;
+
     Edge: GraphQLObjectType;
 
     localIdFieldName: ?string;
+
     resourceConfig: mixed;
+
     NodeResource: Class<R>;
 
     constructor({

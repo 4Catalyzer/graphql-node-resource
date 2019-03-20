@@ -1,10 +1,10 @@
 module.exports = {
   presets: [
     [
-      '@4c/4catalyzer',
+      '@4c',
       {
         target: 'node',
-        modules: process.env.BABEL_ENV !== 'esm' ? 'commonjs' : false
+        modules: process.env.BABEL_ENV !== 'esm' ? 'commonjs' : false,
       },
     ],
     '@babel/flow',
