@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/4Catalyzer/graphql-server/compare/v1.0.0...v1.0.1) (2019-03-20)
+
+
+### Bug Fixes
+
+* Clean before building ([#36](https://github.com/4Catalyzer/graphql-server/issues/36)) ([000f556](https://github.com/4Catalyzer/graphql-server/commit/000f556))
+
 <a name="1.0.0"></a>
 # [1.0.0](https://github.com/4Catalyzer/graphql-server/compare/v0.8.1...v1.0.0) (2019-02-26)
 
