@@ -1,3 +1,10 @@
+## [1.0.2](https://github.com/4Catalyzer/graphql-server/compare/v1.0.1...v1.0.2) (2019-03-22)
+
+
+### Bug Fixes
+
+* Fix resource caching for batches ([#37](https://github.com/4Catalyzer/graphql-server/issues/37)) ([a5aaa4a](https://github.com/4Catalyzer/graphql-server/commit/a5aaa4a))
+
 ## [1.0.1](https://github.com/4Catalyzer/graphql-server/compare/v1.0.0...v1.0.1) (2019-03-20)
 
 
