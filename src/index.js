@@ -8,7 +8,7 @@ import HttpApi from './api/HttpApi';
 import HttpError from './api/HttpError';
 import fetch from './api/fetch';
 
-import createNodeType from './types/NodeType';
+import createNodeType, { RESOURCE_CACHE_KEY } from './types/NodeType';
 
 import asType from './utils/asType';
 import resolveThunk from './utils/resolveThunk';
@@ -23,13 +23,14 @@ export const utils = {
 };
 
 export {
+  createNodeType,
+  fetch,
   HttpApi,
   HttpError,
-  fetch,
   HttpResource,
   PaginatedHttpResource,
   Resource,
-  createNodeType,
+  RESOURCE_CACHE_KEY,
 };
 
 export type { HttpMethod, RequestOptions } from './api/fetch';
