@@ -63,6 +63,11 @@ export type CreateNodeTypeArgs = {
   getDefaultResourceConfig?: (name: string) => mixed,
 };
 
+// Apollo Server shallowly clones the context for each request in a batch,
+// making the context object inappropriate as a batch-level cache key. Use this
+// to manually assign a cache key for the full batch.
+export const RESOURCE_CACHE_KEY = Symbol('resource cache key');
+
 export default function createNodeType({
   fieldNameResolver = d => d,
   localIdFieldMode = 'omit',
@@ -273,11 +278,13 @@ export default function createNodeType({
     }
 
     getResource(context: Context): R {
-      let resources = Resources.get(context);
+      const cacheKey = context[RESOURCE_CACHE_KEY] || context;
+      let resources = Resources.get(cacheKey);
+
       if (!resources) {
         // eslint-disable-next-line no-param-reassign
         resources = new Map();
-        Resources.set(context, resources);
+        Resources.set(cacheKey, resources);
       }
 
       let resource = resources.get(this.name);
