@@ -62,7 +62,7 @@
     "invariant": "^2.2.4",
     "lodash": "^4.17.11",
     "node-fetch": "^2.6.0",
-    "pluralize": "^7.0.0"
+    "pluralize": "^8.0.0"
   },
   "peerDependencies": {
     "graphql": ">=14.0.0",
