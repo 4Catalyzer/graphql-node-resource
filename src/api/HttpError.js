@@ -57,11 +57,7 @@ export default class HttpError extends Error {
         this.errors,
       )}`;
     } else {
-      this.message = `HttpError(${
-        this.status
-      }): The network resource returned the following message:\n\n${
-        this.body
-      }`;
+      this.message = `HttpError(${this.status}): The network resource returned the following message:\n\n${this.body}`;
     }
     return this;
   }
