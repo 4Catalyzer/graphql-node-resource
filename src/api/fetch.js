@@ -23,7 +23,7 @@ export type HttpMethod =
 export type RequestOptions = {
   method: HttpMethod,
   url: string,
-  data?: ?mixed,
+  data?: ?{},
   files?: File[],
   headers?: { [string]: string },
 };
