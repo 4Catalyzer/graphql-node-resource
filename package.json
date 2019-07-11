@@ -60,7 +60,7 @@
     "express": "^4.17.1",
     "form-data": "^2.5.0",
     "invariant": "^2.2.4",
-    "lodash": "^4.17.13",
+    "lodash": "^4.17.14",
     "node-fetch": "^2.6.0",
     "pluralize": "^8.0.0"
   },
