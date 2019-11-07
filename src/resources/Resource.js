@@ -1,5 +1,7 @@
 /* @flow */
 
+import type { Args } from '../api/HttpApi';
+
 export default class Resource<TContext> {
   context: TContext;
 
@@ -9,7 +11,7 @@ export default class Resource<TContext> {
   }
 
   // eslint-disable-next-line no-unused-vars
-  get(id: string): ?Object | Promise<?Object> {
+  get(id: string, args?: Args): ?Object | Promise<?Object> {
     throw new Error('not implemented');
   }
 

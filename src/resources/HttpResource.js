@@ -28,8 +28,8 @@ export default class HttpResource<TApi: HttpApi = HttpApi> extends Resource<
     this._endpoint = endpoint;
   }
 
-  get(id?: string): ?Object | Promise<?Object> {
-    return this.api.get(this.getPath(id));
+  get(id?: string, args?: Args): ?Object | Promise<?Object> {
+    return this.api.get(this.getPath(id), args);
   }
 
   getConnection(args: Args) {
