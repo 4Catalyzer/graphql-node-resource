@@ -43,10 +43,6 @@ type NodeTypeConfig<R extends Resource<any>> = GraphQLObjectTypeConfig<
   resourceConfig?: unknown;
 };
 
-export interface NodeType<R extends Resource<any>> extends GraphQLObjectType {
-  getResource(context: Context): R;
-}
-
 export type NodeFieldResolver<TContext> = GraphQLFieldResolver<
   ObjStub,
   TContext
