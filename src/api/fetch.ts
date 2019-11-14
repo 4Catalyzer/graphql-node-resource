@@ -30,9 +30,7 @@ export type RequestOptions = {
 
 type Init = {
   method: string;
-  headers: {
-    [key: string]: string;
-  };
+  headers: Record<string, string>;
   body?: string | FormData;
 };
 

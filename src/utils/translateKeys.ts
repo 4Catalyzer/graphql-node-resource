@@ -10,13 +10,13 @@ export default function translateKeys(
     return data.toISOString();
   }
 
-  if (!data || typeof data !== 'object') {
+  if (typeof data !== 'object' || !data) {
     return data;
   }
 
-  const translatedData: { [key: string]: unknown } = {};
+  const translatedData: Record<string, unknown> = {};
 
-  Object.entries(data as {}).forEach(([key, value]) => {
+  Object.entries(data).forEach(([key, value]) => {
     translatedData[translate(key)] = translateKeys(value, translate);
   });
 

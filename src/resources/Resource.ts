@@ -6,7 +6,6 @@ export default class Resource<TContext> {
   }
 
   get(
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     _id: string,
   ):
     | (Record<string, any> | null | undefined)
