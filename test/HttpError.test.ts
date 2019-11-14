@@ -1,6 +1,5 @@
-/** @flow */
-
 import { Response } from 'node-fetch';
+
 import { HttpError } from '../src';
 
 describe('HttpError', () => {

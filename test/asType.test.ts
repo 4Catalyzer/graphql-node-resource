@@ -1,5 +1,3 @@
-/** @flow */
-
 import asType from '../src/utils/asType';
 
 describe('asType', () => {

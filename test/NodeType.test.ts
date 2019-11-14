@@ -1,16 +1,14 @@
-/* @flow */
-
 import {
-  graphql,
-  GraphQLSchema,
-  GraphQLString,
   GraphQLInt,
   GraphQLObjectType,
+  GraphQLSchema,
+  GraphQLString,
+  graphql,
 } from 'graphql';
 import mockedFetch from 'node-fetch';
 
-import { createNodeType, HttpResource } from '../src';
-import { TestHttpApi, TestHttpResource, type MockContext } from './helpers';
+import { HttpResource, createNodeType } from '../src';
+import { MockContext, TestHttpApi, TestHttpResource } from './helpers';
 
 describe('NodeType', () => {
   const nodeId = Buffer.from('Widget:1').toString('base64');

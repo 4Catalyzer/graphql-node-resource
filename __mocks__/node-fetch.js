@@ -1,5 +1,3 @@
-/* @flow */
-
 import mock from 'fetch-mock';
 import { Headers, Request, Response } from 'node-fetch';
 

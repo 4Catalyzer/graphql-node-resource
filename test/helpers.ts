@@ -1,9 +1,6 @@
-/* @flow */
-
-import { HttpApi, HttpResource, utils, HttpError } from '../src';
-import apiFetch, { type HttpMethod } from '../src/api/fetch';
-
-import type { Data } from '../src/api/HttpApi';
+import { HttpApi, HttpError, HttpResource, utils } from '../src';
+import apiFetch, { HttpMethod } from '../src/api/fetch';
+import { Data } from '../src/api/HttpApi';
 
 function getData({ data, meta } = {}) {
   if (meta) data.meta = meta; // eslint-disable-line no-param-reassign
@@ -33,7 +30,7 @@ export class TestHttpApi extends HttpApi {
 }
 
 export type MockContext = {
-  httpApi: TestHttpApi,
+  httpApi: TestHttpApi;
 };
 
 export class TestHttpResource extends HttpResource<TestHttpApi> {

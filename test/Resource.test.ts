@@ -1,5 +1,3 @@
-/* @flow */
-
 import { Resource } from '../src';
 
 describe('Resource', () => {

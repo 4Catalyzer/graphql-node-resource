@@ -1,5 +1,3 @@
-/* @flow */
-
 import mockedFetch from 'node-fetch';
 
 import PaginatedHttpResource from '../src/resources/PaginatedHttpResource';

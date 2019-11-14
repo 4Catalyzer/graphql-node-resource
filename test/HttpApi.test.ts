@@ -1,9 +1,7 @@
-/** @flow */
-
 import range from 'lodash/range';
 import mockedFetch from 'node-fetch';
-import { HttpApi, HttpError } from '../src';
 
+import { HttpApi, HttpError } from '../src';
 import { TestHttpApi } from './helpers';
 
 describe('HttpApi', () => {
