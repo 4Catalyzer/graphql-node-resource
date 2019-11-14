@@ -204,9 +204,10 @@ export default class HttpApi {
           this.request<T[]>('GET', getPath(chunkKeys)),
         ),
       );
+
       const items = flatten<T | null | undefined>(chunkedItems).filter(
-        Boolean,
-      ) as T[];
+        <T>(item: T): item is T extends null | undefined ? never : T => !!item,
+      );
 
       const itemsByKey: Record<string, T[]> = {};
       keys.forEach(key => {
