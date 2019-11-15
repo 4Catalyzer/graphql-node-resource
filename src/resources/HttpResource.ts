@@ -26,11 +26,7 @@ export default class HttpResource<
     this._endpoint = endpoint;
   }
 
-  get(
-    id?: string,
-  ):
-    | (Record<string, any> | null | undefined)
-    | Promise<Record<string, any> | null | undefined> {
+  get<T>(id?: string): (T | null | undefined) | Promise<T | null | undefined> {
     return this.api.get(this.getPath(id));
   }
 

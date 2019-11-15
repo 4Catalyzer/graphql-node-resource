@@ -5,11 +5,9 @@ export default abstract class Resource<TContext> {
     this.context = context;
   }
 
-  abstract get(
+  abstract get<T>(
     _id: string,
-  ):
-    | (Record<string, any> | null | undefined)
-    | Promise<Record<string, any> | null | undefined>;
+  ): (T | null | undefined) | Promise<T | null | undefined>;
 
   // TODO: Once we have a concept of a model, this should go on there.
   makeId({ id }: any): string {
