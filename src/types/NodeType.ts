@@ -30,9 +30,10 @@ type Context = any;
 
 // graphql overrides
 
-type ObjStub = { [key: string]: unknown } & {
+interface ObjStub {
+  [fieldname: string]: unknown;
   id: string;
-};
+}
 
 type NodeTypeConfig<R extends Resource<any>> = GraphQLObjectTypeConfig<
   ObjStub,

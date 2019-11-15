@@ -19,6 +19,11 @@ const PAGINATION_ARG_KEYS = Object.keys(forwardConnectionArgs);
 export type Args = Record<string, NodeJS.PoorMansUnknown>;
 export type Data = unknown | null | undefined;
 
+export type QueryString = {
+  parse(query: string): Record<string, string | string[]>;
+  stringify(obj: Record<string, any>): string;
+};
+
 export type PaginationResult<T> = Connection<T> & {
   meta: {};
 };
@@ -44,7 +49,7 @@ export default class HttpApi {
 
   _loader: DataLoader<any, any>;
 
-  qs = querystring;
+  qs: QueryString = querystring;
 
   numKeysPerChunk = 25;
 
