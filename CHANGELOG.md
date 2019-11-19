@@ -1,3 +1,15 @@
+# [2.0.0](https://github.com/4Catalyzer/graphql-server/compare/v1.0.2...v2.0.0) (2019-11-19)
+
+
+### Features
+
+* Upgrade DataLoader ([#283](https://github.com/4Catalyzer/graphql-server/issues/283)) ([699c361](https://github.com/4Catalyzer/graphql-server/commit/699c361e102c73ee6d2f96fcd4fcb4552c7d6829))
+
+
+### BREAKING CHANGES
+
+* Use DataLoader v2.x instead of v1.x.
+
 ## [1.0.2](https://github.com/4Catalyzer/graphql-server/compare/v1.0.1...v1.0.2) (2019-03-22)
 
 
