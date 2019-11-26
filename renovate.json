@@ -1,6 +1,6 @@
 {
   "extends": ["github>4Catalyzer/renovate-config:library", ":automergeMinor"],
   "packageRules": [
-    { "packagePatterns": ["*"], "excludePackageNames": ["flow-bin"] }
+    { "packagePatterns": ["flow-bin"], "groupName": "flow-bin" }
   ]
 }
