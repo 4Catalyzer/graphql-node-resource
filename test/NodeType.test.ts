@@ -13,16 +13,15 @@ import { MockContext, TestHttpApi, TestHttpResource } from './helpers';
 describe('NodeType', () => {
   const nodeId = Buffer.from('Widget:1').toString('base64');
 
-  let schema;
-  let context;
-  let NodeType;
+  let schema: GraphQLSchema;
+  let context: any;
+  let NodeType: NodeType<any, any, any>;
   let createResolve;
 
-  async function runQuery(source, variableValues) {
+  async function runQuery(source: string) {
     const result = await graphql({
       schema,
       source,
-      variableValues,
       contextValue: context,
     });
     if (result.errors) throw result.errors[0];

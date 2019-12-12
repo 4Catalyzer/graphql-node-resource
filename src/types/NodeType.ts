@@ -27,8 +27,6 @@ import Resource from '../resources/Resource';
 import asType from '../utils/asType';
 import resolveThunk from '../utils/resolveThunk';
 
-type Context = any;
-
 type Args = Record<string, unknown>;
 
 // graphql overrides
@@ -89,6 +87,44 @@ export interface CreateNodeTypeArgs<
   getDefaultResourceConfig?: (name: string) => unknown;
 }
 
+export interface NodeTypeInterface<
+  TObject extends ObjStub,
+  TContext,
+  R extends Resource<TContext>
+> extends GraphQLObjectType<TObject, TContext> {
+  getResource(context: TContext): R;
+}
+
+export interface CreateNodeTypeReturn<
+  TObject extends ObjStub,
+  TContext,
+  TArgs = Args
+> {
+  NodeType: NodeTypeInterface<TObject, TContext, Resource<TContext>>;
+
+  getNodeResource: (
+    context: TContext,
+    info: GraphQLResolveInfo,
+  ) => Resource<TContext>;
+
+  getNodeValue: (
+    obj: TObject,
+    fieldName: keyof TObject,
+    context: TContext,
+    info: GraphQLResolveInfo,
+  ) => TObject[keyof TObject] extends undefined
+    ? Promise<TObject[keyof TObject]>
+    : TObject[keyof TObject];
+
+  nodeField: GraphQLFieldConfig<TObject, TContext>;
+
+  nodesField: GraphQLFieldConfig<TObject, TContext>;
+
+  createResolve: (
+    resolve: GraphQLFieldResolver<TObject, TContext, TArgs>,
+    objFields: TObject,
+  ) => NodeFieldResolver<TObject, TContext>;
+}
 // Apollo Server shallowly clones the context for each request in a batch,
 // making the context object inappropriate as a batch-level cache key. Use this
 // to manually assign a cache key for the full batch.
@@ -104,11 +140,15 @@ export default function createNodeType<
   getDefaultResourceConfig = name => ({
     endpoint: pluralize(snakeCase(name)),
   }),
-}: CreateNodeTypeArgs<TObject, TContext, TArgs> = {}) {
+}: CreateNodeTypeArgs<TObject, TContext, TArgs> = {}): CreateNodeTypeReturn<
+  TObject,
+  TContext,
+  TArgs
+> {
   // eslint-disable-next-line no-use-before-define
   const TYPES: Map<string, NodeType<any>> = new Map();
 
-  const { nodeInterface, nodeField, nodesField } = nodeDefinitions<Context>(
+  const { nodeInterface, nodeField, nodesField } = nodeDefinitions<TContext>(
     async (globalId, context) => {
       const { type, id } = fromGlobalId(globalId);
       const resolvesType = TYPES.get(type);
@@ -240,7 +280,7 @@ export default function createNodeType<
   function makeFields(
     fields: Thunk<Record<string, any>>,
     localIdFieldName?: string | null | undefined,
-  ): () => GraphQLFieldConfigMap<ObjStub, Context> {
+  ): () => GraphQLFieldConfigMap<ObjStub, TContext> {
     return () => {
       const idFields: Record<string, unknown> = {
         id: globalIdField(undefined, getLocalId),
@@ -278,11 +318,12 @@ export default function createNodeType<
   }
 
   const Resources: WeakMap<
-    Context,
+    TContext,
     Map<string, Resource<TContext>>
   > = new WeakMap();
 
-  class NodeType<R extends Resource<TContext>> extends GraphQLObjectType {
+  class NodeType<R extends Resource<TContext>> extends GraphQLObjectType
+    implements NodeTypeInterface<TObject, TContext, R> {
     Connection: GraphQLObjectType;
 
     Edge: GraphQLObjectType;
@@ -333,7 +374,7 @@ export default function createNodeType<
       TYPES.set(name, this);
     }
 
-    getResource(context: Context): R {
+    getResource(context: TContext): R {
       const cacheKey = context[RESOURCE_CACHE_KEY] || context;
       let resources = Resources.get(cacheKey);
 
