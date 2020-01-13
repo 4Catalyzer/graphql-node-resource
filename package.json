@@ -94,6 +94,6 @@
     "semantic-release": "^16.0.1"
   },
   "engines": {
-    "node": ">=10"
+    "node": ">=v10.18.1"
   }
 }
