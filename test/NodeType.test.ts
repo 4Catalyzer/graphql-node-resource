@@ -66,15 +66,13 @@ describe('NodeType', () => {
         name: { type: GraphQLString },
         resolvedFavoriteColor: {
           type: GraphQLString,
-          resolve: createResolve(({ favoriteColor }) => favoriteColor, {
-            favoriteColor: String,
-          }),
+          resolve: createResolve(({ favoriteColor }) => favoriteColor, [
+            'favoriteColor',
+          ]),
         },
         resolvedUserId: {
           type: GraphQLString,
-          resolve: createResolve(({ id }) => id, {
-            id: String,
-          }),
+          resolve: createResolve(({ id }) => id, ['id']),
         },
       }),
       Resource: TestHttpResource,
