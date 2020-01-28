@@ -53,6 +53,6 @@ describe('fetch', () => {
       ],
     });
 
-    expect(mockedFetch.lastCall()[1].body instanceof FormData).toEqual(true);
+    expect(mockedFetch.lastCall()![1].body instanceof FormData).toEqual(true);
   });
 });

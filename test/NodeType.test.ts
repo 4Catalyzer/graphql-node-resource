@@ -15,7 +15,7 @@ describe('NodeType', () => {
 
   let schema: GraphQLSchema;
   let context: any;
-  let NodeType: NodeType<any, any, any>;
+  let NodeType;
   let createResolve;
 
   async function runQuery(source: string) {
@@ -91,7 +91,7 @@ describe('NodeType', () => {
         number: { type: GraphQLInt },
         foo: {
           type: GraphQLString,
-          resolve: (obj, args, ctx) => Widget.getResource(ctx).getFoo(),
+          resolve: (_obj, _args, ctx) => Widget.getResource(ctx).getFoo(),
         },
         user: {
           type: User,
@@ -203,11 +203,11 @@ describe('NodeType', () => {
         foo: {
           type: GraphQLString,
           resolve: createResolve(
-            async (obj, args, ctx: MockContext) => {
+            async (obj, _args, ctx: MockContext) => {
               await ctx.httpApi.get('foo');
               return { foo: obj.foo };
             },
-            { foo: String },
+            ['foo'],
           ),
         },
       }),

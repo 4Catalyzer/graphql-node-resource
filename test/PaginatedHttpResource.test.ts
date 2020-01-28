@@ -1,10 +1,12 @@
 import mockedFetch from 'node-fetch';
 
+import { HttpContext } from '../src';
 import PaginatedHttpResource from '../src/resources/PaginatedHttpResource';
 import { TestHttpApi } from './helpers';
 
 describe('PaginatedHttpResource', () => {
-  let mockContext;
+  let mockContext: HttpContext<any>;
+
   beforeEach(() => {
     mockContext = {
       httpApi: new TestHttpApi(),

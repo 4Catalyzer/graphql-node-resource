@@ -14,9 +14,11 @@ import pick from 'lodash/pick';
 import urlJoin from '../utils/urlJoin';
 import { HttpMethod } from './fetch';
 
+export type Maybe<T> = T | null | undefined;
+
 const PAGINATION_ARG_KEYS = Object.keys(forwardConnectionArgs);
 
-export type Args = Record<string, NodeJS.PoorMansUnknown>;
+export type Args = { [key: string]: unknown };
 export type Data = unknown | null | undefined;
 
 export type QueryString = {
@@ -40,14 +42,14 @@ export type HttpApiOptions = {
   externalOrigin: string;
 };
 
-export default class HttpApi {
+export default abstract class HttpApi {
   _origin: string;
 
   _apiBase: string;
 
   _externalOrigin: string;
 
-  _loader: DataLoader<any, any>;
+  _loader: DataLoader<string, any>;
 
   qs: QueryString = querystring;
 
@@ -75,7 +77,7 @@ export default class HttpApi {
   async getPaginatedConnection<T>(
     path: string,
     { after, first, ...args }: Args,
-  ): Promise<PaginationResult<T> | null | undefined> {
+  ): Promise<Maybe<PaginationResult<T>>> {
     const items = await this.get<PaginatedApiResult<T>>(
       this.makePath(path, {
         ...args,
@@ -119,7 +121,7 @@ export default class HttpApi {
   async getUnpaginatedConnection<T>(
     path: string,
     args: Args,
-  ): Promise<PaginationResult<T> | null | undefined> {
+  ): Promise<Maybe<PaginationResult<T>>> {
     const apiArgs = omit(args, PAGINATION_ARG_KEYS);
     const paginationArgs = pick(args, PAGINATION_ARG_KEYS);
 
@@ -136,38 +138,26 @@ export default class HttpApi {
     };
   }
 
-  // eslint-disable-next-line require-await
-  async request<T>(
+  abstract async request<T = any>(
     _method: HttpMethod,
     _reqUrl: string,
     _data?: Data,
-  ): Promise<T | null | undefined> {
-    throw new Error('Not Implemented');
+  ): Promise<Maybe<T>>;
+
+  post<T>(path: string, data?: Data) {
+    return this.request<T>('POST', this._getUrl(path), data);
   }
 
-  post(
-    path: string,
-    data?: Data,
-  ): Promise<Record<string, any> | null | undefined> {
-    return this.request('POST', this._getUrl(path), data);
+  put<T>(path: string, data?: Data) {
+    return this.request<T>('PUT', this._getUrl(path), data);
   }
 
-  put(
-    path: string,
-    data?: Data,
-  ): Promise<Record<string, any> | null | undefined> {
-    return this.request('PUT', this._getUrl(path), data);
+  patch<T>(path: string, data?: Data) {
+    return this.request<T>('PATCH', this._getUrl(path), data);
   }
 
-  patch(
-    path: string,
-    data?: Data,
-  ): Promise<Record<string, any> | null | undefined> {
-    return this.request('PATCH', this._getUrl(path), data);
-  }
-
-  delete(path: string): Promise<Record<string, any> | null | undefined> {
-    return this.request('DELETE', this._getUrl(path));
+  delete<T>(path: string) {
+    return this.request<T>('DELETE', this._getUrl(path));
   }
 
   makePath(path: string, args?: Args): string {
