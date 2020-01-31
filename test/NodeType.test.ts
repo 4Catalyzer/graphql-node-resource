@@ -14,9 +14,18 @@ describe('NodeType', () => {
   const nodeId = Buffer.from('Widget:1').toString('base64');
 
   let schema: GraphQLSchema;
-  let context: any;
-  let NodeType;
-  let createResolve;
+  // let context: any;
+  // let NodeType;
+  // let createResolve;
+  // const { NodeType, createResolve } = rest;
+
+  const context = {
+    httpApi: new TestHttpApi(),
+  };
+
+  const { nodeField, nodesField, NodeType, createResolve } = createNodeType({
+    localIdFieldMode: 'deprecated',
+  });
 
   async function runQuery(source: string) {
     const result = await graphql({
@@ -45,14 +54,7 @@ describe('NodeType', () => {
   }
 
   beforeEach(() => {
-    context = {
-      httpApi: new TestHttpApi(),
-    };
-
-    const { nodeField, nodesField, ...rest } = createNodeType({
-      localIdFieldMode: 'deprecated',
-    });
-    ({ NodeType, createResolve } = rest);
+    // ({ NodeType, createResolve } = rest);
 
     class WidgetResource extends TestHttpResource {
       getFoo() {
@@ -60,15 +62,13 @@ describe('NodeType', () => {
       }
     }
 
-    const User = new NodeType({
+    const User = new NodeType<{ fu: string; id: string }, WidgetResource>({
       name: 'User',
       fields: () => ({
         name: { type: GraphQLString },
         resolvedFavoriteColor: {
           type: GraphQLString,
-          resolve: createResolve(({ favoriteColor }) => favoriteColor, [
-            'favoriteColor',
-          ]),
+          resolve: a => a,
         },
         resolvedUserId: {
           type: GraphQLString,

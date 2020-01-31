@@ -20,7 +20,7 @@ describe('urlJoin', () => {
   });
 
   it('should handle empty args', () => {
-    expect(urlJoin('/foo', undefined, '/', 5, '', null, 'bar')).toEqual(
+    expect(urlJoin('/foo', undefined, '/', '5', '', null, 'bar')).toEqual(
       '/foo/5/bar',
     );
   });
