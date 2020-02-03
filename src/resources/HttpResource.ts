@@ -1,10 +1,12 @@
 import HttpApi, { Args, Data } from '../api/HttpApi';
+import { Context } from '../types/Context';
+import { Maybe, Obj } from '../utils/typing';
 import urlJoin from '../utils/urlJoin';
 import Resource from './Resource';
 
 export type Endpoint = string | ((id?: string) => string);
 
-export type HttpContext<TApi extends HttpApi = HttpApi> = {
+export type HttpContext<TApi extends HttpApi = HttpApi> = Context & {
   readonly httpApi: TApi;
 };
 
@@ -27,7 +29,7 @@ export default class HttpResource<
     this._endpoint = endpoint;
   }
 
-  get<T>(id?: string): (T | null | undefined) | Promise<T | null | undefined> {
+  get(id?: string): Promise<Maybe<Obj>> {
     return this.api.get(this.getPath(id));
   }
 

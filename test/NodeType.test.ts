@@ -7,7 +7,10 @@ import {
 } from 'graphql';
 import mockedFetch from 'node-fetch';
 
-import { HttpResource, createNodeType } from '../src';
+import { HttpResource } from '../src';
+import { config, setup } from '../src/config';
+import createResolve from '../src/types/createResolve';
+import NodeType from '../src/types/NodeType';
 import { MockContext, TestHttpApi, TestHttpResource } from './helpers';
 
 describe('NodeType', () => {
@@ -23,9 +26,12 @@ describe('NodeType', () => {
     httpApi: new TestHttpApi(),
   };
 
-  const { nodeField, nodesField, NodeType, createResolve } = createNodeType({
-    localIdFieldMode: 'deprecated',
-  });
+  setup({ localIdFieldMode: 'deprecated' });
+  // const { nodeField, nodesField, NodeType, getNodeResource } = createNodeType<
+  //   HttpContext<any>
+  // >({
+  //   localIdFieldMode: 'deprecated',
+  // });
 
   async function runQuery(source: string) {
     const result = await graphql({
@@ -62,24 +68,25 @@ describe('NodeType', () => {
       }
     }
 
-    const User = new NodeType<{ fu: string; id: string }, WidgetResource>({
+    const User: NodeType<WidgetResource> = new NodeType<WidgetResource>({
       name: 'User',
       fields: () => ({
         name: { type: GraphQLString },
         resolvedFavoriteColor: {
           type: GraphQLString,
-          resolve: a => a,
+          resolve: obj => obj.id,
         },
         resolvedUserId: {
           type: GraphQLString,
-          resolve: createResolve(({ id }) => id, ['id']),
+          resolve: o => o.id,
         },
       }),
-      Resource: TestHttpResource,
+      makeId: a => a.id,
+      createResource: ctx => new WidgetResource(ctx, { endpoint: 'users' }),
       localIdFieldName: 'userId',
-      resourceConfig: {
-        endpoint: 'users',
-      },
+      // resourceConfig: {
+      //   endpoint: 'users',
+      // },
     });
 
     const Widget = new NodeType({
@@ -95,15 +102,15 @@ describe('NodeType', () => {
           type: User,
         },
       }),
-      Resource: WidgetResource,
+      createResource: ctx => new WidgetResource(ctx, { endpoint: 'a' }),
     });
 
     schema = new GraphQLSchema({
       query: new GraphQLObjectType({
         name: 'Query',
         fields: {
-          node: nodeField,
-          nodes: nodesField,
+          node: config.nodeField,
+          nodes: config.nodesField,
           widget: { type: Widget },
         },
       }),
@@ -209,10 +216,7 @@ describe('NodeType', () => {
           ),
         },
       }),
-      Resource: HttpResource,
-      resourceConfig: {
-        endpoint: 'foo/bar',
-      },
+      createResource: ctx => new HttpResource(ctx, { endpoint: 'foo/bar' }),
     });
 
     expect(type.name).toEqual('Foo');

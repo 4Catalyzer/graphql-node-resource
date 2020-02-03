@@ -1,96 +1,159 @@
 // eslint-disable-next-line max-classes-per-file
-import { GraphQLFieldConfig, GraphQLResolveInfo } from 'graphql';
-import { fromGlobalId, nodeDefinitions } from 'graphql-relay';
+import {
+  GraphQLFieldConfig,
+  GraphQLObjectType,
+  GraphQLObjectTypeConfig,
+  GraphQLString,
+} from 'graphql';
+import { connectionDefinitions, globalIdField } from 'graphql-relay';
 import invariant from 'invariant';
+import camelCase from 'lodash/camelCase';
 
+// eslint-disable-next-line import/no-cycle
+import { config, needsSetup } from '../config';
 import Resource from '../resources/Resource';
-import asType from '../utils/asType';
-import NodeTypeBase, { NodeTypeConfig } from './NodeTypeClass';
-import { Model } from '../resources/Model';
-import ResourceManager from './ResourceManager';
-import { Context } from './Context';
+import resolveThunk from '../utils/resolveThunk';
+import { Obj } from '../utils/typing';
 
-export interface ObjStub {
-  id: string;
+export interface NodeTypeConfig<R extends Resource, TSource>
+  extends GraphQLObjectTypeConfig<TSource, R['context']> {
+  localIdFieldName?: string | null | undefined;
+  createResource: (contxt: R['context']) => R;
+
+  makeId?: (obj: TSource) => string;
 }
 
-export interface Args {
-  [argName: string]: any;
+function getLocalIdFieldName(name: string, localIdFieldName?: string | null) {
+  if (localIdFieldName !== undefined) return localIdFieldName;
+
+  return `${camelCase(name)}Id`;
 }
 
-export interface CreateNodeTypeArgs {
-  localIdFieldMode?: 'include' | 'omit' | 'deprecated';
-}
+export default class NodeType<
+  R extends Resource,
+  TSource extends Obj = { id: string }
+> extends GraphQLObjectType<TSource, R['context']> {
+  Connection: GraphQLObjectType;
 
-interface NodeTypeDefinitions<TContext extends Context> {
-  NodeType: new <R extends Resource<TContext>, TSource>(
-    config: Omit<
-      NodeTypeConfig<R, Model<TSource>>,
-      'localIdFieldMode' | 'resourceManager' | 'typesManager' | 'nodeInterface'
-    >,
-  ) => NodeTypeBase<R, TSource>;
-  nodeField: GraphQLFieldConfig<any, Context>;
-  nodesField: GraphQLFieldConfig<any, Context>;
-  getNodeResource: (context: Context, info: GraphQLResolveInfo) => Resource;
-}
+  Edge: GraphQLObjectType;
 
-function createNodeType<TContext extends Context = Context>({
-  localIdFieldMode = 'omit',
-}: CreateNodeTypeArgs): NodeTypeDefinitions<TContext> {
-  const resourceManager = new ResourceManager();
-  const typesManager = new Map<string, NodeTypeBase<Resource<Context>, any>>();
+  localIdFieldName: NodeTypeConfig<R, TSource>['localIdFieldName'];
 
-  const { nodeInterface, nodeField, nodesField } = nodeDefinitions<TContext>(
-    async (globalId, context) => {
-      const { type, id } = fromGlobalId(globalId);
-      const resolvesType = typesManager.get(type);
+  makeId: NonNullable<NodeTypeConfig<R, TSource>['makeId']>;
 
-      invariant(resolvesType, 'There is no matching type');
-      const item = await resolvesType.getResource(context).get(id);
-
-      if (!item) return null;
-
-      return { $type: type, ...item };
-    },
-
-    obj => typesManager.get(obj.$type),
-  );
-
-  function getNodeResource(context: TContext, info: GraphQLResolveInfo) {
-    // eslint-disable-next-line @typescript-eslint/no-use-before-define
-    const parentType = asType(info.parentType, NodeType);
-    return parentType.getResource(context);
+  getNodeObject(obj: TSource, context: R['context']) {
+    const resource = this.getResource(context);
+    return resource.get(this.getLocalId(obj)) as Promise<TSource>;
   }
 
-  class NodeType<R extends Resource<Context>, TSource> extends NodeTypeBase<
-    R,
-    TSource
-  > {
-    constructor(
-      config: Omit<
-        NodeTypeConfig<R, Model<TSource>>,
-        | 'localIdFieldMode'
-        | 'resourceManager'
-        | 'typesManager'
-        | 'nodeInterface'
-      >,
-    ) {
-      super({
-        ...config,
-        localIdFieldMode,
-        resourceManager,
-        typesManager,
-        nodeInterface,
-      });
+  async getNodeValue(obj: TSource, fieldName: string, context: R['context']) {
+    if (obj[fieldName] === undefined) {
+      const fullObj = await this.getNodeObject(obj, context);
+      return fullObj && fullObj[fieldName];
     }
+
+    return obj[fieldName];
   }
 
-  return {
-    NodeType,
-    nodeField,
-    nodesField,
-    getNodeResource,
-  };
-}
+  getLocalId(obj: TSource) {
+    const id = this.makeId(obj);
+    if (!id) throw new Error('null local id');
 
-export default createNodeType;
+    return id;
+  }
+
+  createResource: (context: R['context']) => R;
+
+  constructor({
+    name,
+    interfaces,
+    localIdFieldName,
+    fields,
+    createResource,
+    makeId,
+
+    ...rest
+  }: NodeTypeConfig<R, TSource>) {
+    if (needsSetup()) {
+      throw new Error('you must first call setup');
+    }
+
+    if (config.localIdFieldMode !== 'omit') {
+      // eslint-disable-next-line no-param-reassign
+      localIdFieldName = getLocalIdFieldName(name, localIdFieldName);
+    } else {
+      invariant(
+        !localIdFieldName,
+        "must not specify localIdFieldName when localIdFieldMode is 'omit'",
+      );
+    }
+
+    super({
+      ...rest,
+      name,
+      interfaces: () => [
+        ...(resolveThunk(interfaces) || []),
+        config.nodeInterface,
+      ],
+      fields: () => {
+        const fieldConfig: Record<
+          string,
+          GraphQLFieldConfig<TSource, R['context']>
+        > = {};
+
+        Object.entries(resolveThunk(fields)).forEach(
+          ([fieldName, { resolve, ...field }]) => {
+            fieldConfig[fieldName] = {
+              ...field,
+              resolve:
+                resolve ||
+                ((obj, _args, context, info) =>
+                  this.getNodeValue(obj, info.fieldName, context)),
+            };
+          },
+        );
+
+        fieldConfig.id = globalIdField(undefined, (object: TSource) =>
+          this.getLocalId(object),
+        );
+
+        // This will only be set if localIdFieldMode is not 'omit'.
+        if (localIdFieldName) {
+          fieldConfig[localIdFieldName] = {
+            type: GraphQLString,
+            deprecationReason:
+              config.localIdFieldMode === 'deprecated'
+                ? 'local IDs are deprecated; use "handle" if available or "id" for the global ID'
+                : null,
+            resolve: obj => this.getLocalId(obj),
+          };
+        }
+
+        return fieldConfig;
+      },
+    });
+
+    const { connectionType, edgeType } = connectionDefinitions({
+      nodeType: this,
+    });
+
+    this.Connection = connectionType;
+    this.Edge = edgeType;
+
+    this.localIdFieldName = localIdFieldName;
+    this.createResource = createResource;
+    this.makeId = makeId || (({ id }: TSource) => id);
+
+    config.typesManager.set(name, this);
+  }
+
+  getResource(context: R['context']) {
+    let resource = config.resourceManager.get(context, this.name);
+    if (!resource) {
+      resource = this.createResource(context);
+      config.resourceManager.set(context, this.name, resource);
+    }
+
+    return resource as R;
+  }
+}
