@@ -68,14 +68,14 @@
     "@babel/core": "^7.8.4",
     "@babel/preset-flow": "^7.8.3",
     "babel-jest": "^25.1.0",
-    "codecov": "^3.6.4",
+    "codecov": "^3.6.5",
     "eslint": "^6.8.0",
     "eslint-config-4catalyzer-flow": "^1.0.3",
     "eslint-config-4catalyzer-jest": "^2.0.3",
     "eslint-config-prettier": "^6.10.0",
     "eslint-plugin-flowtype": "^4.6.0",
     "eslint-plugin-import": "^2.20.1",
-    "eslint-plugin-jest": "^23.6.0",
+    "eslint-plugin-jest": "^23.7.0",
     "eslint-plugin-prettier": "^3.1.2",
     "fetch-mock": "^8.3.2",
     "flow-bin": "^0.110.1",
@@ -88,6 +88,6 @@
     "semantic-release": "^17.0.2"
   },
   "engines": {
-    "node": ">=v10.18.1"
+    "node": ">=v10.19.0"
   }
 }
