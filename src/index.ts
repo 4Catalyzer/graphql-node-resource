@@ -4,6 +4,7 @@ import HttpError from './api/HttpError';
 import HttpResource from './resources/HttpResource';
 import PaginatedHttpResource from './resources/PaginatedHttpResource';
 import Resource from './resources/Resource';
+import createResolve from './types/createResolve';
 import NodeType from './types/NodeType';
 import asType from './utils/asType';
 import resolveThunk from './utils/resolveThunk';
@@ -18,11 +19,12 @@ export const utils = {
 };
 
 export {
-  NodeType,
+  createResolve,
   fetch,
   HttpApi,
   HttpError,
   HttpResource,
+  NodeType,
   PaginatedHttpResource,
   Resource,
 };

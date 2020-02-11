@@ -99,23 +99,11 @@ export default class NodeType<
         const fieldConfig: Record<
           string,
           GraphQLFieldConfig<TSource, R['context']>
-        > = {};
-
-        Object.entries(resolveThunk(fields)).forEach(
-          ([fieldName, { resolve, ...field }]) => {
-            fieldConfig[fieldName] = {
-              ...field,
-              resolve:
-                resolve ||
-                ((obj, _args, context, info) =>
-                  this.getNodeValue(obj, info.fieldName, context)),
-            };
-          },
-        );
-
-        fieldConfig.id = globalIdField(undefined, (object: TSource) =>
-          this.getLocalId(object),
-        );
+        > = {
+          id: globalIdField(undefined, (object: TSource) =>
+            this.getLocalId(object),
+          ),
+        };
 
         // This will only be set if localIdFieldMode is not 'omit'.
         if (localIdFieldName) {
@@ -128,6 +116,18 @@ export default class NodeType<
             resolve: obj => this.getLocalId(obj),
           };
         }
+
+        Object.entries(resolveThunk(fields)).forEach(
+          ([fieldName, { resolve, ...field }]) => {
+            fieldConfig[fieldName] = {
+              ...field,
+              resolve:
+                resolve ||
+                ((obj, _args, context, info) =>
+                  this.getNodeValue(obj, info.fieldName, context)),
+            };
+          },
+        );
 
         return fieldConfig;
       },
