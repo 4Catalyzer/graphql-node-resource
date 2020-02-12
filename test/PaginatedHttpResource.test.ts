@@ -1,6 +1,6 @@
 import mockedFetch from 'node-fetch';
 
-import { HttpContext } from '../src';
+import { HttpContext, RESOURCE_CACHE_KEY } from '../src';
 import PaginatedHttpResource from '../src/resources/PaginatedHttpResource';
 import { TestHttpApi } from './helpers';
 
@@ -9,6 +9,7 @@ describe('PaginatedHttpResource', () => {
 
   beforeEach(() => {
     mockContext = {
+      [RESOURCE_CACHE_KEY]: {},
       httpApi: new TestHttpApi(),
     };
   });

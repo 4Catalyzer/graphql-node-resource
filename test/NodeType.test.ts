@@ -17,21 +17,12 @@ describe('NodeType', () => {
   const nodeId = Buffer.from('Widget:1').toString('base64');
 
   let schema: GraphQLSchema;
-  // let context: any;
-  // let NodeType;
-  // let createResolve;
-  // const { NodeType, createResolve } = rest;
 
   const context = {
     httpApi: new TestHttpApi(),
   };
 
   setup({ localIdFieldMode: 'deprecated' });
-  // const { nodeField, nodesField, NodeType, getNodeResource } = createNodeType<
-  //   HttpContext<any>
-  // >({
-  //   localIdFieldMode: 'deprecated',
-  // });
 
   async function runQuery(source: string) {
     const result = await graphql({
@@ -60,8 +51,6 @@ describe('NodeType', () => {
   }
 
   beforeEach(() => {
-    // ({ NodeType, createResolve } = rest);
-
     class WidgetResource extends TestHttpResource {
       getFoo() {
         return this.api.foo();
@@ -74,7 +63,7 @@ describe('NodeType', () => {
         name: { type: GraphQLString },
         resolvedFavoriteColor: {
           type: GraphQLString,
-          resolve: obj => obj.id,
+          resolve: createResolve(obj => obj.favoriteColor, ['favoriteColor']),
         },
         resolvedUserId: {
           type: GraphQLString,
@@ -84,9 +73,6 @@ describe('NodeType', () => {
       makeId: a => a.id,
       createResource: ctx => new WidgetResource(ctx, { endpoint: 'users' }),
       localIdFieldName: 'userId',
-      // resourceConfig: {
-      //   endpoint: 'users',
-      // },
     });
 
     const Widget = new NodeType({
@@ -102,7 +88,7 @@ describe('NodeType', () => {
           type: User,
         },
       }),
-      createResource: ctx => new WidgetResource(ctx, { endpoint: 'a' }),
+      createResource: ctx => new WidgetResource(ctx, { endpoint: 'widgets' }),
     });
 
     schema = new GraphQLSchema({
@@ -220,5 +206,19 @@ describe('NodeType', () => {
     });
 
     expect(type.name).toEqual('Foo');
+  });
+
+  it('should get make id', () => {
+    const type = new NodeType<any, { foo: string; bar: number }>({
+      name: 'Foo',
+      fields: () => ({
+        foo: { type: GraphQLString },
+      }),
+      createResource: ctx => new HttpResource(ctx, { endpoint: 'foo/bar' }),
+
+      makeId: ({ foo, bar }) => `${foo}/${bar}`,
+    });
+
+    expect(type.makeId({ foo: 'a', bar: 1 })).toEqual('a/1');
   });
 });
