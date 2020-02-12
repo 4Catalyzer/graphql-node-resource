@@ -1,7 +1,7 @@
-import { Context, RESOURCE_CACHE_KEY } from './Context';
 import Resource from '../resources/Resource';
+import { Context, RESOURCE_CACHE_KEY } from './Context';
 
-export default class ResourceManager {
+export default class ResourceCache {
   cache = new WeakMap<any, Map<string, Resource<any>>>();
 
   private getResources(context: Context) {

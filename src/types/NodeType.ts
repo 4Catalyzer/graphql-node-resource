@@ -144,7 +144,7 @@ export default class NodeType<
     this.createResource = createResource;
     this.makeId = makeId || (({ id }: TSource) => id);
 
-    config.typesManager.set(name, this);
+    config.nodeTypesByName.set(name, this);
   }
 
   getResource(context: R['context']) {
