@@ -17,7 +17,7 @@ type Config = {
   nodeInterface: GraphQLInterfaceType;
 };
 
-export const config: Readonly<Config> = {} as any;
+let config: Readonly<Config> | undefined;
 
 function createConfig({
   localIdFieldMode = 'omit',
@@ -50,12 +50,15 @@ function createConfig({
   };
 }
 
-export function needsSetup() {
-  return Object.keys(config).length === 0;
+export function getConfig() {
+  if (!config) {
+    throw new Error('you must first call `setup`');
+  }
+  return config;
 }
 
 export function setup(options: Parameters<typeof createConfig>[0]) {
-  if (!needsSetup()) {
+  if (config) {
     throw new Error("You can't call `setup` twice");
   }
   Object.assign(config, createConfig(options));

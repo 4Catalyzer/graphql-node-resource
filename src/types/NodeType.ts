@@ -10,7 +10,7 @@ import invariant from 'invariant';
 import camelCase from 'lodash/camelCase';
 
 // eslint-disable-next-line import/no-cycle
-import { config, needsSetup } from '../config';
+import { getConfig } from '../config';
 import Resource from '../resources/Resource';
 import resolveThunk from '../utils/resolveThunk';
 import { Obj } from '../utils/typing';
@@ -18,7 +18,7 @@ import { Obj } from '../utils/typing';
 export interface NodeTypeConfig<R extends Resource, TSource>
   extends GraphQLObjectTypeConfig<TSource, R['context']> {
   localIdFieldName?: string | null | undefined;
-  createResource: (contxt: R['context']) => R;
+  createResource: (context: R['context']) => R;
 
   makeId?: (obj: TSource) => string;
 }
@@ -74,9 +74,7 @@ export default class NodeType<
 
     ...rest
   }: NodeTypeConfig<R, TSource>) {
-    if (needsSetup()) {
-      throw new Error('you must first call setup');
-    }
+    const config = getConfig();
 
     if (config.localIdFieldMode !== 'omit') {
       // eslint-disable-next-line no-param-reassign
@@ -148,6 +146,7 @@ export default class NodeType<
   }
 
   getResource(context: R['context']) {
+    const config = getConfig();
     let resource = config.resourceManager.get(context, this.name);
     if (!resource) {
       resource = this.createResource(context);
