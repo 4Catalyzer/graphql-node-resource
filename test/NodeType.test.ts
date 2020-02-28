@@ -8,7 +8,7 @@ import {
 import mockedFetch from 'node-fetch';
 
 import { HttpResource } from '../src';
-import { config, setup } from '../src/config';
+import { getConfig, setup } from '../src/config';
 import createResolve from '../src/types/createResolve';
 import NodeType from '../src/types/NodeType';
 import { MockContext, TestHttpApi, TestHttpResource } from './helpers';
@@ -95,8 +95,8 @@ describe('NodeType', () => {
       query: new GraphQLObjectType({
         name: 'Query',
         fields: {
-          node: config.nodeField,
-          nodes: config.nodesField,
+          node: getConfig().nodeField,
+          nodes: getConfig().nodesField,
           widget: { type: Widget },
         },
       }),
