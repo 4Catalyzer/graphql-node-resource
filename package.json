@@ -1,6 +1,6 @@
 {
   "name": "@4c/graphql-node-resource",
-  "version": "4.0.0-alpha.0",
+  "version": "3.0.0-alpha.0",
   "main": "lib/index.js",
   "repository": {
     "type": "git",
@@ -97,6 +97,6 @@
     "typescript": "^3.7.5"
   },
   "engines": {
-    "node": ">=v10.18.1"
+    "node": ">=v10.19.0"
   }
 }
