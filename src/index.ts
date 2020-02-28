@@ -4,7 +4,8 @@ import HttpError from './api/HttpError';
 import HttpResource from './resources/HttpResource';
 import PaginatedHttpResource from './resources/PaginatedHttpResource';
 import Resource from './resources/Resource';
-import createNodeType, { RESOURCE_CACHE_KEY } from './types/NodeType';
+import createResolve from './types/createResolve';
+import NodeType from './types/NodeType';
 import asType from './utils/asType';
 import resolveThunk from './utils/resolveThunk';
 import translateKeys from './utils/translateKeys';
@@ -18,18 +19,23 @@ export const utils = {
 };
 
 export {
-  createNodeType,
+  createResolve,
   fetch,
   HttpApi,
   HttpError,
   HttpResource,
+  NodeType,
   PaginatedHttpResource,
   Resource,
-  RESOURCE_CACHE_KEY,
 };
+
+export { RESOURCE_CACHE_KEY } from './types/Context';
+
+export { setup } from './config';
 
 export { HttpMethod, RequestOptions } from './api/fetch';
 export { Args, Data, PaginationResult, HttpApiOptions } from './api/HttpApi';
+export { NodeTypeConfig } from './types/NodeType';
 
 export { JsonApiError } from './api/HttpError';
 export {
@@ -37,10 +43,3 @@ export {
   HttpContext,
   HttpResourceOptions,
 } from './resources/HttpResource';
-
-export {
-  NodeFieldResolver,
-  NodeFieldConfig,
-  NodeFieldConfigMap,
-  CreateNodeTypeArgs,
-} from './types/NodeType';

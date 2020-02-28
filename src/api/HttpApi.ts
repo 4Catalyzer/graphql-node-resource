@@ -11,10 +11,9 @@ import flatten from 'lodash/flatten';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 
+import { Maybe, Obj } from '../utils/typing';
 import urlJoin from '../utils/urlJoin';
 import { HttpMethod } from './fetch';
-
-export type Maybe<T> = T | null | undefined;
 
 const PAGINATION_ARG_KEYS = Object.keys(forwardConnectionArgs);
 
@@ -70,7 +69,7 @@ export default abstract class HttpApi {
     );
   }
 
-  get<T>(path: string, args?: Args): Promise<T | null | undefined> {
+  get<T = Obj>(path: string, args?: Args): Promise<Maybe<T>> {
     return this._loader.load(this.makePath(path, args));
   }
 
