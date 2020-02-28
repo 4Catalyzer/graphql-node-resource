@@ -61,5 +61,5 @@ export function setup(options: Parameters<typeof createConfig>[0]) {
   if (config) {
     throw new Error("You can't call `setup` twice");
   }
-  Object.assign(config, createConfig(options));
+  config = createConfig(options);
 }
