@@ -1,15 +1,11 @@
-/* @flow */
-
+import fetch from './api/fetch';
+import HttpApi from './api/HttpApi';
+import HttpError from './api/HttpError';
 import HttpResource from './resources/HttpResource';
 import PaginatedHttpResource from './resources/PaginatedHttpResource';
 import Resource from './resources/Resource';
-
-import HttpApi from './api/HttpApi';
-import HttpError from './api/HttpError';
-import fetch from './api/fetch';
-
-import createNodeType, { RESOURCE_CACHE_KEY } from './types/NodeType';
-
+import createResolve from './types/createResolve';
+import NodeType from './types/NodeType';
 import asType from './utils/asType';
 import resolveThunk from './utils/resolveThunk';
 import translateKeys from './utils/translateKeys';
@@ -23,35 +19,27 @@ export const utils = {
 };
 
 export {
-  createNodeType,
+  createResolve,
   fetch,
   HttpApi,
   HttpError,
   HttpResource,
+  NodeType,
   PaginatedHttpResource,
   Resource,
-  RESOURCE_CACHE_KEY,
 };
 
-export type { HttpMethod, RequestOptions } from './api/fetch';
-export type {
-  Args,
-  Data,
-  QueryString,
-  PaginationResult,
-  HttpApiOptions,
-} from './api/HttpApi';
+export { RESOURCE_CACHE_KEY } from './types/Context';
 
-export type { JsonApiError } from './api/HttpError';
-export type {
+export { setup } from './config';
+
+export { HttpMethod, RequestOptions } from './api/fetch';
+export { Args, Data, PaginationResult, HttpApiOptions } from './api/HttpApi';
+export { NodeTypeConfig } from './types/NodeType';
+
+export { JsonApiError } from './api/HttpError';
+export {
   Endpoint,
   HttpContext,
   HttpResourceOptions,
 } from './resources/HttpResource';
-
-export {
-  NodeFieldResolver,
-  NodeFieldConfig,
-  NodeFieldConfigMap,
-  CreateNodeTypeArgs,
-} from './types/NodeType';

@@ -9,6 +9,7 @@ describe('translateKeys', () => {
       translateKeys(
         {
           foo: date,
+          // eslint-disable-next-line @typescript-eslint/camelcase
           foo_bar: { baz__quz: [1, 2, { FOO: 'boom' }] },
         },
         camelCase,

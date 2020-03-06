@@ -1,5 +1,3 @@
-/** @flow */
-
 import asType from '../src/utils/asType';
 
 describe('asType', () => {
@@ -26,7 +24,7 @@ describe('asType', () => {
       '"Bar" is not an instance of class Foo {}',
     );
 
-    expect(() => asType('foo', Foo)).toThrow(
+    expect(() => asType('foo', Foo as any)).toThrow(
       '"foo" is not an instance of class Foo {}',
     );
   });

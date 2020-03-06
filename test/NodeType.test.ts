@@ -1,30 +1,33 @@
-/* @flow */
-
 import {
-  graphql,
-  GraphQLSchema,
-  GraphQLString,
   GraphQLInt,
   GraphQLObjectType,
+  GraphQLSchema,
+  GraphQLString,
+  graphql,
 } from 'graphql';
 import mockedFetch from 'node-fetch';
 
-import { createNodeType, HttpResource } from '../src';
-import { TestHttpApi, TestHttpResource, type MockContext } from './helpers';
+import { HttpResource } from '../src';
+import { getConfig, setup } from '../src/config';
+import createResolve from '../src/types/createResolve';
+import NodeType from '../src/types/NodeType';
+import { MockContext, TestHttpApi, TestHttpResource } from './helpers';
 
 describe('NodeType', () => {
   const nodeId = Buffer.from('Widget:1').toString('base64');
 
-  let schema;
-  let context;
-  let NodeType;
-  let createResolve;
+  let schema: GraphQLSchema;
 
-  async function runQuery(source, variableValues) {
+  const context = {
+    httpApi: new TestHttpApi(),
+  };
+
+  setup({ localIdFieldMode: 'deprecated' });
+
+  async function runQuery(source: string) {
     const result = await graphql({
       schema,
       source,
-      variableValues,
       contextValue: context,
     });
     if (result.errors) throw result.errors[0];
@@ -48,43 +51,28 @@ describe('NodeType', () => {
   }
 
   beforeEach(() => {
-    context = {
-      httpApi: new TestHttpApi(),
-    };
-
-    const { nodeField, nodesField, ...rest } = createNodeType({
-      localIdFieldMode: 'deprecated',
-    });
-    ({ NodeType, createResolve } = rest);
-
     class WidgetResource extends TestHttpResource {
       getFoo() {
         return this.api.foo();
       }
     }
 
-    const User = new NodeType({
+    const User: NodeType<WidgetResource> = new NodeType<WidgetResource>({
       name: 'User',
       fields: () => ({
         name: { type: GraphQLString },
         resolvedFavoriteColor: {
           type: GraphQLString,
-          resolve: createResolve(({ favoriteColor }) => favoriteColor, {
-            favoriteColor: String,
-          }),
+          resolve: createResolve(obj => obj.favoriteColor, ['favoriteColor']),
         },
         resolvedUserId: {
           type: GraphQLString,
-          resolve: createResolve(({ id }) => id, {
-            id: String,
-          }),
+          resolve: o => o.id,
         },
       }),
-      Resource: TestHttpResource,
+      makeId: a => a.id,
+      createResource: ctx => new WidgetResource(ctx, { endpoint: 'users' }),
       localIdFieldName: 'userId',
-      resourceConfig: {
-        endpoint: 'users',
-      },
     });
 
     const Widget = new NodeType({
@@ -94,21 +82,21 @@ describe('NodeType', () => {
         number: { type: GraphQLInt },
         foo: {
           type: GraphQLString,
-          resolve: (obj, args, ctx) => Widget.getResource(ctx).getFoo(),
+          resolve: (_obj, _args, ctx) => Widget.getResource(ctx).getFoo(),
         },
         user: {
           type: User,
         },
       }),
-      Resource: WidgetResource,
+      createResource: ctx => new WidgetResource(ctx, { endpoint: 'widgets' }),
     });
 
     schema = new GraphQLSchema({
       query: new GraphQLObjectType({
         name: 'Query',
         fields: {
-          node: nodeField,
-          nodes: nodesField,
+          node: getConfig().nodeField,
+          nodes: getConfig().nodesField,
           widget: { type: Widget },
         },
       }),
@@ -206,20 +194,31 @@ describe('NodeType', () => {
         foo: {
           type: GraphQLString,
           resolve: createResolve(
-            async (obj, args, ctx: MockContext) => {
+            async (obj, _args, ctx: MockContext) => {
               await ctx.httpApi.get('foo');
               return { foo: obj.foo };
             },
-            { foo: String },
+            ['foo'],
           ),
         },
       }),
-      Resource: HttpResource,
-      resourceConfig: {
-        endpoint: 'foo/bar',
-      },
+      createResource: ctx => new HttpResource(ctx, { endpoint: 'foo/bar' }),
     });
 
     expect(type.name).toEqual('Foo');
+  });
+
+  it('should get make id', () => {
+    const type = new NodeType<any, { foo: string; bar: number }>({
+      name: 'Foo',
+      fields: () => ({
+        foo: { type: GraphQLString },
+      }),
+      createResource: ctx => new HttpResource(ctx, { endpoint: 'foo/bar' }),
+
+      makeId: ({ foo, bar }) => `${foo}/${bar}`,
+    });
+
+    expect(type.makeId({ foo: 'a', bar: 1 })).toEqual('a/1');
   });
 });

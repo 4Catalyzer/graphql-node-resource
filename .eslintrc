@@ -1,25 +1,17 @@
 {
+  "plugins": ["prettier"],
   "extends": [
-    "4catalyzer-flow",
+    "4catalyzer",
     "4catalyzer-jest",
     "prettier",
-    "prettier/flowtype"
+    "4catalyzer-typescript"
   ],
-  "plugins": [
-    "prettier"
-  ],
-  "rules": {
-    "prettier/prettier": "error"
+  "env": {
+    "node": true
   },
-
-  "overrides": [
-    {
-      "files": [
-        "**/test/**"
-      ],
-      "rules": {
-        "flowtype/require-valid-file-annotation": "off"
-      }
-    }
-  ]
+  "rules": {
+    "prettier/prettier": "error",
+    "global-require": "off",
+    "import/no-dynamic-require": "off"
+  }
 }

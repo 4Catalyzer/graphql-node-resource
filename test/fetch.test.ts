@@ -1,7 +1,5 @@
-/** @flow */
-
-import mockedFetch, { Response } from 'node-fetch';
 import FormData from 'form-data';
+import mockedFetch, { Response } from 'node-fetch';
 
 import { fetch } from '../src';
 
@@ -16,7 +14,7 @@ describe('fetch', () => {
       { body: {}, status: 200 },
       {
         headers: {
-          Accept: 'application/json',
+          'Accept': 'application/json',
           'Content-Type': 'application/json',
         },
       },
@@ -55,6 +53,6 @@ describe('fetch', () => {
       ],
     });
 
-    expect(mockedFetch.lastCall()[1].body instanceof FormData).toEqual(true);
+    expect(mockedFetch.lastCall()![1].body instanceof FormData).toEqual(true);
   });
 });

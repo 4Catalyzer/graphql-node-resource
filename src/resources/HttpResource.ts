@@ -1,34 +1,35 @@
-/* @flow */
-
-import type HttpApi, { Args, Data } from '../api/HttpApi';
+import HttpApi, { Args, Data } from '../api/HttpApi';
+import { Context } from '../types/Context';
+import { Maybe, Obj } from '../utils/typing';
 import urlJoin from '../utils/urlJoin';
 import Resource from './Resource';
 
 export type Endpoint = string | ((id?: string) => string);
 
-export type HttpContext<TApi: HttpApi = HttpApi> = {
-  +httpApi: TApi,
+export type HttpContext<TApi extends HttpApi = HttpApi> = Context & {
+  readonly httpApi: TApi;
 };
 
 export type HttpResourceOptions = {
-  endpoint: Endpoint,
+  endpoint: Endpoint;
 };
 
-export default class HttpResource<TApi: HttpApi = HttpApi> extends Resource<
-  HttpContext<TApi>,
-> {
-  +api: TApi;
+export default class HttpResource<
+  TApi extends HttpApi = HttpApi,
+  TContext extends HttpContext<TApi> = HttpContext<TApi>
+> extends Resource<TContext> {
+  readonly api: TApi;
 
   _endpoint: Endpoint;
 
-  constructor(context: HttpContext<TApi>, { endpoint }: HttpResourceOptions) {
+  constructor(context: TContext, { endpoint }: HttpResourceOptions) {
     super(context);
 
     this.api = context.httpApi;
     this._endpoint = endpoint;
   }
 
-  get(id?: string): ?Object | Promise<?Object> {
+  get(id?: string): Promise<Maybe<Obj>> {
     return this.api.get(this.getPath(id));
   }
 
@@ -66,6 +67,6 @@ export default class HttpResource<TApi: HttpApi = HttpApi> extends Resource<
   }
 
   getConnectionBase(path: string, args: Args) {
-    return this.api.getUnpaginatedConnection<Object>(path, args);
+    return this.api.getUnpaginatedConnection<Record<string, any>>(path, args);
   }
 }

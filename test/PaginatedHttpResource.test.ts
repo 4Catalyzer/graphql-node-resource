@@ -1,14 +1,15 @@
-/* @flow */
-
 import mockedFetch from 'node-fetch';
 
+import { HttpContext, RESOURCE_CACHE_KEY } from '../src';
 import PaginatedHttpResource from '../src/resources/PaginatedHttpResource';
 import { TestHttpApi } from './helpers';
 
 describe('PaginatedHttpResource', () => {
-  let mockContext;
+  let mockContext: HttpContext<any>;
+
   beforeEach(() => {
     mockContext = {
+      [RESOURCE_CACHE_KEY]: {},
       httpApi: new TestHttpApi(),
     };
   });

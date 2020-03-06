@@ -1,9 +1,7 @@
-/* @flow */
-
 export default function translateKeys(
-  data: mixed,
+  data: unknown,
   translate: (key: string) => string,
-): mixed {
+): unknown {
   if (Array.isArray(data)) {
     return data.map(value => translateKeys(value, translate));
   }
@@ -12,11 +10,12 @@ export default function translateKeys(
     return data.toISOString();
   }
 
-  if (!data || typeof data !== 'object') {
+  if (typeof data !== 'object' || !data) {
     return data;
   }
 
-  const translatedData = {};
+  const translatedData: Record<string, unknown> = {};
+
   Object.entries(data).forEach(([key, value]) => {
     translatedData[translate(key)] = translateKeys(value, translate);
   });

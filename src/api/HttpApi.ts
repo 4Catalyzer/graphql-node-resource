@@ -1,50 +1,58 @@
-/* @flow */
-
+import querystring from 'querystring';
 import DataLoader from 'dataloader';
-import { connectionFromArray, forwardConnectionArgs } from 'graphql-relay';
-import type { Connection } from 'graphql-relay';
+import {
+  Connection,
+  connectionFromArray,
+  forwardConnectionArgs,
+} from 'graphql-relay';
+import invariant from 'invariant';
 import chunk from 'lodash/chunk';
 import flatten from 'lodash/flatten';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
-import invariant from 'invariant';
-import querystring from 'querystring';
 
+import { Maybe, Obj } from '../utils/typing';
 import urlJoin from '../utils/urlJoin';
-import type { HttpMethod } from './fetch';
+import { HttpMethod } from './fetch';
 
 const PAGINATION_ARG_KEYS = Object.keys(forwardConnectionArgs);
 
-export type Args = { [key: string]: mixed };
-export type Data = ?mixed;
+export type Args = { [key: string]: unknown };
+export type Data = unknown | null | undefined;
 
 export type QueryString = {
-  parse<T>(query: string): T,
-  stringify(obj: Object): string,
+  parse(query: string): Record<string, string | string[]>;
+  stringify(obj: Record<string, any>): string;
 };
 
 export type PaginationResult<T> = Connection<T> & {
-  meta: {},
+  meta: {};
 };
 
+export type PaginatedApiResult<T> = Array<T> & {
+  meta: {
+    cursors?: any;
+    hasNextPage?: boolean;
+  };
+};
 export type HttpApiOptions = {
-  apiBase: string,
-  origin: string,
-  externalOrigin: string,
+  apiBase: string;
+  origin: string;
+  externalOrigin: string;
 };
 
-export default class HttpApi {
+export default abstract class HttpApi {
   _origin: string;
 
   _apiBase: string;
 
   _externalOrigin: string;
 
-  _loader: DataLoader<*, *>;
+  _loader: DataLoader<string, any>;
 
   qs: QueryString = querystring;
 
-  numKeysPerChunk: number = 25;
+  numKeysPerChunk = 25;
 
   constructor({ apiBase, origin, externalOrigin }: HttpApiOptions) {
     this._origin = origin;
@@ -61,15 +69,15 @@ export default class HttpApi {
     );
   }
 
-  get<T>(path: string, args?: Args): Promise<?T> {
+  get<T = Obj>(path: string, args?: Args): Promise<Maybe<T>> {
     return this._loader.load(this.makePath(path, args));
   }
 
   async getPaginatedConnection<T>(
     path: string,
     { after, first, ...args }: Args,
-  ): Promise<?PaginationResult<T>> {
-    const items = await this.get(
+  ): Promise<Maybe<PaginationResult<T>>> {
+    const items = await this.get<PaginatedApiResult<T>>(
       this.makePath(path, {
         ...args,
         cursor: after,
@@ -88,7 +96,7 @@ export default class HttpApi {
         '`meta` property containing an array of cursors and `hasNextPage`',
     );
 
-    const { cursors, hasNextPage, ...meta } = items.meta;
+    const { cursors, hasNextPage, ...meta } = items.meta!;
     const lastIndex = items.length - 1;
 
     // These connections only paginate forward, so the existence of a previous
@@ -112,46 +120,43 @@ export default class HttpApi {
   async getUnpaginatedConnection<T>(
     path: string,
     args: Args,
-  ): Promise<?PaginationResult<T>> {
+  ): Promise<Maybe<PaginationResult<T>>> {
     const apiArgs = omit(args, PAGINATION_ARG_KEYS);
     const paginationArgs = pick(args, PAGINATION_ARG_KEYS);
 
     // XXX Need to cast the result of the get to a list
-    const items = await this.get(this.makePath(path, apiArgs));
+    const items = await this.get<T[]>(this.makePath(path, apiArgs));
     invariant(
       Array.isArray(items),
       `Expected \`GET\` to return an array of items, got: ${typeof items} instead`,
     );
 
     return {
-      ...connectionFromArray(items, paginationArgs),
+      ...connectionFromArray(items!, paginationArgs),
       meta: {},
     };
   }
 
-  // eslint-disable-next-line require-await
-  async request<T>(
+  abstract async request<T = any>(
     _method: HttpMethod,
     _reqUrl: string,
     _data?: Data,
-  ): Promise<?T> {
-    throw new Error('Not Implemented');
+  ): Promise<Maybe<T>>;
+
+  post<T>(path: string, data?: Data) {
+    return this.request<T>('POST', this._getUrl(path), data);
   }
 
-  post(path: string, data?: Data): Promise<?Object> {
-    return this.request('POST', this._getUrl(path), data);
+  put<T>(path: string, data?: Data) {
+    return this.request<T>('PUT', this._getUrl(path), data);
   }
 
-  put(path: string, data?: Data): Promise<?Object> {
-    return this.request('PUT', this._getUrl(path), data);
+  patch<T>(path: string, data?: Data) {
+    return this.request<T>('PATCH', this._getUrl(path), data);
   }
 
-  patch(path: string, data?: Data): Promise<?Object> {
-    return this.request('PATCH', this._getUrl(path), data);
-  }
-
-  delete(path: string): Promise<?Object> {
-    return this.request('DELETE', this._getUrl(path));
+  delete<T>(path: string) {
+    return this.request<T>('DELETE', this._getUrl(path));
   }
 
   makePath(path: string, args?: Args): string {
@@ -172,27 +177,33 @@ export default class HttpApi {
     return `${pathBase}?${search}`;
   }
 
-  createArgLoader(path: string, key: string) {
-    return this.createLoader(
+  createArgLoader<T extends Record<string, unknown>>(
+    path: string,
+    key: string,
+  ) {
+    return this.createLoader<T>(
       keys => this.getUrl(path, { [key]: keys }),
-      item => item[key],
+      item => item[key] as string,
     );
   }
 
-  createLoader<T>(
+  createLoader<T extends Record<string, unknown>>(
     getPath: (keys: string[]) => string,
     getKey: (obj: T) => string,
   ) {
-    return new DataLoader<*, *>(async keys => {
+    return new DataLoader<any, any>(async keys => {
       // No need to cache the GET; the DataLoader will cache it.
       const chunkedItems = await Promise.all(
-        chunk(keys, this.numKeysPerChunk).map(chunkKeys =>
-          this.request('GET', getPath((chunkKeys: any))),
+        chunk<string>(keys, this.numKeysPerChunk).map(chunkKeys =>
+          this.request<T[]>('GET', getPath(chunkKeys)),
         ),
       );
-      const items = flatten(chunkedItems).filter(Boolean);
 
-      const itemsByKey = {};
+      const items = flatten<T | null | undefined>(chunkedItems).filter(
+        <T>(item: T): item is T extends null | undefined ? never : T => !!item,
+      );
+
+      const itemsByKey: Record<string, T[]> = {};
       keys.forEach(key => {
         itemsByKey[key] = [];
       });

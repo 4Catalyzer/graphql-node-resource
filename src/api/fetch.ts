@@ -1,12 +1,10 @@
-/* @flow */
-
 import FormData from 'form-data';
-import _fetch from 'node-fetch';
+import _fetch, { Response } from 'node-fetch';
 
 export type File = {
-  fieldname: string,
-  originalname: string,
-  buffer: Buffer,
+  fieldname: string;
+  originalname: string;
+  buffer: Buffer;
 };
 
 export type HttpMethod =
@@ -21,17 +19,19 @@ export type HttpMethod =
   | 'PATCH';
 
 export type RequestOptions = {
-  method: HttpMethod,
-  url: string,
-  data?: ?{},
-  files?: File[],
-  headers?: { [string]: string },
+  method: HttpMethod;
+  url: string;
+  data?: {} | null | undefined;
+  files?: File[];
+  headers?: {
+    [key: string]: string;
+  };
 };
 
 type Init = {
-  method: string,
-  headers: { [string]: string },
-  body?: string | FormData,
+  method: string;
+  headers: Record<string, string>;
+  body?: string | FormData;
 };
 
 export default function fetch(reqOptions: RequestOptions): Promise<Response> {

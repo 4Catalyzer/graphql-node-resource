@@ -1,7 +1,5 @@
-/* @flow */
-
-import mockedFetch from 'node-fetch';
 import { connectionFromArray } from 'graphql-relay';
+import mockedFetch from 'node-fetch';
 
 import HttpResource from '../src/resources/HttpResource';
 import { TestHttpApi } from './helpers';

@@ -1,12 +1,10 @@
-/* @flow */
-
+import HttpApi, { Args } from '../api/HttpApi';
 import HttpResource from './HttpResource';
-import type HttpApi, { Args } from '../api/HttpApi';
 
 export default class PaginatedHttpResource<
-  TApi: HttpApi = HttpApi,
+  TApi extends HttpApi = HttpApi
 > extends HttpResource<TApi> {
   getConnectionBase(path: string, args: Args) {
-    return this.api.getPaginatedConnection<Object>(path, args);
+    return this.api.getPaginatedConnection<Record<string, any>>(path, args);
   }
 }

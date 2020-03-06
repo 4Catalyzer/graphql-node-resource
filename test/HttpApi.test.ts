@@ -1,24 +1,12 @@
-/** @flow */
-
 import range from 'lodash/range';
 import mockedFetch from 'node-fetch';
-import { HttpApi, HttpError } from '../src';
 
+import { HttpError } from '../src';
 import { TestHttpApi } from './helpers';
 
 describe('HttpApi', () => {
   afterEach(() => {
     mockedFetch.restore();
-  });
-
-  it('should throw for unimplemented request()', async () => {
-    await expect(
-      new HttpApi({
-        apiBase: '',
-        externalOrigin: '',
-        origin: '',
-      }).request('GET', '/foo'),
-    ).rejects.toThrow('Not Implemented');
   });
 
   it('should parse query string', () => {

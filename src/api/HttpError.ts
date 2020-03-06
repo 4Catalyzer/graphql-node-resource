@@ -1,15 +1,14 @@
-/* @flow */
-
 import util from 'util';
+import { Response } from 'node-fetch';
 
-export type JsonApiError = {
-  detail?: string,
-  code: string,
+export interface JsonApiError {
+  detail?: string;
+  code: string;
   source?: {
-    pointer: string,
-  },
-  meta: any,
-};
+    pointer: string;
+  };
+  meta: any;
+}
 
 export default class HttpError extends Error {
   response: Response;
@@ -18,14 +17,17 @@ export default class HttpError extends Error {
 
   errors: Array<JsonApiError> = [];
 
-  body: string = '';
+  body = '';
 
-  extensions: ?{
-    upstream: {
-      status: number,
-      errors: JsonApiError[],
-    },
-  };
+  extensions:
+    | {
+        upstream: {
+          status: number;
+          errors: JsonApiError[];
+        };
+      }
+    | null
+    | undefined;
 
   constructor(response: Response) {
     super();
