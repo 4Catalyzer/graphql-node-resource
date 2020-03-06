@@ -1,3 +1,15 @@
+# [3.0.0](https://github.com/4Catalyzer/graphql-node-resource/compare/v2.1.0...v3.0.0) (2020-03-06)
+
+
+### Bug Fixes
+
+* release as major bump ([5686f4b](https://github.com/4Catalyzer/graphql-node-resource/commit/5686f4bba484618d4607b7b0d451ed68f2bb8fd0))
+
+
+### BREAKING CHANGES
+
+* convert to typescript a few API changes
+
 # [2.1.0](https://github.com/4Catalyzer/graphql-node-resource/compare/v2.0.0...v2.1.0) (2020-03-06)
 
 
