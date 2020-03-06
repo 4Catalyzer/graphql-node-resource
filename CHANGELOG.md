@@ -1,3 +1,10 @@
+# [2.1.0](https://github.com/4Catalyzer/graphql-node-resource/compare/v2.0.0...v2.1.0) (2020-03-06)
+
+
+### Features
+
+* convert package to typescript ([#278](https://github.com/4Catalyzer/graphql-node-resource/issues/278)) ([7c5440e](https://github.com/4Catalyzer/graphql-node-resource/commit/7c5440e5a15602dea367ddb67ae64cf083e905ea))
+
 # [2.0.0](https://github.com/4Catalyzer/graphql-server/compare/v1.0.2...v2.0.0) (2019-11-19)
 
 
