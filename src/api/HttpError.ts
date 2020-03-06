@@ -1,4 +1,5 @@
 import util from 'util';
+
 import { Response } from 'node-fetch';
 
 export interface JsonApiError {
