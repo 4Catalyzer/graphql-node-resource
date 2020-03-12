@@ -1,3 +1,10 @@
+# [3.1.0](https://github.com/4Catalyzer/graphql-node-resource/compare/v3.0.0...v3.1.0) (2020-03-12)
+
+
+### Features
+
+* get parent node type ([#318](https://github.com/4Catalyzer/graphql-node-resource/issues/318)) ([1de1b90](https://github.com/4Catalyzer/graphql-node-resource/commit/1de1b9051ece9ac4d200351047bf0a5eaea4bd8b))
+
 # [3.0.0](https://github.com/4Catalyzer/graphql-node-resource/compare/v2.1.0...v3.0.0) (2020-03-06)
 
 
