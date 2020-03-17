@@ -1,1 +1,1 @@
-number of manually triggered releases: 1
+number of manually triggered releases: 2
