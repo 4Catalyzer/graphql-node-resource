@@ -150,20 +150,22 @@
     rxjs "^6.5.2"
     semver "^7.0.0"
 
-"@4c/semantic-release-alt-publish-dir@^5.0.6":
-  version "5.0.6"
-  resolved "https://registry.yarnpkg.com/@4c/semantic-release-alt-publish-dir/-/semantic-release-alt-publish-dir-5.0.6.tgz#80cdf362b30412d40fddad57f79d24f3fcf64525"
-  integrity sha512-vLYoQXGe+fp4LAzgl5yLu2oMS5B/pjYtOtvs4p187EYU6PhDSFhefosYQKKnhkOzDcIdgxtQMrQtOF7Z95Kvqw==
+"@4c/semantic-release-alt-publish-dir@^5.0.7":
+  version "5.0.7"
+  resolved "https://registry.yarnpkg.com/@4c/semantic-release-alt-publish-dir/-/semantic-release-alt-publish-dir-5.0.7.tgz#03cd3ca916f7b98edda3ecfb61559ab919306157"
+  integrity sha512-RmXk17OXSN1vTNTQPEsZGNRVDCkeYlpmvzxAQlMgsxjX5TIscFb/IC5E19e8SsJZQRRiXDmbFUUVUtgT8Q+BaQ==
   dependencies:
     "@4c/file-butler" "^4.1.0"
     "@semantic-release/npm" "^7.0.0"
+    execa "^4.0.0"
+    read-pkg-up "^7.0.1"
 
-"@4c/semantic-release-config@^2.0.6":
-  version "2.0.6"
-  resolved "https://registry.yarnpkg.com/@4c/semantic-release-config/-/semantic-release-config-2.0.6.tgz#e53c12f6bc31d402b8559f5684640373ffe6e2fe"
-  integrity sha512-/t3BkmfPHoa+Vr5IYUBhlmMBXFgIHglP14H2I+RfViPwdSMnPgM9DubwfA3J/0Vj/OA+zA9x/TJEvIyp6nOf8w==
+"@4c/semantic-release-config@^2.0.7":
+  version "2.0.7"
+  resolved "https://registry.yarnpkg.com/@4c/semantic-release-config/-/semantic-release-config-2.0.7.tgz#2c92c29269cf58fad38a1db010f1aafaede9bc58"
+  integrity sha512-nzkLybxVqWPkG/IbK3773dCV2rjPNFoNwABo6hxUnJORX6Hb2LlGvmFAWTVcMKiw8BiK6n9SVIjhqjv1GcZVgw==
   dependencies:
-    "@4c/semantic-release-alt-publish-dir" "^5.0.6"
+    "@4c/semantic-release-alt-publish-dir" "^5.0.7"
     "@semantic-release/changelog" "^5.0.0"
     "@semantic-release/git" "^9.0.0"
     "@semantic-release/github" "^7.0.0"
