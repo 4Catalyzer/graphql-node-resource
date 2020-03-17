@@ -1,3 +1,10 @@
+## [3.1.2](https://github.com/4Catalyzer/graphql-node-resource/compare/v3.1.1...v3.1.2) (2020-03-17)
+
+
+### Bug Fixes
+
+* fix publish again ([05fd1ae](https://github.com/4Catalyzer/graphql-node-resource/commit/05fd1aec2d773422b5e74344abdd0042e45b4b2a))
+
 ## [3.1.1](https://github.com/4Catalyzer/graphql-node-resource/compare/v3.1.0...v3.1.1) (2020-03-17)
 
 
