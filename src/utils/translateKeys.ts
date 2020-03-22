@@ -3,7 +3,7 @@ export default function translateKeys(
   translate: (key: string) => string,
 ): unknown {
   if (Array.isArray(data)) {
-    return data.map(value => translateKeys(value, translate));
+    return data.map((value) => translateKeys(value, translate));
   }
 
   if (data instanceof Date) {

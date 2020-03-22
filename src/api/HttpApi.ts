@@ -60,11 +60,11 @@ export default abstract class HttpApi {
     this._externalOrigin = externalOrigin;
     this._apiBase = apiBase;
 
-    this._loader = new DataLoader(paths =>
+    this._loader = new DataLoader((paths) =>
       Promise.all(
         // Don't fail the entire batch on a single failed request.
-        paths.map(path =>
-          this.request('GET', this._getUrl(path)).catch(e => e),
+        paths.map((path) =>
+          this.request('GET', this._getUrl(path)).catch((e) => e),
         ),
       ),
     );
@@ -183,8 +183,8 @@ export default abstract class HttpApi {
     key: string,
   ) {
     return this.createLoader<T>(
-      keys => this.getUrl(path, { [key]: keys }),
-      item => item[key] as string,
+      (keys) => this.getUrl(path, { [key]: keys }),
+      (item) => item[key] as string,
     );
   }
 
@@ -192,10 +192,10 @@ export default abstract class HttpApi {
     getPath: (keys: string[]) => string,
     getKey: (obj: T) => string,
   ) {
-    return new DataLoader<any, any>(async keys => {
+    return new DataLoader<any, any>(async (keys) => {
       // No need to cache the GET; the DataLoader will cache it.
       const chunkedItems = await Promise.all(
-        chunk<string>(keys, this.numKeysPerChunk).map(chunkKeys =>
+        chunk<string>(keys, this.numKeysPerChunk).map((chunkKeys) =>
           this.request<T[]>('GET', getPath(chunkKeys)),
         ),
       );
@@ -205,17 +205,17 @@ export default abstract class HttpApi {
       );
 
       const itemsByKey: Record<string, T[]> = {};
-      keys.forEach(key => {
+      keys.forEach((key) => {
         itemsByKey[key] = [];
       });
-      items.forEach(item => {
+      items.forEach((item) => {
         const key = getKey(item);
         if (itemsByKey[key]) {
           itemsByKey[key].push(item);
         }
       });
 
-      return keys.map(key => itemsByKey[key]);
+      return keys.map((key) => itemsByKey[key]);
     });
   }
 

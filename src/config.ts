@@ -37,7 +37,7 @@ function createConfig({
       return { $type: type, ...item };
     },
 
-    obj => nodeTypesByName.get(obj.$type),
+    (obj) => nodeTypesByName.get(obj.$type),
   );
 
   return {
