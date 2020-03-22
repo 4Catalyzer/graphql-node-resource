@@ -111,7 +111,7 @@ export default class NodeType<
               config.localIdFieldMode === 'deprecated'
                 ? 'local IDs are deprecated; use "handle" if available or "id" for the global ID'
                 : null,
-            resolve: obj => this.getLocalId(obj),
+            resolve: (obj) => this.getLocalId(obj),
           };
         }
 
