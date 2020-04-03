@@ -87,7 +87,7 @@
     "eslint-plugin-jest": "^23.8.2",
     "eslint-plugin-prettier": "^3.1.2",
     "fetch-mock": "^9.3.1",
-    "graphql": "^14.6.0",
+    "graphql": "^15.0.0",
     "graphql-relay": "^0.6.0",
     "husky": "^4.2.3",
     "jest": "^25.2.4",
