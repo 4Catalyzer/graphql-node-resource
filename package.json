@@ -6,9 +6,7 @@
     "type": "git",
     "url": "git+https://github.com/4Catalyzer/graphql-node-resource.git"
   },
-  "author": {
-    "name": "4Catalyzer"
-  },
+  "author": "4Catalyzer",
   "license": "MIT",
   "scripts": {
     "build": "4c build src",
@@ -100,8 +98,5 @@
   },
   "bugs": {
     "url": "https://github.com/4Catalyzer/graphql-node-resource/issues"
-  },
-  "readme": "ERROR: No README data found!",
-  "homepage": "https://github.com/4Catalyzer/graphql-node-resource#readme",
-  "_id": "@4c/graphql-node-resource@3.1.2"
+  }
 }
