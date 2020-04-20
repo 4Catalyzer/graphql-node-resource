@@ -22,7 +22,7 @@ export type Args = { [key: string]: unknown };
 export type Data = unknown | null | undefined;
 
 export type QueryString = {
-  parse(query: string): Record<string, string | string[]>;
+  parse(query: string): Record<string, any>;
   stringify(obj: Record<string, any>): string;
 };
 
