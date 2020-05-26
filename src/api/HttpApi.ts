@@ -27,7 +27,7 @@ export type QueryString = {
 };
 
 export type PaginationResult<T> = Connection<T> & {
-  meta: {};
+  meta: unknown;
 };
 
 export type PaginatedApiResult<T> = Array<T> & {

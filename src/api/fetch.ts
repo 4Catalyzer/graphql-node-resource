@@ -21,7 +21,7 @@ export type HttpMethod =
 export type RequestOptions = {
   method: HttpMethod;
   url: string;
-  data?: {} | null | undefined;
+  data?: Record<string, unknown> | null | undefined;
   files?: File[];
   headers?: {
     [key: string]: string;
