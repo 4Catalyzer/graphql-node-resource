@@ -83,11 +83,11 @@ describe('HttpApi', () => {
 
     const keys = range(api.numKeysPerChunk + 5).map(String);
 
-    const params = keys.map(key => `saladId=${key}`);
+    const params = keys.map((key) => `saladId=${key}`);
     const chunk1Params = params.slice(0, api.numKeysPerChunk);
     const chunk2Params = params.slice(api.numKeysPerChunk);
 
-    const data = keys.map(saladId => ({ saladId }));
+    const data = keys.map((saladId) => ({ saladId }));
     const chunk1Data = data.slice(0, api.numKeysPerChunk);
     const chunk2Data = data.slice(api.numKeysPerChunk);
 
@@ -102,8 +102,8 @@ describe('HttpApi', () => {
 
     const loader = api.createArgLoader('dressings', 'saladId');
 
-    expect(await Promise.all(keys.map(key => loader.load(key)))).toEqual(
-      data.map(item => [item]),
+    expect(await Promise.all(keys.map((key) => loader.load(key)))).toEqual(
+      data.map((item) => [item]),
     );
   });
 });

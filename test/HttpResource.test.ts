@@ -19,7 +19,7 @@ describe('HttpResource', () => {
 
   it('should accept a function as the endpoint', () => {
     const resource = new HttpResource(mockContext, {
-      endpoint: id => `salads/${id || ''}`,
+      endpoint: (id) => `salads/${id || ''}`,
     });
 
     expect(resource.getPath('1')).toEqual('salads/1');

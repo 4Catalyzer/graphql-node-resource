@@ -20,7 +20,7 @@ export default class HttpResource<
 > extends Resource<TContext> {
   readonly api: TApi;
 
-  _endpoint: Endpoint;
+  protected readonly _endpoint: Endpoint;
 
   constructor(context: TContext, { endpoint }: HttpResourceOptions) {
     super(context);
