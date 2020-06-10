@@ -71,7 +71,7 @@
     "@4c/semantic-release-config": "^2.0.9",
     "@4c/tsconfig": "^0.3.1",
     "@babel/preset-typescript": "^7.10.1",
-    "@types/jest": "^25.2.3",
+    "@types/jest": "^26.0.0",
     "@typescript-eslint/eslint-plugin": "^3.1.0",
     "@typescript-eslint/parser": "^3.1.0",
     "codecov": "^3.7.0",
