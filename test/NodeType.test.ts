@@ -77,7 +77,7 @@ describe('NodeType', () => {
       localIdFieldName: 'userId',
     });
 
-    const Widget = new NodeType({
+    const Widget: NodeType<WidgetResource> = new NodeType({
       name: 'Widget',
       fields: () => ({
         name: { type: GraphQLString },
@@ -191,7 +191,7 @@ describe('NodeType', () => {
   });
 
   it('should createNode', () => {
-    const type = new NodeType({
+    const type: NodeType<HttpResource<TestHttpApi>> = new NodeType({
       name: 'Foo',
       fields: () => ({
         foo: {
