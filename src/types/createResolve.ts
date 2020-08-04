@@ -2,12 +2,19 @@ import { GraphQLFieldConfig, GraphQLFieldResolver } from 'graphql';
 
 import NodeType from './NodeType';
 
-export default function createResolve<TFields extends string, TContext = any>(
-  resolve: GraphQLFieldResolver<Record<TFields, any>, TContext>,
-  fieldNames: TFields[],
-): GraphQLFieldConfig<any, TContext>['resolve'] {
+export default function createResolve<
+  TSource,
+  TContext,
+  TField extends string
+>(
+  resolve: GraphQLFieldResolver<TSource & Record<TField, unknown>, TContext>,
+  fieldNames: TField[],
+): GraphQLFieldConfig<TSource & Record<TField, unknown>, TContext>['resolve'] {
   return async (obj, args, context, info) => {
-    const nodeType = info.parentType as NodeType<any, Record<TFields, any>>;
+    const nodeType = info.parentType as NodeType<
+      any,
+      TSource & Record<TField, unknown>
+    >;
     for (const fieldName of fieldNames) {
       if (obj[fieldName] === undefined) {
         // await in a loop is OK here. dataloader makes sure that only

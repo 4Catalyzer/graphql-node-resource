@@ -9,8 +9,8 @@ import mockedFetch from 'node-fetch';
 
 import { HttpResource } from '../src';
 import { getConfig, setup } from '../src/config';
-import createResolve from '../src/types/createResolve';
 import NodeType from '../src/types/NodeType';
+import createResolve from '../src/types/createResolve';
 import { MockContext, TestHttpApi, TestHttpResource } from './helpers';
 
 describe('NodeType', () => {
@@ -63,19 +63,21 @@ describe('NodeType', () => {
         name: { type: GraphQLString },
         resolvedFavoriteColor: {
           type: GraphQLString,
-          resolve: createResolve(obj => obj.favoriteColor, ['favoriteColor']),
+          resolve: createResolve((obj) => obj.favoriteColor, [
+            'favoriteColor',
+          ]),
         },
         resolvedUserId: {
           type: GraphQLString,
-          resolve: o => o.id,
+          resolve: (o) => o.id,
         },
       }),
-      makeId: a => a.id,
-      createResource: ctx => new WidgetResource(ctx, { endpoint: 'users' }),
+      makeId: (a) => a.id,
+      createResource: (ctx) => new WidgetResource(ctx, { endpoint: 'users' }),
       localIdFieldName: 'userId',
     });
 
-    const Widget = new NodeType({
+    const Widget: NodeType<WidgetResource> = new NodeType({
       name: 'Widget',
       fields: () => ({
         name: { type: GraphQLString },
@@ -88,7 +90,8 @@ describe('NodeType', () => {
           type: User,
         },
       }),
-      createResource: ctx => new WidgetResource(ctx, { endpoint: 'widgets' }),
+      createResource: (ctx) =>
+        new WidgetResource(ctx, { endpoint: 'widgets' }),
     });
 
     schema = new GraphQLSchema({
@@ -188,7 +191,7 @@ describe('NodeType', () => {
   });
 
   it('should createNode', () => {
-    const type = new NodeType({
+    const type: NodeType<HttpResource<TestHttpApi>> = new NodeType({
       name: 'Foo',
       fields: () => ({
         foo: {
@@ -202,7 +205,7 @@ describe('NodeType', () => {
           ),
         },
       }),
-      createResource: ctx => new HttpResource(ctx, { endpoint: 'foo/bar' }),
+      createResource: (ctx) => new HttpResource(ctx, { endpoint: 'foo/bar' }),
     });
 
     expect(type.name).toEqual('Foo');
@@ -214,7 +217,7 @@ describe('NodeType', () => {
       fields: () => ({
         foo: { type: GraphQLString },
       }),
-      createResource: ctx => new HttpResource(ctx, { endpoint: 'foo/bar' }),
+      createResource: (ctx) => new HttpResource(ctx, { endpoint: 'foo/bar' }),
 
       makeId: ({ foo, bar }) => `${foo}/${bar}`,
     });
