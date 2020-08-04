@@ -1,3 +1,10 @@
+## [3.1.5](https://github.com/4Catalyzer/graphql-node-resource/compare/v3.1.4...v3.1.5) (2020-08-04)
+
+
+### Bug Fixes
+
+* optional id ([#339](https://github.com/4Catalyzer/graphql-node-resource/issues/339)) ([38bb939](https://github.com/4Catalyzer/graphql-node-resource/commit/38bb939b8ade0e1ca3d532ba36428d2dc5c53883))
+
 ## [3.1.4](https://github.com/4Catalyzer/graphql-node-resource/compare/v3.1.3...v3.1.4) (2020-04-13)
 
 
