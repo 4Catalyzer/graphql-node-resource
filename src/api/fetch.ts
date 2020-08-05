@@ -1,5 +1,5 @@
 import FormData from 'form-data';
-import _fetch, { Response } from 'node-fetch';
+import _fetch, { RequestInit, Response } from 'node-fetch';
 
 export type File = {
   fieldname: string;
