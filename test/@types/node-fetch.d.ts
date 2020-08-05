@@ -1,9 +1,9 @@
 declare module 'node-fetch' {
-  import { Headers, Request, Response } from 'node-fetch';
   import { FetchMockSandbox } from 'fetch-mock';
+  import { Headers, Request, RequestInit, Response } from 'node-fetch';
 
   declare const fetch: FetchMockSandbox;
 
-  export { Response };
+  export { Response, RequestInit };
   export default fetch;
 }

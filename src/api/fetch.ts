@@ -51,7 +51,10 @@ export default function fetch(reqOptions: RequestOptions): Promise<Response> {
 
       init.body = formData;
     } else {
-      init.headers['Content-Type'] = 'application/json';
+      init.headers = {
+        ...init.headers,
+        'Content-Type': 'application/json',
+      };
       init.body = JSON.stringify(data);
     }
   }
