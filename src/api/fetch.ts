@@ -26,10 +26,9 @@ export type RequestOptions = RequestInit & {
 };
 
 export default function fetch(reqOptions: RequestOptions): Promise<Response> {
-  const { method, url, data, headers, files, ...rest } = reqOptions;
+  const { url, data, headers, files, ...rest } = reqOptions;
 
   const init: RequestInit = {
-    method,
     headers: {
       Accept: 'application/json',
       ...headers,
