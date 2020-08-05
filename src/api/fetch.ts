@@ -18,31 +18,23 @@ export type HttpMethod =
   | 'TRACE'
   | 'PATCH';
 
-export type RequestOptions = {
+export type RequestOptions = RequestInit & {
   method: HttpMethod;
   url: string;
   data?: Record<string, unknown> | null | undefined;
   files?: File[];
-  headers?: {
-    [key: string]: string;
-  };
-};
-
-type Init = {
-  method: string;
-  headers: Record<string, string>;
-  body?: string | FormData;
 };
 
 export default function fetch(reqOptions: RequestOptions): Promise<Response> {
-  const { method, url, data, headers, files } = reqOptions;
+  const { method, url, data, headers, files, ...rest } = reqOptions;
 
-  const init: Init = {
+  const init: RequestInit = {
     method,
     headers: {
       Accept: 'application/json',
       ...headers,
     },
+    ...rest,
   };
 
   if (data) {
