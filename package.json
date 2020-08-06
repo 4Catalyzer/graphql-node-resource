@@ -1,6 +1,6 @@
 {
   "name": "@4c/graphql-node-resource",
-  "version": "3.1.5",
+  "version": "3.2.0",
   "main": "lib/index.js",
   "repository": {
     "type": "git",
@@ -100,5 +100,5 @@
   },
   "readme": "ERROR: No README data found!",
   "homepage": "https://github.com/4Catalyzer/graphql-node-resource#readme",
-  "_id": "@4c/graphql-node-resource@3.1.4"
+  "_id": "@4c/graphql-node-resource@3.1.5"
 }

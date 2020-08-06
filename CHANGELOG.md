@@ -1,3 +1,10 @@
+# [3.2.0](https://github.com/4Catalyzer/graphql-node-resource/compare/v3.1.5...v3.2.0) (2020-08-06)
+
+
+### Features
+
+* Support additional request options ([#355](https://github.com/4Catalyzer/graphql-node-resource/issues/355)) ([81af702](https://github.com/4Catalyzer/graphql-node-resource/commit/81af7026c17da1d4de947ec472fe649a335c85fe))
+
 ## [3.1.5](https://github.com/4Catalyzer/graphql-node-resource/compare/v3.1.4...v3.1.5) (2020-08-04)
 
 
