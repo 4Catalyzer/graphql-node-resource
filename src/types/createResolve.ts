@@ -9,7 +9,7 @@ export default function createResolve<
 >(
   resolve: GraphQLFieldResolver<TSource & Record<TField, any>, TContext>,
   fieldNames: TField[],
-): GraphQLFieldConfig<TSource & Record<TField, unknown>, TContext>['resolve'] {
+): GraphQLFieldConfig<TSource & Record<TField, any>, TContext>['resolve'] {
   return async (obj, args, context, info) => {
     const nodeType = info.parentType as NodeType<
       any,
