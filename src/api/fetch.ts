@@ -1,5 +1,5 @@
 import FormData from 'form-data';
-import _fetch, { Response } from 'node-fetch';
+import _fetch, { RequestInit, Response } from 'node-fetch';
 
 export type File = {
   fieldname: string;
@@ -18,31 +18,22 @@ export type HttpMethod =
   | 'TRACE'
   | 'PATCH';
 
-export type RequestOptions = {
+export type RequestOptions = RequestInit & {
   method: HttpMethod;
   url: string;
   data?: Record<string, unknown> | null | undefined;
   files?: File[];
-  headers?: {
-    [key: string]: string;
-  };
-};
-
-type Init = {
-  method: string;
-  headers: Record<string, string>;
-  body?: string | FormData;
 };
 
 export default function fetch(reqOptions: RequestOptions): Promise<Response> {
-  const { method, url, data, headers, files } = reqOptions;
+  const { url, data, headers, files, ...rest } = reqOptions;
 
-  const init: Init = {
-    method,
+  const init: RequestInit = {
     headers: {
       Accept: 'application/json',
       ...headers,
     },
+    ...rest,
   };
 
   if (data) {
@@ -59,7 +50,10 @@ export default function fetch(reqOptions: RequestOptions): Promise<Response> {
 
       init.body = formData;
     } else {
-      init.headers['Content-Type'] = 'application/json';
+      init.headers = {
+        ...init.headers,
+        'Content-Type': 'application/json',
+      };
       init.body = JSON.stringify(data);
     }
   }
