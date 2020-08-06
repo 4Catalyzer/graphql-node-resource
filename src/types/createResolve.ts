@@ -7,7 +7,7 @@ export default function createResolve<
   TContext,
   TField extends string
 >(
-  resolve: GraphQLFieldResolver<TSource & Record<TField, unknown>, TContext>,
+  resolve: GraphQLFieldResolver<TSource & Record<TField, any>, TContext>,
   fieldNames: TField[],
 ): GraphQLFieldConfig<TSource & Record<TField, unknown>, TContext>['resolve'] {
   return async (obj, args, context, info) => {
