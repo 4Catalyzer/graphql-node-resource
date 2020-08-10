@@ -9,14 +9,11 @@ export default function createResolve<
 >(
   resolve: GraphQLFieldResolver<TSource & Record<TField, any>, TContext>,
   fieldNames: TField[],
-): GraphQLFieldConfig<TSource & Record<TField, any>, TContext>['resolve'] {
+): GraphQLFieldConfig<TSource, TContext>['resolve'] {
   return async (obj, args, context, info) => {
-    const nodeType = info.parentType as NodeType<
-      any,
-      TSource & Record<TField, unknown>
-    >;
+    const nodeType = info.parentType as NodeType<any, TSource>;
     for (const fieldName of fieldNames) {
-      if (obj[fieldName] === undefined) {
+      if ((obj as any)[fieldName] === undefined) {
         // await in a loop is OK here. dataloader makes sure that only
         // one request is fired
         // eslint-disable-next-line no-await-in-loop
@@ -25,6 +22,6 @@ export default function createResolve<
       }
     }
 
-    return resolve(obj, args, context, info);
+    return resolve(obj as any, args, context, info);
   };
 }
