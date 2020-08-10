@@ -43,7 +43,9 @@ export default class NodeType<
 
   getNodeObject(obj: TSource, context: R['context']) {
     const resource = this.getResource(context);
-    return resource.get(this.getLocalId(obj)) as Promise<TSource>;
+    return resource.get(this.getLocalId(obj)) as Promise<
+      TSource & Record<string, any>
+    >;
   }
 
   async getNodeValue(obj: TSource, fieldName: string, context: R['context']) {
