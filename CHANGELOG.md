@@ -1,3 +1,10 @@
+## [3.2.2](https://github.com/4Catalyzer/graphql-node-resource/compare/v3.2.1...v3.2.2) (2020-08-10)
+
+
+### Bug Fixes
+
+* Fix createResolve type ([#358](https://github.com/4Catalyzer/graphql-node-resource/issues/358)) ([591de1d](https://github.com/4Catalyzer/graphql-node-resource/commit/591de1d26a187f245b7465a065cee1858ef03a18))
+
 ## [3.2.1](https://github.com/4Catalyzer/graphql-node-resource/compare/v3.2.0...v3.2.1) (2020-08-06)
 
 
