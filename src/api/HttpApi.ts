@@ -201,7 +201,9 @@ export default abstract class HttpApi {
       );
 
       const items = flatten<T | null | undefined>(chunkedItems).filter(
-        <T>(item: T): item is T extends null | undefined ? never : T => !!item,
+        <TItem>(
+          item: TItem,
+        ): item is TItem extends null | undefined ? never : TItem => !!item,
       );
 
       const itemsByKey: Record<string, T[]> = {};
