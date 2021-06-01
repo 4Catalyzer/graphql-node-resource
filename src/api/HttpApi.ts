@@ -112,7 +112,7 @@ export default abstract class HttpApi {
         startCursor: items[0] ? cursors[0] : null,
         endCursor: items[lastIndex] ? cursors[lastIndex] : null,
         hasPreviousPage,
-        hasNextPage,
+        hasNextPage: !!hasNextPage,
       },
       meta,
     };
@@ -138,7 +138,7 @@ export default abstract class HttpApi {
     };
   }
 
-  abstract async request<T = any>(
+  abstract request<T = any>(
     _method: HttpMethod,
     _reqUrl: string,
     _data?: Data,
