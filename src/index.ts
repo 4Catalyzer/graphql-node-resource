@@ -33,12 +33,17 @@ export { RESOURCE_CACHE_KEY } from './types/Context';
 
 export { setup } from './config';
 
-export { HttpMethod, RequestOptions } from './api/fetch';
-export { Args, Data, PaginationResult, HttpApiOptions } from './api/HttpApi';
-export { NodeTypeConfig } from './types/NodeType';
+export type { HttpMethod, RequestOptions } from './api/fetch';
+export type {
+  Args,
+  Data,
+  PaginationResult,
+  HttpApiOptions,
+} from './api/HttpApi';
+export type { NodeTypeConfig } from './types/NodeType';
 
-export { JsonApiError } from './api/HttpError';
-export {
+export type { JsonApiError } from './api/HttpError';
+export type {
   Endpoint,
   HttpContext,
   HttpResourceOptions,

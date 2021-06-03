@@ -31,7 +31,7 @@ function getLocalIdFieldName(name: string, localIdFieldName?: string | null) {
 
 export default class NodeType<
   R extends Resource,
-  TSource extends Obj = { id: string }
+  TSource extends Obj = { id: string },
 > extends GraphQLObjectType<TSource, R['context']> {
   Connection: GraphQLObjectType;
 
