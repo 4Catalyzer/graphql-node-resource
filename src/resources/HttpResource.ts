@@ -16,7 +16,7 @@ export type HttpResourceOptions = {
 
 export default class HttpResource<
   TApi extends HttpApi = HttpApi,
-  TContext extends HttpContext<TApi> = HttpContext<TApi>
+  TContext extends HttpContext<TApi> = HttpContext<TApi>,
 > extends Resource<TContext> {
   readonly api: TApi;
 

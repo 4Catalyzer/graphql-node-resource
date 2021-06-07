@@ -5,7 +5,7 @@ import NodeType from './NodeType';
 export default function createResolve<
   TSource,
   TContext,
-  TField extends string
+  TField extends string,
 >(
   resolve: GraphQLFieldResolver<TSource & Record<TField, any>, TContext>,
   fieldNames: TField[],
