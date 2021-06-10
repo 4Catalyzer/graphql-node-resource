@@ -1,3 +1,9 @@
+## [4.0.2](https://github.com/4Catalyzer/graphql-node-resource/compare/v4.0.1...v4.0.2) (2021-06-10)
+
+
+
+
+
 ## [3.2.2](https://github.com/4Catalyzer/graphql-node-resource/compare/v3.2.1...v3.2.2) (2020-08-10)
 
 
