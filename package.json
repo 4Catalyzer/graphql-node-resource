@@ -36,10 +36,8 @@
     "testEnvironment": "node"
   },
   "release": {
-    "pkgRoot": "lib",
-    "extends": [
-      "@4c/semantic-release-config"
-    ]
+    "publishDir": "lib",
+    "conventionalCommits": true
   },
   "dependencies": {
     "@types/invariant": "^2.2.34",
@@ -65,7 +63,6 @@
     "@4c/cli": "^2.2.6",
     "@4c/jest-preset": "^1.6.0",
     "@4c/prettier-config": "^1.1.0",
-    "@4c/semantic-release-config": "^2.1.0",
     "@4c/tsconfig": "^0.4.0",
     "@babel/preset-typescript": "^7.13.0",
     "@types/jest": "^26.0.23",
@@ -86,16 +83,14 @@
     "jest": "^27.0.4",
     "lint-staged": "^11.0.0",
     "prettier": "^2.3.0",
-    "semantic-release": "^17.4.3",
     "typescript": "^4.3.2"
   },
   "engines": {
-    "node": ">=v10.19.0"
+    "node": ">=v12.0.0"
   },
   "bugs": {
     "url": "https://github.com/4Catalyzer/graphql-node-resource/issues"
   },
   "readme": "ERROR: No README data found!",
-  "homepage": "https://github.com/4Catalyzer/graphql-node-resource#readme",
-  "_id": "@4c/graphql-node-resource@3.2.1"
+  "homepage": "https://github.com/4Catalyzer/graphql-node-resource#readme"
 }
