@@ -42,25 +42,37 @@ export type HttpApiOptions = {
   externalOrigin: string;
 };
 
+/**
+ * An HTTP request helper class oriented towards fetching resources
+ * from well structured REST endpoints. HttpApi includes simple support for
+ * batching and caching requests. Requests are cached using
+ * [DataLoader](https://github.com/graphql/dataloader/blob/v2.0.0/README.md)
+ */
 export default abstract class HttpApi {
-  _origin: string;
+  private origin: string;
 
-  _apiBase: string;
+  private apiBase: string;
 
-  _externalOrigin: string;
+  private externalOrigin: string;
 
-  _loader: DataLoader<string, any>;
+  private loader: DataLoader<string, any>;
 
-  qs: QueryString = querystring;
+  /** The serializer and deserializer used for query parameters */
+  readonly qs: QueryString = querystring;
 
-  numKeysPerChunk = 25;
+  /** 
+  DataLoader requests with many keys will be split into multiple 
+  requests to avoid hitting URL size limits. The default works well for 
+  chunking UUID keys
+  */
+  readonly numKeysPerChunk = 25;
 
   constructor({ apiBase, origin, externalOrigin }: HttpApiOptions) {
-    this._origin = origin;
-    this._externalOrigin = externalOrigin;
-    this._apiBase = apiBase;
+    this.origin = origin;
+    this.externalOrigin = externalOrigin;
+    this.apiBase = apiBase;
 
-    this._loader = new DataLoader((paths) =>
+    this.loader = new DataLoader((paths) =>
       Promise.all(
         // Don't fail the entire batch on a single failed request.
         paths.map((path) =>
@@ -71,7 +83,7 @@ export default abstract class HttpApi {
   }
 
   get<T = Obj>(path: string, args?: Args): Promise<Maybe<T>> {
-    return this._loader.load(this.makePath(path, args));
+    return this.loader.load(this.makePath(path, args));
   }
 
   async getPaginatedConnection<T>(
@@ -178,6 +190,22 @@ export default abstract class HttpApi {
     return `${pathBase}?${search}`;
   }
 
+  /**
+   * Create a loader for batching requests based on the same query string parameter.
+   * multiple calls to the loader will coalesce into one request with the query list
+   * useful for filtering.
+   *
+   * ```ts
+   * const createdByLoader = api.createArgLoader('/projects/', 'createdBy')
+   * createLoader.load('1')
+   * createLoader.load('2')
+   *
+   * // GET /projects?createdBy=1&createdBy=2
+   * ```
+   *
+   * @param path A valid pathname not including the `apiBase`
+   * @param key The query parameter to batch requests based on.
+   */
   createArgLoader<T extends Record<string, unknown>>(
     path: string,
     key: string,
@@ -188,6 +216,7 @@ export default abstract class HttpApi {
     );
   }
 
+  /** Create a data loader that makes a chunked HTTP request */
   createLoader<T extends Record<string, unknown>>(
     getPath: (keys: string[]) => string,
     getKey: (obj: T) => string,
@@ -195,7 +224,7 @@ export default abstract class HttpApi {
     return new DataLoader<any, any>(async (keys) => {
       // No need to cache the GET; the DataLoader will cache it.
       const chunkedItems = await Promise.all(
-        chunk<string>(keys, this.numKeysPerChunk).map((chunkKeys) =>
+        chunk<string>(keys, this.numKeysPerChunk || 1).map((chunkKeys) =>
           this.request<T[]>('GET', getPath(chunkKeys)),
         ),
       );
@@ -226,10 +255,10 @@ export default abstract class HttpApi {
   }
 
   getExternalUrl(path: string, args?: Args): string {
-    return this._getUrl(this.makePath(path, args), this._externalOrigin);
+    return this._getUrl(this.makePath(path, args), this.externalOrigin);
   }
 
-  _getUrl(path: string, origin: string = this._origin) {
-    return `${origin}${urlJoin(this._apiBase, path)}`;
+  _getUrl(path: string, origin: string = this.origin) {
+    return `${origin}${urlJoin(this.apiBase, path)}`;
   }
 }
