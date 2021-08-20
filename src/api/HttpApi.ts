@@ -86,7 +86,7 @@ export default abstract class HttpApi {
     return this.loader.load(this.makePath(path, args));
   }
 
-  protected validateConnectionaArgs({ first, after, last, before }: Args) {
+  protected validateConnectionArgs({ first, after, last, before }: Args) {
     if (after && before) {
       throw new TypeError(
         '`after` and `before` cursors cannot be specified together',
@@ -104,19 +104,19 @@ export default abstract class HttpApi {
 
   async getPaginatedConnection<T>(
     path: string,
-    connectionsArgs: Args,
+    connectionArgs: Args,
   ): Promise<Maybe<PaginationResult<T>>> {
-    this.validateConnectionaArgs(connectionsArgs);
-    const { after, first, before, last, ...args } = connectionsArgs;
+    this.validateConnectionArgs(connectionArgs);
+    const { after, first, before, last, ...args } = connectionArgs;
 
     // assume forward pagination
     const limit = before ? last : first;
 
-    const query: Args = { ...args, limit, pageSize: limit };
+    const query: Args = { ...args };
 
     if (before) query.before = before;
     if (after) query.cursor = after;
-    if (limit) {
+    if (limit != null) {
       query.limit = limit;
       query.pageSize = limit;
     }
@@ -136,7 +136,7 @@ export default abstract class HttpApi {
     );
 
     // hasNextPage is always relative to the direction we're paginating
-    // i.e. it indicates if we can continue to paginating in this direction
+    // i.e. it indicates if we can continue to paginate in this direction
     const { cursors, hasNextPage: hasNext, ...meta } = items.meta!;
     const lastIndex = items.length - 1;
 

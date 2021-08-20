@@ -59,7 +59,7 @@ describe('PaginatedHttpResource', () => {
       cursors: data.map((_, i) => String(i + 1)),
     };
 
-    mockedFetch.get('https://gateway/v1/salads?limit=2&pageSize=2&cursor=1', {
+    mockedFetch.get('https://gateway/v1/salads?cursor=1&limit=2&pageSize=2', {
       status: 200,
       body: { data, meta },
     });
@@ -91,7 +91,7 @@ describe('PaginatedHttpResource', () => {
       cursors: data.map((_, i) => String(i)),
     };
 
-    mockedFetch.get('https://gateway/v1/salads?limit=2&pageSize=2&before=3', {
+    mockedFetch.get('https://gateway/v1/salads?before=3&limit=2&pageSize=2', {
       status: 200,
       body: { data, meta },
     });
