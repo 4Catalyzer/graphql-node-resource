@@ -1,3 +1,14 @@
+# [4.1.0](https://github.com/4Catalyzer/graphql-node-resource/compare/v4.0.2...v4.1.0) (2021-08-25)
+
+
+### Features
+
+* support backwards pagination ([#411](https://github.com/4Catalyzer/graphql-node-resource/issues/411)) ([ba1aefa](https://github.com/4Catalyzer/graphql-node-resource/commit/ba1aefaab71210ed27b16fd6d3f2f21c8cf07fbd))
+
+
+
+
+
 ## [4.0.2](https://github.com/4Catalyzer/graphql-node-resource/compare/v4.0.1...v4.0.2) (2021-06-10)
 
 
