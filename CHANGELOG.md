@@ -1,3 +1,14 @@
+## [4.1.1](https://github.com/4Catalyzer/graphql-node-resource/compare/v4.1.0...v4.1.1) (2021-08-25)
+
+
+### Bug Fixes
+
+* HttpApi property type ([320ca84](https://github.com/4Catalyzer/graphql-node-resource/commit/320ca84ca953c635135b93d807e487923e17a1c1))
+
+
+
+
+
 # [4.1.0](https://github.com/4Catalyzer/graphql-node-resource/compare/v4.0.2...v4.1.0) (2021-08-25)
 
 
