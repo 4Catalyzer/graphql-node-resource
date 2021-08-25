@@ -159,7 +159,6 @@ export default abstract class HttpApi {
       hasNextPage = !!hasNext;
     }
 
-    // let hasPreviousPage = !!after;
     return {
       edges: items.map((item, i) => ({
         node: item,
