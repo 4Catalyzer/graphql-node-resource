@@ -65,7 +65,7 @@ export default abstract class HttpApi {
   requests to avoid hitting URL size limits. The default works well for 
   chunking UUID keys
   */
-  readonly numKeysPerChunk = 25;
+  readonly numKeysPerChunk: number = 25;
 
   constructor({ apiBase, origin, externalOrigin }: HttpApiOptions) {
     this.origin = origin;
