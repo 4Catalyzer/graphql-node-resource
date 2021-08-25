@@ -95,6 +95,10 @@ export default abstract class HttpApi {
     if (first != null && last != null) {
       throw new TypeError('`first` and `last` cannot be specified together.');
     }
+    // Not a necessary limitation just a current one.
+    // We don't have seperate query params for 'first' or 'last',
+    // so if you just provide 'limit' it's not possible to tell in FR whether
+    // you should go forward or backwards, and defaults to forwards
     if (last != null && !before) {
       throw new TypeError(
         'Server does not support backwards pagination without a `before` cursor',
@@ -115,6 +119,9 @@ export default abstract class HttpApi {
     const query: Args = { ...args };
 
     if (before) query.before = before;
+    // TODO: this is deprecated and should be 'after' but being
+    // left to accomodate older upstream servers since the new FR supports
+    // either
     if (after) query.cursor = after;
     if (limit != null) {
       query.limit = limit;
