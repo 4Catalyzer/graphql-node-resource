@@ -86,17 +86,50 @@ export default abstract class HttpApi {
     return this.loader.load(this.makePath(path, args));
   }
 
+  protected validateConnectionArgs({ first, after, last, before }: Args) {
+    if (after && before) {
+      throw new TypeError(
+        '`after` and `before` cursors cannot be specified together',
+      );
+    }
+    if (first != null && last != null) {
+      throw new TypeError('`first` and `last` cannot be specified together.');
+    }
+    // Not a necessary limitation just a current one.
+    // We don't have seperate query params for 'first' or 'last',
+    // so if you just provide 'limit' it's not possible to tell in FR whether
+    // you should go forward or backwards, and defaults to forwards
+    if (last != null && !before) {
+      throw new TypeError(
+        'Server does not support backwards pagination without a `before` cursor',
+      );
+    }
+  }
+
   async getPaginatedConnection<T>(
     path: string,
-    { after, first, ...args }: Args,
+    connectionArgs: Args,
   ): Promise<Maybe<PaginationResult<T>>> {
+    this.validateConnectionArgs(connectionArgs);
+    const { after, first, before, last, ...args } = connectionArgs;
+
+    // assume forward pagination
+    const limit = before ? last : first;
+
+    const query: Args = { ...args };
+
+    if (before) query.before = before;
+    // TODO: this is deprecated and should be 'after' but being
+    // left to accomodate older upstream servers since the new FR supports
+    // either
+    if (after) query.cursor = after;
+    if (limit != null) {
+      query.limit = limit;
+      query.pageSize = limit;
+    }
+
     const items = await this.get<PaginatedApiResult<T>>(
-      this.makePath(path, {
-        ...args,
-        cursor: after,
-        limit: first,
-        pageSize: first,
-      }),
+      this.makePath(path, query),
     );
 
     if (!items) {
@@ -109,12 +142,23 @@ export default abstract class HttpApi {
         '`meta` property containing an array of cursors and `hasNextPage`',
     );
 
-    const { cursors, hasNextPage, ...meta } = items.meta!;
+    // hasNextPage is always relative to the direction we're paginating
+    // i.e. it indicates if we can continue to paginate in this direction
+    const { cursors, hasNextPage: hasNext, ...meta } = items.meta!;
     const lastIndex = items.length - 1;
 
-    // These connections only paginate forward, so the existence of a previous
-    // page doesn't make any difference, but this is the correct value.
-    const hasPreviousPage = !!after;
+    let hasPreviousPage: boolean, hasNextPage: boolean;
+
+    if (before) {
+      hasPreviousPage = !!hasNext;
+      // this could be incorrect if we set before to the first item in the list
+      // but Relay doesn't do that
+      hasNextPage = true;
+    } else {
+      hasPreviousPage = !!after;
+      hasNextPage = !!hasNext;
+    }
+
     return {
       edges: items.map((item, i) => ({
         node: item,
@@ -124,7 +168,7 @@ export default abstract class HttpApi {
         startCursor: items[0] ? cursors[0] : null,
         endCursor: items[lastIndex] ? cursors[lastIndex] : null,
         hasPreviousPage,
-        hasNextPage: !!hasNextPage,
+        hasNextPage,
       },
       meta,
     };
