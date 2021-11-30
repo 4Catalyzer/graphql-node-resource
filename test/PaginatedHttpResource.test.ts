@@ -156,7 +156,7 @@ describe('PaginatedHttpResource', () => {
   });
 
   describe('arg validation', () => {
-    it('should not allow both directions at once', async () => {
+    it('should default to forward when both is specified', async () => {
       const resource = new PaginatedHttpResource(mockContext, {
         endpoint: 'salads',
       });
@@ -166,22 +166,36 @@ describe('PaginatedHttpResource', () => {
       ).rejects.toThrowError(
         '`after` and `before` cursors cannot be specified together',
       );
-
-      await expect(
-        resource.getConnection({ first: 0, last: 10 }),
-      ).rejects.toThrowError(
-        '`first` and `last` cannot be specified together',
-      );
     });
 
-    it('should prevent bawards pagination without a cursor', async () => {
+    it('should allow both limit args', async () => {
       const resource = new PaginatedHttpResource(mockContext, {
         endpoint: 'salads',
       });
 
-      await expect(resource.getConnection({ last: 10 })).rejects.toThrowError(
-        'Server does not support backwards pagination without a `before` cursor',
+      mockedFetch.getOnce(
+        'https://gateway/v1/salads?cursor=3&limit=2&pageSize=2',
+        {
+          status: 200,
+          body: { data: null },
+        },
       );
+
+      expect(
+        await resource.getConnection({ after: '3', last: 2, first: 2 }),
+      ).toEqual(null);
+
+      mockedFetch.getOnce(
+        'https://gateway/v1/salads?before=3&limit=2&pageSize=2',
+        {
+          status: 200,
+          body: { data: null },
+        },
+      );
+
+      expect(
+        await resource.getConnection({ before: '3', last: 2, first: 2 }),
+      ).toEqual(null);
     });
 
     it('ignores nullish values', async () => {
