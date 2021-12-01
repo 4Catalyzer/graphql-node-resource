@@ -86,22 +86,10 @@ export default abstract class HttpApi {
     return this.loader.load(this.makePath(path, args));
   }
 
-  protected validateConnectionArgs({ first, after, last, before }: Args) {
+  protected validateConnectionArgs({ after, before }: Args) {
     if (after && before) {
       throw new TypeError(
         '`after` and `before` cursors cannot be specified together',
-      );
-    }
-    if (first != null && last != null) {
-      throw new TypeError('`first` and `last` cannot be specified together.');
-    }
-    // Not a necessary limitation just a current one.
-    // We don't have seperate query params for 'first' or 'last',
-    // so if you just provide 'limit' it's not possible to tell in FR whether
-    // you should go forward or backwards, and defaults to forwards
-    if (last != null && !before) {
-      throw new TypeError(
-        'Server does not support backwards pagination without a `before` cursor',
       );
     }
   }
