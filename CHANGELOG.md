@@ -1,3 +1,14 @@
+## [4.1.2](https://github.com/4Catalyzer/graphql-node-resource/compare/v4.1.1...v4.1.2) (2021-12-01)
+
+
+### Bug Fixes
+
+* loosen validation to support what Relay actually does ([#435](https://github.com/4Catalyzer/graphql-node-resource/issues/435)) ([6dd2715](https://github.com/4Catalyzer/graphql-node-resource/commit/6dd2715e50eccd65976d026915d25553b264f105))
+
+
+
+
+
 ## [4.1.1](https://github.com/4Catalyzer/graphql-node-resource/compare/v4.1.0...v4.1.1) (2021-08-25)
 
 
