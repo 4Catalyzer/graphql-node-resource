@@ -1,3 +1,14 @@
+# [4.2.0](https://github.com/4Catalyzer/graphql-node-resource/compare/v4.1.2...v4.2.0) (2021-12-30)
+
+
+### Features
+
+* update pagination arg logic and expose protected method ([#439](https://github.com/4Catalyzer/graphql-node-resource/issues/439)) ([37bbb5c](https://github.com/4Catalyzer/graphql-node-resource/commit/37bbb5cd55327d7e23bc0972dbbc555c4b452ced))
+
+
+
+
+
 ## [4.1.2](https://github.com/4Catalyzer/graphql-node-resource/compare/v4.1.1...v4.1.2) (2021-12-01)
 
 
