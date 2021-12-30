@@ -3,6 +3,7 @@ import querystring from 'querystring';
 import DataLoader from 'dataloader';
 import {
   Connection,
+  ConnectionArguments,
   connectionFromArray,
   forwardConnectionArgs,
 } from 'graphql-relay';
@@ -94,27 +95,56 @@ export default abstract class HttpApi {
     }
   }
 
+  /**
+   * Construct the query string for a paginated request from the provided cursor and limit arguments
+   */
+  protected getPaginationArgs({
+    after,
+    first,
+    before,
+    last,
+  }: ConnectionArguments): [forward: boolean, query: Args] {
+    const query: Args = {};
+
+    let forward = true;
+    if (after != null) {
+      forward = true;
+      // TODO: this is deprecated and should be 'after' but being
+      // left to accomodate older upstream servers since the new FR supports
+      // either
+      query.cursor = after;
+      if (first) query.limit = first;
+    } else if (before != null) {
+      forward = false;
+      query.before = before;
+      query.last = last;
+    } else if (first != null) {
+      forward = true;
+      query.limit = first;
+    } else if (last != null) {
+      forward = false;
+      query.last = last;
+    }
+    return [forward, query];
+  }
+
   async getPaginatedConnection<T>(
     path: string,
     connectionArgs: Args,
   ): Promise<Maybe<PaginationResult<T>>> {
     this.validateConnectionArgs(connectionArgs);
     const { after, first, before, last, ...args } = connectionArgs;
+    const [forward, paginationArgs] = this.getPaginationArgs({
+      after,
+      first,
+      before,
+      last,
+    } as any);
 
-    // assume forward pagination
-    const limit = before ? last : first;
-
-    const query: Args = { ...args };
-
-    if (before) query.before = before;
-    // TODO: this is deprecated and should be 'after' but being
-    // left to accomodate older upstream servers since the new FR supports
-    // either
-    if (after) query.cursor = after;
-    if (limit != null) {
-      query.limit = limit;
-      query.pageSize = limit;
-    }
+    const query = {
+      ...args,
+      ...paginationArgs,
+    };
 
     const items = await this.get<PaginatedApiResult<T>>(
       this.makePath(path, query),
@@ -137,7 +167,7 @@ export default abstract class HttpApi {
 
     let hasPreviousPage: boolean, hasNextPage: boolean;
 
-    if (before) {
+    if (!forward) {
       hasPreviousPage = !!hasNext;
       // this could be incorrect if we set before to the first item in the list
       // but Relay doesn't do that
