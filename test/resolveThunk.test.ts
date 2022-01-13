@@ -4,7 +4,7 @@ describe('resolveThunk', () => {
   it('should return non functions', () => {
     const value = {};
     expect(resolveThunk(value)).toEqual(value);
-    expect(resolveThunk(null)).toEqual(null);
+    expect(resolveThunk(undefined)).toEqual(undefined);
   });
 
   it('should call functions', () => {
