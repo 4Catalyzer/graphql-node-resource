@@ -1,5 +1,15 @@
-import { Thunk } from 'graphql';
+import type { ThunkObjMap, ThunkReadonlyArray } from 'graphql';
 
-export default function resolveThunk<T>(thunk: Thunk<T>): T {
+function resolveThunk<T>(
+  thunk: ThunkReadonlyArray<T> | undefined,
+): undefined | T[];
+function resolveThunk<T>(
+  thunk: ThunkObjMap<T> | undefined,
+): undefined | Record<string, T>;
+function resolveThunk<T>(
+  thunk: ThunkObjMap<T> | ThunkReadonlyArray<T> | undefined,
+): any {
   return thunk instanceof Function ? thunk() : thunk;
 }
+
+export default resolveThunk;

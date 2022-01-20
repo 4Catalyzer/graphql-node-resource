@@ -63,9 +63,10 @@ describe('NodeType', () => {
         name: { type: GraphQLString },
         resolvedFavoriteColor: {
           type: GraphQLString,
-          resolve: createResolve((obj) => obj.favoriteColor, [
-            'favoriteColor',
-          ]),
+          resolve: createResolve(
+            (obj) => obj.favoriteColor,
+            ['favoriteColor'],
+          ),
         },
         resolvedUserId: {
           type: GraphQLString,

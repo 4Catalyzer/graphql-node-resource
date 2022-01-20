@@ -1,5 +1,9 @@
 import { GraphQLFieldConfig, GraphQLInterfaceType } from 'graphql';
-import { fromGlobalId, nodeDefinitions } from 'graphql-relay';
+import {
+  ConnectionConfig,
+  fromGlobalId,
+  nodeDefinitions,
+} from 'graphql-relay';
 import invariant from 'invariant';
 
 import Resource from './resources/Resource';
@@ -15,6 +19,9 @@ type Config = {
   resourceManager: ResourceCache;
   nodeTypesByName: Map<string, NodeType<Resource<Context>, any>>;
   nodeInterface: GraphQLInterfaceType;
+
+  connectionFields?: ConnectionConfig['connectionFields'];
+  edgeFields?: ConnectionConfig['edgeFields'];
 };
 
 let config: Readonly<Config> | undefined;
@@ -37,7 +44,7 @@ function createConfig({
       return { $type: type, ...item };
     },
 
-    (obj) => nodeTypesByName.get(obj.$type),
+    (obj) => obj.$type,
   );
 
   return {

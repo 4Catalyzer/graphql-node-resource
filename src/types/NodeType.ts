@@ -5,7 +5,11 @@ import {
   GraphQLObjectTypeConfig,
   GraphQLString,
 } from 'graphql';
-import { connectionDefinitions, globalIdField } from 'graphql-relay';
+import {
+  ConnectionConfig,
+  connectionDefinitions,
+  globalIdField,
+} from 'graphql-relay';
 import invariant from 'invariant';
 import camelCase from 'lodash/camelCase';
 
@@ -21,6 +25,9 @@ export interface NodeTypeConfig<R extends Resource, TSource>
   createResource: (context: R['context']) => R;
 
   makeId?: (obj: TSource) => string;
+
+  connectionFields?: ConnectionConfig['connectionFields'];
+  edgeFields?: ConnectionConfig['edgeFields'];
 }
 
 function getLocalIdFieldName(name: string, localIdFieldName?: string | null) {
@@ -117,7 +124,7 @@ export default class NodeType<
           };
         }
 
-        Object.entries(resolveThunk(fields)).forEach(
+        Object.entries(resolveThunk(fields)!).forEach(
           ([fieldName, { resolve, ...field }]) => {
             fieldConfig[fieldName] = {
               ...field,
@@ -135,6 +142,20 @@ export default class NodeType<
 
     const { connectionType, edgeType } = connectionDefinitions({
       nodeType: this,
+      connectionFields:
+        rest.connectionFields || config.connectionFields
+          ? () => ({
+              ...resolveThunk(config.connectionFields),
+              ...resolveThunk(rest.connectionFields),
+            })
+          : undefined,
+      edgeFields:
+        rest.edgeFields || config.edgeFields
+          ? () => ({
+              ...resolveThunk(config.edgeFields),
+              ...resolveThunk(rest.edgeFields),
+            })
+          : undefined,
     });
 
     this.Connection = connectionType;
