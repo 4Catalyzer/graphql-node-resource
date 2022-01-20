@@ -81,7 +81,7 @@
     "graphql-relay": "^0.10.0",
     "hookem": "^1.0.9",
     "jest": "^27.4.5",
-    "lint-staged": "^11.2.6",
+    "lint-staged": "^12.2.2",
     "prettier": "^2.5.1",
     "typescript": "^4.5.4"
   },
