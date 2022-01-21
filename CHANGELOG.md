@@ -1,3 +1,19 @@
+# [5.0.0](https://github.com/4Catalyzer/graphql-node-resource/compare/v4.2.0...v5.0.0) (2022-01-21)
+
+
+### Features
+
+* allow connection and edge configuration for nodes ([#443](https://github.com/4Catalyzer/graphql-node-resource/issues/443)) ([df6b28c](https://github.com/4Catalyzer/graphql-node-resource/commit/df6b28c850a20326b93cd96060d8d89d9fbcab82))
+
+
+### BREAKING CHANGES
+
+* upgrade to graphql 16, there should be no actual breaking changes, but GQL changes how `resolveType` works which we rely on so major bump out of caution
+
+
+
+
+
 # [4.2.0](https://github.com/4Catalyzer/graphql-node-resource/compare/v4.1.2...v4.2.0) (2021-12-30)
 
 
