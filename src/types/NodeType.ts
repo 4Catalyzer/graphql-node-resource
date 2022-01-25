@@ -1,4 +1,5 @@
 // eslint-disable-next-line max-classes-per-file
+
 import {
   GraphQLFieldConfig,
   GraphQLObjectType,
@@ -10,7 +11,6 @@ import {
   connectionDefinitions,
   globalIdField,
 } from 'graphql-relay';
-import invariant from 'invariant';
 import camelCase from 'lodash/camelCase';
 
 // eslint-disable-next-line import/no-cycle
@@ -88,9 +88,9 @@ export default class NodeType<
     if (config.localIdFieldMode !== 'omit') {
       // eslint-disable-next-line no-param-reassign
       localIdFieldName = getLocalIdFieldName(name, localIdFieldName);
-    } else {
-      invariant(
-        !localIdFieldName,
+    }
+    if (config.localIdFieldMode === 'omit' && localIdFieldName) {
+      throw new Error(
         "must not specify localIdFieldName when localIdFieldMode is 'omit'",
       );
     }

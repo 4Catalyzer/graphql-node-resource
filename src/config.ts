@@ -4,7 +4,6 @@ import {
   fromGlobalId,
   nodeDefinitions,
 } from 'graphql-relay';
-import invariant from 'invariant';
 
 import Resource from './resources/Resource';
 import { Context } from './types/Context';
@@ -28,7 +27,11 @@ let config: Readonly<Config> | undefined;
 
 function createConfig({
   localIdFieldMode = 'omit',
-}: Pick<Config, 'localIdFieldMode'>): Config {
+  ...rest
+}: Pick<
+  Config,
+  'localIdFieldMode' | 'connectionFields' | 'edgeFields'
+>): Config {
   const nodeTypesByName = new Map<string, NodeType<Resource<Context>, any>>();
 
   const { nodeInterface, nodeField, nodesField } = nodeDefinitions<Context>(
@@ -36,7 +39,9 @@ function createConfig({
       const { type, id } = fromGlobalId(globalId);
       const resolvedType = nodeTypesByName.get(type);
 
-      invariant(resolvedType, 'There is no matching type');
+      if (!resolvedType) {
+        throw new Error('There is no matching type');
+      }
       const item = await resolvedType.getResource(context).get(id);
 
       if (!item) return null;
@@ -48,6 +53,7 @@ function createConfig({
   );
 
   return {
+    ...rest,
     resourceManager: new ResourceCache(),
     nodeTypesByName,
     localIdFieldMode,

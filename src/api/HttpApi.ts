@@ -7,7 +7,6 @@ import {
   connectionFromArray,
   forwardConnectionArgs,
 } from 'graphql-relay';
-import invariant from 'invariant';
 import chunk from 'lodash/chunk';
 import flatten from 'lodash/flatten';
 import omit from 'lodash/omit';
@@ -154,11 +153,12 @@ export default abstract class HttpApi {
       return null;
     }
 
-    invariant(
-      items.meta,
-      'Unexpected format. `GET` should return an array of items with a ' +
-        '`meta` property containing an array of cursors and `hasNextPage`',
-    );
+    if (!items.meta) {
+      throw new Error(
+        'Unexpected format. `GET` should return an array of items with a ' +
+          '`meta` property containing an array of cursors and `hasNextPage`',
+      );
+    }
 
     // hasNextPage is always relative to the direction we're paginating
     // i.e. it indicates if we can continue to paginate in this direction
@@ -201,10 +201,10 @@ export default abstract class HttpApi {
 
     // XXX Need to cast the result of the get to a list
     const items = await this.get<T[]>(this.makePath(path, apiArgs));
-    invariant(
-      Array.isArray(items),
-      `Expected \`GET\` to return an array of items, got: ${typeof items} instead`,
-    );
+    if (!Array.isArray(items))
+      throw new Error(
+        `Expected \`GET\` to return an array of items, got: ${typeof items} instead`,
+      );
 
     return {
       ...connectionFromArray(items!, paginationArgs),

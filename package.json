@@ -40,7 +40,6 @@
     "conventionalCommits": true
   },
   "dependencies": {
-    "@types/invariant": "^2.2.35",
     "@types/lodash": "^4.14.178",
     "@types/node": "^17.0.8",
     "@types/node-fetch": "^2.5.12",
@@ -48,7 +47,6 @@
     "dataloader": "^2.0.0",
     "express": "^4.17.2",
     "form-data": "^4.0.0",
-    "invariant": "^2.2.4",
     "lodash": "^4.17.21",
     "node-fetch": "^2.6.1",
     "pluralize": "^8.0.0",
