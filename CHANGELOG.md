@@ -1,3 +1,14 @@
+## [5.0.1](https://github.com/4Catalyzer/graphql-node-resource/compare/v5.0.0...v5.0.1) (2022-01-25)
+
+
+### Bug Fixes
+
+* remove invariant package ([83d90eb](https://github.com/4Catalyzer/graphql-node-resource/commit/83d90eb9a692582d13380637bc04af9f7545233b))
+
+
+
+
+
 # [5.0.0](https://github.com/4Catalyzer/graphql-node-resource/compare/v4.2.0...v5.0.0) (2022-01-21)
 
 

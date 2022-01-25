@@ -1,6 +1,6 @@
 {
   "name": "@4c/graphql-node-resource",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "main": "lib/index.js",
   "repository": {
     "type": "git",
