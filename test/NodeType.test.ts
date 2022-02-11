@@ -13,6 +13,22 @@ import NodeType from '../src/types/NodeType';
 import createResolve from '../src/types/createResolve';
 import { MockContext, TestHttpApi, TestHttpResource } from './helpers';
 
+function mockResponses() {
+  mockedFetch.getOnce('https://gateway/v1/widgets/1', {
+    status: 200,
+    body: {
+      data: { id: '1', name: 'Floofh', number: 5, user: { id: '2' } },
+    },
+  });
+
+  mockedFetch.getOnce('https://gateway/v1/users/2', {
+    status: 200,
+    body: {
+      data: { id: '2', name: 'Johan Schmidt', favoriteColor: 'blue' },
+    },
+  });
+}
+
 describe('NodeType', () => {
   const nodeId = Buffer.from('Widget:1').toString('base64');
 
@@ -21,8 +37,6 @@ describe('NodeType', () => {
   const context = {
     httpApi: new TestHttpApi(),
   };
-
-  setup({ localIdFieldMode: 'deprecated' });
 
   async function runQuery(source: string) {
     const result = await graphql({
@@ -34,87 +48,79 @@ describe('NodeType', () => {
     return result.data || {};
   }
 
-  function mockResponses() {
-    mockedFetch.get('https://gateway/v1/widgets/1', {
-      status: 200,
-      body: {
-        data: { id: '1', name: 'Floofh', number: 5, user: { id: '2' } },
-      },
-    });
+  setup({ localIdFieldMode: 'deprecated' });
 
-    mockedFetch.get('https://gateway/v1/users/2', {
-      status: 200,
-      body: {
-        data: { id: '2', name: 'Johan Schmidt', favoriteColor: 'blue' },
-      },
-    });
-  }
+  describe.each([false, true])(
+    'resolving nodes lazily: %s',
+    (resolveNodesLazily) => {
+      beforeEach(() => {
+        class WidgetResource extends TestHttpResource {
+          getFoo() {
+            return this.api.foo();
+          }
+        }
 
-  beforeEach(() => {
-    class WidgetResource extends TestHttpResource {
-      getFoo() {
-        return this.api.foo();
-      }
-    }
+        const User: NodeType<WidgetResource> = new NodeType<WidgetResource>({
+          name: 'User',
+          fields: () => ({
+            name: { type: GraphQLString },
+            resolvedFavoriteColor: {
+              type: GraphQLString,
+              resolve: createResolve(
+                (obj) => obj.favoriteColor,
+                ['favoriteColor'],
+              ),
+            },
+            resolvedUserId: {
+              type: GraphQLString,
+              resolve: (o) => o.id,
+            },
+          }),
+          makeId: (a) => a.id,
+          makeObjectStub: resolveNodesLazily ? (id) => ({ id }) : undefined,
+          createResource: (ctx) =>
+            new WidgetResource(ctx, { endpoint: 'users' }),
+          localIdFieldName: 'userId',
+        });
 
-    const User: NodeType<WidgetResource> = new NodeType<WidgetResource>({
-      name: 'User',
-      fields: () => ({
-        name: { type: GraphQLString },
-        resolvedFavoriteColor: {
-          type: GraphQLString,
-          resolve: createResolve(
-            (obj) => obj.favoriteColor,
-            ['favoriteColor'],
-          ),
-        },
-        resolvedUserId: {
-          type: GraphQLString,
-          resolve: (o) => o.id,
-        },
-      }),
-      makeId: (a) => a.id,
-      createResource: (ctx) => new WidgetResource(ctx, { endpoint: 'users' }),
-      localIdFieldName: 'userId',
-    });
+        const Widget: NodeType<WidgetResource> = new NodeType({
+          name: 'Widget',
+          fields: () => ({
+            name: { type: GraphQLString },
+            number: { type: GraphQLInt },
+            foo: {
+              type: GraphQLString,
+              resolve: (_obj, _args, ctx) => Widget.getResource(ctx).getFoo(),
+            },
+            user: {
+              type: User,
+            },
+          }),
+          makeObjectStub: resolveNodesLazily ? (id) => ({ id }) : undefined,
+          createResource: (ctx) =>
+            new WidgetResource(ctx, { endpoint: 'widgets' }),
+        });
 
-    const Widget: NodeType<WidgetResource> = new NodeType({
-      name: 'Widget',
-      fields: () => ({
-        name: { type: GraphQLString },
-        number: { type: GraphQLInt },
-        foo: {
-          type: GraphQLString,
-          resolve: (_obj, _args, ctx) => Widget.getResource(ctx).getFoo(),
-        },
-        user: {
-          type: User,
-        },
-      }),
-      createResource: (ctx) =>
-        new WidgetResource(ctx, { endpoint: 'widgets' }),
-    });
+        schema = new GraphQLSchema({
+          query: new GraphQLObjectType({
+            name: 'Query',
+            fields: {
+              node: getConfig().nodeField,
+              nodes: getConfig().nodesField,
+              widget: { type: Widget },
+            },
+          }),
+        });
+      });
 
-    schema = new GraphQLSchema({
-      query: new GraphQLObjectType({
-        name: 'Query',
-        fields: {
-          node: getConfig().nodeField,
-          nodes: getConfig().nodesField,
-          widget: { type: Widget },
-        },
-      }),
-    });
-  });
+      afterEach(() => {
+        mockedFetch.reset();
+      });
 
-  afterEach(() => {
-    mockedFetch.restore();
-  });
-
-  it('should fetch node', async () => {
-    mockResponses();
-    const result = await runQuery(
-      `
+      it('should fetch node', async () => {
+        mockResponses();
+        const result = await runQuery(
+          `
         {
           node(id: "${nodeId}") {
             ...on Widget {
@@ -123,15 +129,52 @@ describe('NodeType', () => {
           }
         }
       `,
-    );
+        );
 
-    expect(result.node).toEqual({ name: 'Floofh' });
-  });
+        expect(result.node).toEqual({ name: 'Floofh' });
+      });
 
-  it('should add inferred local ids', async () => {
-    mockResponses();
-    const result = await runQuery(
-      `
+      it('should fetch nodes', async () => {
+        mockResponses();
+        const result = await runQuery(
+          `
+        {
+          nodes(ids: ["${nodeId}"]) {
+            ...on Widget {
+              name
+            }
+          }
+        }
+      `,
+        );
+
+        expect(result.nodes).toEqual([{ name: 'Floofh' }]);
+      });
+
+      if (resolveNodesLazily) {
+        it('should avoid fetching when not required', async () => {
+          const result = await runQuery(
+            `
+            {
+              node(id: "${nodeId}") {
+                ...on Widget {
+                  id
+                }
+              }
+            }
+          `,
+          );
+
+          expect(result.node).toEqual({ id: nodeId });
+          expect(mockedFetch.done()).toBe(true);
+          expect(mockedFetch.calls()).toHaveLength(0);
+        });
+      }
+
+      it('should add inferred local ids', async () => {
+        mockResponses();
+        const result = await runQuery(
+          `
         {
           node(id: "${nodeId}") {
             ...on Widget {
@@ -140,15 +183,15 @@ describe('NodeType', () => {
           }
         }
       `,
-    );
+        );
 
-    expect(result.node).toEqual({ widgetId: '1' });
-  });
+        expect(result.node).toEqual({ widgetId: '1' });
+      });
 
-  it('should resolve resource', async () => {
-    mockResponses();
-    const result = await runQuery(
-      `
+      it('should resolve resource', async () => {
+        mockResponses();
+        const result = await runQuery(
+          `
         {
           node(id: "${nodeId}") {
             ...on Widget {
@@ -157,15 +200,15 @@ describe('NodeType', () => {
           }
         }
       `,
-    );
+        );
 
-    expect(result.node).toEqual({ foo: 'foobar' });
-  });
+        expect(result.node).toEqual({ foo: 'foobar' });
+      });
 
-  it('should resolve from object stubs', async () => {
-    mockResponses();
-    const result = await runQuery(
-      `
+      it('should resolve from object stubs', async () => {
+        mockResponses();
+        const result = await runQuery(
+          `
         {
           node(id: "${nodeId}") {
             ...on Widget {
@@ -179,17 +222,19 @@ describe('NodeType', () => {
           }
         }
       `,
-    );
+        );
 
-    expect(result.node).toEqual({
-      user: {
-        name: 'Johan Schmidt',
-        resolvedFavoriteColor: 'blue',
-        resolvedUserId: '2',
-        userId: '2',
-      },
-    });
-  });
+        expect(result.node).toEqual({
+          user: {
+            name: 'Johan Schmidt',
+            resolvedFavoriteColor: 'blue',
+            resolvedUserId: '2',
+            userId: '2',
+          },
+        });
+      });
+    },
+  );
 
   it('should createNode', () => {
     const type: NodeType<HttpResource<TestHttpApi>> = new NodeType({
