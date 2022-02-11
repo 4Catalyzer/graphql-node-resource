@@ -25,6 +25,7 @@ export interface NodeTypeConfig<R extends Resource, TSource>
   createResource: (context: R['context']) => R;
 
   makeId?: (obj: TSource) => string;
+  makeObjectStub?: (id: string) => TSource;
 
   connectionFields?: ConnectionConfig['connectionFields'];
   edgeFields?: ConnectionConfig['edgeFields'];
@@ -47,6 +48,8 @@ export default class NodeType<
   localIdFieldName: NodeTypeConfig<R, TSource>['localIdFieldName'];
 
   makeId: NonNullable<NodeTypeConfig<R, TSource>['makeId']>;
+
+  makeObjectStub?: NonNullable<NodeTypeConfig<R, TSource>['makeObjectStub']>;
 
   getNodeObject(obj: TSource, context: R['context']) {
     const resource = this.getResource(context);
@@ -80,6 +83,7 @@ export default class NodeType<
     fields,
     createResource,
     makeId,
+    makeObjectStub,
 
     ...rest
   }: NodeTypeConfig<R, TSource>) {
@@ -164,6 +168,7 @@ export default class NodeType<
     this.localIdFieldName = localIdFieldName;
     this.createResource = createResource;
     this.makeId = makeId || (({ id }: TSource) => id);
+    this.makeObjectStub = makeObjectStub;
 
     config.nodeTypesByName.set(name, this);
   }

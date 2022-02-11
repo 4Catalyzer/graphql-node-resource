@@ -1,6 +1,6 @@
 import { HttpApi, HttpError, HttpResource, utils } from '../src';
-import apiFetch, { HttpMethod } from '../src/api/fetch';
 import { Data } from '../src/api/HttpApi';
+import apiFetch, { HttpMethod } from '../src/api/fetch';
 
 function getData(response: { data?: { [key: string]: any }; meta?: {} } = {}) {
   const { data, meta } = response;
@@ -18,6 +18,7 @@ export class TestHttpApi extends HttpApi {
   }
 
   async request<T>(method: HttpMethod, url: string, data?: Data) {
+    console.log('FETCHING');
     const resp = await apiFetch({ method, url, data: { data } });
     if (resp.status === 204) return null;
 

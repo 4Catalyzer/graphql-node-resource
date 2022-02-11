@@ -42,7 +42,11 @@ function createConfig({
       if (!resolvedType) {
         throw new Error('There is no matching type');
       }
-      const item = await resolvedType.getResource(context).get(id);
+      const resource = resolvedType.getResource(context);
+
+      const item = !resolvedType.makeObjectStub
+        ? await resource.get(id)
+        : resolvedType.makeObjectStub(id);
 
       if (!item) return null;
 
@@ -71,7 +75,7 @@ export function getConfig() {
 }
 
 export function setup(options: Parameters<typeof createConfig>[0]) {
-  if (config) {
+  if (config && process.env.NODE_ENV !== 'test') {
     throw new Error("You can't call `setup` twice");
   }
   config = createConfig(options);
