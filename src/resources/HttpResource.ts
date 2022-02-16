@@ -8,6 +8,9 @@ export type Endpoint = string | ((id?: string) => string);
 
 export type HttpContext<TApi extends HttpApi = HttpApi> = Context & {
   readonly httpApi: TApi;
+  readonly options?: {
+    throwOnEmptyStringPaths?: boolean;
+  };
 };
 
 export type HttpResourceOptions = {
@@ -57,6 +60,14 @@ export default class HttpResource<
     const endpoint = this._endpoint;
     if (typeof endpoint === 'function') {
       return endpoint(id);
+    }
+
+    // this protects against GraphQL inputs of empty string hitting list endpoints
+    // example: GET /users/<user_id> with an empty string user_id will request /users
+    if (this.context.options?.throwOnEmptyStringPaths && id === '') {
+      throw new TypeError(
+        "id can't be an empty string; pass a nullish value instead",
+      );
     }
 
     return urlJoin(endpoint, id);
