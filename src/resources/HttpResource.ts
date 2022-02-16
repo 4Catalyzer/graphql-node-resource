@@ -63,7 +63,7 @@ export default class HttpResource<
     // example: GET /users/<user_id> with an empty string user_id will request /users
     if (this.context.options?.throwOnEmptyStringPaths && id === '') {
       throw new TypeError(
-        "id can't be an empty string; pass a nullish value instead",
+        "id can't be an empty string; pass a value or undefined",
       );
     }
 
