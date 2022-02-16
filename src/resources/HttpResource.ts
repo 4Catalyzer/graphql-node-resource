@@ -58,9 +58,6 @@ export default class HttpResource<
 
   getPath(id?: string) {
     const endpoint = this._endpoint;
-    if (typeof endpoint === 'function') {
-      return endpoint(id);
-    }
 
     // this protects against GraphQL inputs of empty string hitting list endpoints
     // example: GET /users/<user_id> with an empty string user_id will request /users
@@ -70,6 +67,9 @@ export default class HttpResource<
       );
     }
 
+    if (typeof endpoint === 'function') {
+      return endpoint(id);
+    }
     return urlJoin(endpoint, id);
   }
 
