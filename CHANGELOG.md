@@ -1,3 +1,14 @@
+# [5.1.0](https://github.com/4Catalyzer/graphql-node-resource/compare/v5.0.1...v5.1.0) (2022-02-16)
+
+
+### Features
+
+* add small optimization to avoid overfetching nodes ([#453](https://github.com/4Catalyzer/graphql-node-resource/issues/453)) ([e27e157](https://github.com/4Catalyzer/graphql-node-resource/commit/e27e157f401ae4029a4604466d7b2202cf1b8a3d))
+
+
+
+
+
 ## [5.0.1](https://github.com/4Catalyzer/graphql-node-resource/compare/v5.0.0...v5.0.1) (2022-01-25)
 
 
