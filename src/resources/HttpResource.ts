@@ -70,6 +70,7 @@ export default class HttpResource<
     if (typeof endpoint === 'function') {
       return endpoint(id);
     }
+
     return urlJoin(endpoint, id);
   }
 
