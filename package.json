@@ -64,13 +64,13 @@
     "@4c/tsconfig": "^0.4.0",
     "@babel/preset-typescript": "^7.16.7",
     "@types/jest": "^27.4.1",
-    "@typescript-eslint/eslint-plugin": "^5.12.1",
-    "@typescript-eslint/parser": "^5.12.1",
+    "@typescript-eslint/eslint-plugin": "^5.13.0",
+    "@typescript-eslint/parser": "^5.13.0",
     "codecov": "^3.8.3",
     "eslint-config-4catalyzer": "^1.4.1",
     "eslint-config-4catalyzer-jest": "^2.2.0",
     "eslint-config-4catalyzer-typescript": "^3.2.0",
-    "eslint-config-prettier": "^8.4.0",
+    "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-jest": "^25.7.0",
     "eslint-plugin-prettier": "^4.0.0",
@@ -79,9 +79,9 @@
     "graphql-relay": "^0.10.0",
     "hookem": "^2.0.1",
     "jest": "^27.5.1",
-    "lint-staged": "^12.3.4",
+    "lint-staged": "^12.3.5",
     "prettier": "^2.5.1",
-    "typescript": "^4.5.5"
+    "typescript": "^4.6.2"
   },
   "engines": {
     "node": ">=v12.0.0"
