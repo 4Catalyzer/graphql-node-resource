@@ -1,4 +1,4 @@
-import { Response } from 'node-fetch';
+import { Response } from 'undici';
 
 import { HttpError } from '../src';
 

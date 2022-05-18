@@ -5,7 +5,7 @@ import {
   GraphQLString,
   graphql,
 } from 'graphql';
-import mockedFetch from 'node-fetch';
+import { fetch } from 'undici';
 
 import { HttpResource } from '../src';
 import { getConfig, setup } from '../src/config';
@@ -14,14 +14,14 @@ import createResolve from '../src/types/createResolve';
 import { MockContext, TestHttpApi, TestHttpResource } from './helpers';
 
 function mockResponses() {
-  mockedFetch.getOnce('https://gateway/v1/widgets/1', {
+  fetch.getOnce('https://gateway/v1/widgets/1', {
     status: 200,
     body: {
       data: { id: '1', name: 'Floofh', number: 5, user: { id: '2' } },
     },
   });
 
-  mockedFetch.getOnce('https://gateway/v1/users/2', {
+  fetch.getOnce('https://gateway/v1/users/2', {
     status: 200,
     body: {
       data: { id: '2', name: 'Johan Schmidt', favoriteColor: 'blue' },
@@ -114,7 +114,7 @@ describe('NodeType', () => {
       });
 
       afterEach(() => {
-        mockedFetch.reset();
+        fetch.reset();
       });
 
       it('should fetch node', async () => {
@@ -166,8 +166,8 @@ describe('NodeType', () => {
           );
 
           expect(result.node).toEqual({ id: nodeId });
-          expect(mockedFetch.done()).toBe(true);
-          expect(mockedFetch.calls()).toHaveLength(0);
+          expect(fetch.done()).toBe(true);
+          expect(fetch.calls()).toHaveLength(0);
         });
       }
 

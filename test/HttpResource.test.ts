@@ -1,5 +1,5 @@
 import { connectionFromArray } from 'graphql-relay';
-import mockedFetch from 'node-fetch';
+import { fetch } from 'undici';
 
 import HttpResource from '../src/resources/HttpResource';
 import { TestHttpApi } from './helpers';
@@ -14,7 +14,7 @@ describe('HttpResource', () => {
   });
 
   afterEach(() => {
-    mockedFetch.restore();
+    fetch.restore();
   });
 
   it('should accept a function as the endpoint', () => {
@@ -37,7 +37,7 @@ describe('HttpResource', () => {
     const resource = new HttpResource(mockContext, { endpoint: 'salads' });
     const data = { spicy: true };
 
-    mockedFetch.get('https://gateway/v1/salads/5', {
+    fetch.get('https://gateway/v1/salads/5', {
       status: 200,
       body: { data },
     });
@@ -49,7 +49,7 @@ describe('HttpResource', () => {
     const resource = new HttpResource(mockContext, { endpoint: 'salads' });
     const data = [{ spicy: true }];
 
-    mockedFetch.get('https://gateway/v1/salads', {
+    fetch.get('https://gateway/v1/salads', {
       status: 200,
       body: { data },
     });
@@ -61,7 +61,7 @@ describe('HttpResource', () => {
     const resource = new HttpResource(mockContext, { endpoint: 'salads' });
     const data = [{ spicy: true }, { spicy: true }, { spicy: true }];
 
-    mockedFetch.get('https://gateway/v1/salads', {
+    fetch.get('https://gateway/v1/salads', {
       status: 200,
       body: { data },
     });
@@ -76,7 +76,7 @@ describe('HttpResource', () => {
     const resource = new HttpResource(mockContext, { endpoint: 'salads' });
     const data = { spicy: true };
 
-    mockedFetch.post('https://gateway/v1/salads', {
+    fetch.post('https://gateway/v1/salads', {
       status: 200,
       body: { data },
     });
@@ -88,7 +88,7 @@ describe('HttpResource', () => {
     const resource = new HttpResource(mockContext, { endpoint: 'salads' });
     const data = { spicy: true };
 
-    mockedFetch.patch('https://gateway/v1/salads/5', {
+    fetch.patch('https://gateway/v1/salads/5', {
       status: 200,
       body: { data },
     });
@@ -100,7 +100,7 @@ describe('HttpResource', () => {
     const resource = new HttpResource(mockContext, { endpoint: 'salads' });
     const data = { spicy: true };
 
-    mockedFetch.put('https://gateway/v1/salads/5', {
+    fetch.put('https://gateway/v1/salads/5', {
       status: 200,
       body: { data },
     });
@@ -111,7 +111,7 @@ describe('HttpResource', () => {
   it('should delete', async () => {
     const resource = new HttpResource(mockContext, { endpoint: 'salads' });
 
-    mockedFetch.delete('https://gateway/v1/salads/5', {
+    fetch.delete('https://gateway/v1/salads/5', {
       status: 204,
     });
 
@@ -129,7 +129,7 @@ describe('HttpResource', () => {
       endpoint: 'salads',
     });
 
-    mockedFetch.delete('https://gateway/v1/salads/5', {
+    fetch.delete('https://gateway/v1/salads/5', {
       status: 204,
     });
 

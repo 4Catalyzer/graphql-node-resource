@@ -1,4 +1,4 @@
-import mockedFetch from 'node-fetch';
+import { fetch } from 'undici';
 
 import { HttpContext, RESOURCE_CACHE_KEY } from '../src';
 import PaginatedHttpResource from '../src/resources/PaginatedHttpResource';
@@ -15,7 +15,7 @@ describe('PaginatedHttpResource', () => {
   });
 
   afterEach(() => {
-    mockedFetch.restore();
+    fetch.restore();
   });
 
   it('should get paginated connection', async () => {
@@ -28,7 +28,7 @@ describe('PaginatedHttpResource', () => {
       cursors: data.map((_, i) => String(i)),
     };
 
-    mockedFetch.get('https://gateway/v1/salads?limit=2', {
+    fetch.get('https://gateway/v1/salads?limit=2', {
       status: 200,
       body: { data, meta },
     });
@@ -59,7 +59,7 @@ describe('PaginatedHttpResource', () => {
       cursors: data.map((_, i) => String(i + 1)),
     };
 
-    mockedFetch.get('https://gateway/v1/salads?cursor=1&limit=2', {
+    fetch.get('https://gateway/v1/salads?cursor=1&limit=2', {
       status: 200,
       body: { data, meta },
     });
@@ -91,7 +91,7 @@ describe('PaginatedHttpResource', () => {
       cursors: data.map((_, i) => String(i)),
     };
 
-    mockedFetch.get('https://gateway/v1/salads?before=3&last=2', {
+    fetch.get('https://gateway/v1/salads?before=3&last=2', {
       status: 200,
       body: { data, meta },
     });
@@ -121,7 +121,7 @@ describe('PaginatedHttpResource', () => {
       cursors: data.map((_, i) => String(i)),
     };
 
-    mockedFetch.get('https://gateway/v1/salads?limit=2', {
+    fetch.get('https://gateway/v1/salads?limit=2', {
       status: 200,
       body: { data, meta },
     });
@@ -147,7 +147,7 @@ describe('PaginatedHttpResource', () => {
     });
     const data = null;
 
-    mockedFetch.get('https://gateway/v1/salads?limit=2', {
+    fetch.get('https://gateway/v1/salads?limit=2', {
       status: 200,
       body: { data },
     });
@@ -173,7 +173,7 @@ describe('PaginatedHttpResource', () => {
         endpoint: 'salads',
       });
 
-      mockedFetch.getOnce('https://gateway/v1/salads?cursor=3&limit=2', {
+      fetch.getOnce('https://gateway/v1/salads?cursor=3&limit=2', {
         status: 200,
         body: { data: null },
       });
@@ -182,7 +182,7 @@ describe('PaginatedHttpResource', () => {
         await resource.getConnection({ after: '3', last: 3, first: 2 }),
       ).toEqual(null);
 
-      mockedFetch.getOnce('https://gateway/v1/salads?before=3&last=2', {
+      fetch.getOnce('https://gateway/v1/salads?before=3&last=2', {
         status: 200,
         body: { data: null },
       });
@@ -198,7 +198,7 @@ describe('PaginatedHttpResource', () => {
       });
       const data = null;
 
-      mockedFetch.get('https://gateway/v1/salads?limit=2', {
+      fetch.get('https://gateway/v1/salads?limit=2', {
         status: 200,
         body: { data },
       });

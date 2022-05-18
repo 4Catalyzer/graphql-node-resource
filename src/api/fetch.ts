@@ -1,11 +1,12 @@
-import FormData from 'form-data';
-import _fetch, { RequestInit, Response } from 'node-fetch';
+import {
+  File,
+  FormData,
+  RequestInit,
+  Response,
+  fetch as _fetch,
+} from 'undici';
 
-export type File = {
-  fieldname: string;
-  originalname: string;
-  buffer: Buffer;
-};
+export type { File };
 
 export type HttpMethod =
   | 'GET'
@@ -28,7 +29,7 @@ export type RequestOptions = RequestInit & {
 export default function fetch(reqOptions: RequestOptions): Promise<Response> {
   const { url, data, headers, files, ...rest } = reqOptions;
 
-  const init: RequestInit = {
+  const init: Partial<RequestInit> = {
     headers: {
       Accept: 'application/json',
       ...headers,
@@ -44,16 +45,19 @@ export default function fetch(reqOptions: RequestOptions): Promise<Response> {
         formData.append(name, value),
       );
 
-      files.forEach(({ fieldname, buffer, originalname }) => {
-        formData.append(fieldname, buffer, originalname);
+      files.forEach((file) => {
+        formData.append(file.name, file, file.name);
       });
-
+      // @ts-expect-error readonly on the type
       init.body = formData;
     } else {
+      // @ts-expect-error readonly on the type
       init.headers = {
         ...init.headers,
         'Content-Type': 'application/json',
       };
+
+      // @ts-expect-error readonly on the type
       init.body = JSON.stringify(data);
     }
   }

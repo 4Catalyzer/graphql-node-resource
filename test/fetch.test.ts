@@ -1,5 +1,4 @@
-import FormData from 'form-data';
-import mockedFetch, { Response } from 'node-fetch';
+import { File, FormData, Response, fetch as mockedFetch } from 'undici';
 
 import { fetch } from '../src';
 
@@ -44,13 +43,7 @@ describe('fetch', () => {
       method: 'GET',
       url: 'https://example.com/foo',
       data: { foo: 'bar' },
-      files: [
-        {
-          fieldname: 'file',
-          buffer: Buffer.from('Content!'),
-          originalname: 'file',
-        },
-      ],
+      files: [new File(Buffer.from('Content!'), 'file')],
     });
 
     expect(mockedFetch.lastCall()![1].body instanceof FormData).toEqual(true);

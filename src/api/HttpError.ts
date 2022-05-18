@@ -1,6 +1,6 @@
 import util from 'util';
 
-import { Response } from 'node-fetch';
+import { Response } from 'undici';
 
 export interface JsonApiError {
   detail?: string;
