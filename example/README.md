@@ -21,3 +21,12 @@ The GraphQL API is composed of 3 main parts:
 ## Starting Point
 
 A good starting point would be the `types/Query.ts` file. This is the entrypoint into any of the API endpoints.
+
+## Running the App
+
+```sh
+yarn # install the deps
+yarn start # start the app
+```
+
+The app will run the GraphIQL tool. Navigate to the [outputted server url](http://localhost:8081/graphql) to interact with the API.
