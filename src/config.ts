@@ -67,6 +67,24 @@ function createConfig({
   };
 }
 
+/**
+ * Returns the config created by calling `setup`. This can only be called after `setup` is called. This can be used
+ * to add the `node` and `nodes` field to your Query type. These fields are required by the Relay client.w
+ * 
+ * @example
+ * // Query.ts
+ * // assumes you have already called setup previously
+ * const config = getConfig();
+ * 
+ * export default new GraphQLObjectType({
+ *   name: "Query",
+ *   fields: () => ({
+ *     node: config.nodeField,
+ *     nodesField: config.nodesField
+ *   })
+ * })
+ * @returns the previously created config
+ */
 export function getConfig() {
   if (!config) {
     throw new Error('you must first call `setup`');
@@ -74,9 +92,19 @@ export function getConfig() {
   return config;
 }
 
-export function setup(options: Parameters<typeof createConfig>[0]) {
+/**
+ * This is used by the Node class to determine how to generate the resulting GraphQL schema.
+ * This must be called first by your application before trying to generate the GraphQL schema.
+ * 
+ * @param options a set of options to alter the behavior of this library
+ * 
+ * @returns the newly created config
+ */
+export function setup(options: Parameters<typeof createConfig>[0]): Config {
   if (config && process.env.NODE_ENV !== 'test') {
     throw new Error("You can't call `setup` twice");
   }
   config = createConfig(options);
+
+  return config;
 }
