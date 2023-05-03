@@ -141,7 +141,7 @@ export default new GraphQLObjectType({
     fields: {
         foo: {
             type: Foo,
-            resolve() {
+            resolve: (parent, args, context, info) => {
                 return {
                     id: 'foo:123'
                 }
