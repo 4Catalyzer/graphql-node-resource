@@ -14,6 +14,18 @@ export type HttpResourceOptions = {
   endpoint: Endpoint;
 };
 
+/**
+ * This represents a standard REST resource that folows the CRUD
+ * pattern. Its used by the NodeType class to fetch the
+ * resource. It can also be used within mutations to modify or create
+ * resources.
+ * 
+ * This class assumes the resource does not provide a paginated connection
+ * response. For resources that support the connection spec, 
+ * use {@link PaginatedHttpResource}.
+ * 
+ * To get a NodeType's resource, use {@link NodeType.getResource}.
+ */
 export default class HttpResource<
   TApi extends HttpApi = HttpApi,
   TContext extends HttpContext<TApi> = HttpContext<TApi>,
