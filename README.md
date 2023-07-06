@@ -13,12 +13,16 @@ graph LR;
 ```
 _example architecture_
 
+## Example Application
+
+For a full end-to-end example of this library, see [example/README.md](example/README.md). This demonstrates how to connect this library to a real backend REST API.
+
 
 ## What is a Node?
 
 A `Node` is a refetchable GraphQL resource. All `Node`s must have a _globally unique ID_ and be fetchable via this ID. Relay will refetch these resources in the following way:
 
-```
+```graphql
 node(id: $resource_id) {
     ... on Foo {
         bar
@@ -26,6 +30,26 @@ node(id: $resource_id) {
     }
 }
 ```
+
+The spec defines the Node interface in this way:
+```graphql
+# An object with a Globally Unique ID
+interface Node {
+  # The ID of the object.
+  id: ID!
+}
+```
+
+It can be used in a GQL schema as such:
+```graphql
+type User implements Node {
+  id: ID!
+  # Full name
+  name: String!
+}
+```
+
+See the [Global Identification Page](https://graphql.org/learn/global-object-identification/) for more information.
 
 ## The Node Class
 
@@ -173,8 +197,3 @@ TODO
 
 The following is a list of suggested best practices:
 1. One HttpResource for one GraphQL type: an HttpResource should be responsible for fetching a single Resource.
-
-## Example Application
-
-For a full end-to-end example of this library, see [example/README.md](example/README.md). This demonstrates how to connect
-this library to a real backend REST API.

@@ -201,7 +201,7 @@ app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
 
 export default function start(port: number) {
   app.listen(port, () => {
-    console.log('Listening on port ' + port);
+    console.log('REST API listening on port ' + port);
   });
 
   return app;

@@ -26,5 +26,5 @@ app.use(
 // start the GQL HTTP server
 const port = 8081;
 app.listen(port, () => {
-    console.log(`Running a GraphQL API server at http://localhost:${port}/graphql`);
+    console.log(`See the GraphiQL playground at http://localhost:${port}/graphql`);
 });
