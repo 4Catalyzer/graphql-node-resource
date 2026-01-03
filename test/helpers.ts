@@ -1,6 +1,8 @@
-import { HttpApi, HttpError, HttpResource, utils } from '../src';
-import { Data } from '../src/api/HttpApi';
-import apiFetch, { HttpMethod } from '../src/api/fetch';
+import type { Data } from '../src/api/HttpApi.js';
+import apiFetch from '../src/api/fetch.js';
+import type { HttpMethod } from '../src/api/fetch.js';
+import { HttpApi, HttpError, HttpResource, utils } from '../src/index.js';
+import type { Obj } from '../src/utils/typing.js';
 
 function getData(response: { data?: { [key: string]: any }; meta?: {} } = {}) {
   const { data, meta } = response;
@@ -23,7 +25,7 @@ export class TestHttpApi extends HttpApi {
     if (resp.status === 204) return null;
 
     if (!resp.ok) throw await new HttpError(resp).init();
-    return getData(await resp.json()) as T;
+    return getData((await resp.json()) as Obj) as T;
   }
 
   foo() {

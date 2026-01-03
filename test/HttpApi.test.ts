@@ -1,12 +1,12 @@
-import range from 'lodash/range';
-import mockedFetch from 'node-fetch';
+import range from 'lodash/range.js';
+import fetchMock from '@fetch-mock/jest';
 
-import { HttpError } from '../src';
-import { TestHttpApi } from './helpers';
+import { HttpError } from '../src/index.js';
+import { TestHttpApi } from './helpers.js';
 
 describe('HttpApi', () => {
   afterEach(() => {
-    mockedFetch.restore();
+    fetchMock.mockReset();
   });
 
   it('should parse query string', () => {
@@ -28,17 +28,19 @@ describe('HttpApi', () => {
   it('should cache gets', async () => {
     const api = new TestHttpApi();
 
-    mockedFetch.get('https://gateway/v1/foo/1', { body: {}, status: 200 });
+    fetchMock.get('https://gateway/v1/foo/1', { body: {}, status: 200 });
 
     await Promise.all([api.get('foo/1'), api.get('foo/1'), api.get('foo/1')]);
 
-    expect(mockedFetch.calls('https://gateway/v1/foo/1')).toHaveLength(1);
+    expect(
+      fetchMock.callHistory.calls('https://gateway/v1/foo/1'),
+    ).toHaveLength(1);
   });
 
   it('should re throw get errors', async () => {
     const api = new TestHttpApi();
 
-    mockedFetch.get('https://gateway/v1/foo/1', { body: '{}', status: 409 });
+    fetchMock.get('https://gateway/v1/foo/1', { body: '{}', status: 409 });
 
     await expect(api.get('foo/1')).rejects.toThrow(HttpError);
   });
@@ -46,7 +48,7 @@ describe('HttpApi', () => {
   it('should create an arg loader', async () => {
     const api = new TestHttpApi();
 
-    mockedFetch.get('https://gateway/v1/dressings?saladId=1', {
+    fetchMock.get('https://gateway/v1/dressings?saladId=1', {
       body: { data: [{ saladId: '1' }, { saladId: '1' }] },
       status: 200,
     });
@@ -61,14 +63,14 @@ describe('HttpApi', () => {
     expect(resultA).toEqual([{ saladId: '1' }, { saladId: '1' }]);
     expect(resultA === resultB).toEqual(true);
     expect(
-      mockedFetch.calls('https://gateway/v1/dressings?saladId=1'),
+      fetchMock.callHistory.calls('https://gateway/v1/dressings?saladId=1'),
     ).toHaveLength(1);
   });
 
   it('should create an arg loader that returns an empty set', async () => {
     const api = new TestHttpApi();
 
-    mockedFetch.get('https://gateway/v1/dressings?saladId=1', {
+    fetchMock.get('https://gateway/v1/dressings?saladId=1', {
       body: { data: null },
       status: 200,
     });
@@ -91,11 +93,11 @@ describe('HttpApi', () => {
     const chunk1Data = data.slice(0, api.numKeysPerChunk);
     const chunk2Data = data.slice(api.numKeysPerChunk);
 
-    mockedFetch.get(`https://gateway/v1/dressings?${chunk1Params.join('&')}`, {
+    fetchMock.get(`https://gateway/v1/dressings?${chunk1Params.join('&')}`, {
       body: { data: chunk1Data },
       status: 200,
     });
-    mockedFetch.get(`https://gateway/v1/dressings?${chunk2Params.join('&')}`, {
+    fetchMock.get(`https://gateway/v1/dressings?${chunk2Params.join('&')}`, {
       body: { data: chunk2Data },
       status: 200,
     });

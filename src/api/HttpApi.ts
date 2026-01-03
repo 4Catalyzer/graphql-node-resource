@@ -1,20 +1,13 @@
 import querystring from 'querystring';
 
 import DataLoader from 'dataloader';
-import {
-  Connection,
-  ConnectionArguments,
-  connectionFromArray,
-  forwardConnectionArgs,
-} from 'graphql-relay';
-import chunk from 'lodash/chunk';
-import flatten from 'lodash/flatten';
-import omit from 'lodash/omit';
-import pick from 'lodash/pick';
+import { connectionFromArray, forwardConnectionArgs } from 'graphql-relay';
+import type { Connection, ConnectionArguments } from 'graphql-relay';
+import _ from 'lodash';
 
-import { HttpMethod } from './fetch';
-import { Maybe, Obj } from '../utils/typing';
-import urlJoin from '../utils/urlJoin';
+import type { HttpMethod } from './fetch.js';
+import type { Maybe, Obj } from '../utils/typing.js';
+import urlJoin from '../utils/urlJoin.js';
 
 const PAGINATION_ARG_KEYS = Object.keys(forwardConnectionArgs);
 
@@ -196,8 +189,8 @@ export default abstract class HttpApi {
     path: string,
     args: Args,
   ): Promise<Maybe<PaginationResult<T>>> {
-    const apiArgs = omit(args, PAGINATION_ARG_KEYS);
-    const paginationArgs = pick(args, PAGINATION_ARG_KEYS);
+    const apiArgs = _.omit(args, PAGINATION_ARG_KEYS);
+    const paginationArgs = _.pick(args, PAGINATION_ARG_KEYS);
 
     // XXX Need to cast the result of the get to a list
     const items = await this.get<T[]>(this.makePath(path, apiArgs));
@@ -286,12 +279,12 @@ export default abstract class HttpApi {
     return new DataLoader<any, any>(async (keys) => {
       // No need to cache the GET; the DataLoader will cache it.
       const chunkedItems = await Promise.all(
-        chunk<string>(keys, this.numKeysPerChunk || 1).map((chunkKeys) =>
+        _.chunk<string>(keys, this.numKeysPerChunk || 1).map((chunkKeys) =>
           this.request<T[]>('GET', getPath(chunkKeys)),
         ),
       );
 
-      const items = flatten<T | null | undefined>(chunkedItems).filter(
+      const items = _.flatten<T | null | undefined>(chunkedItems).filter(
         <TItem>(
           item: TItem,
         ): item is TItem extends null | undefined ? never : TItem => !!item,

@@ -1,23 +1,17 @@
 // eslint-disable-next-line max-classes-per-file
 
-import {
-  GraphQLFieldConfig,
-  GraphQLObjectType,
-  GraphQLObjectTypeConfig,
-  GraphQLString,
-} from 'graphql';
-import {
-  ConnectionConfig,
-  connectionDefinitions,
-  globalIdField,
-} from 'graphql-relay';
-import camelCase from 'lodash/camelCase';
+import { GraphQLObjectType, GraphQLString } from 'graphql';
+import type { GraphQLFieldConfig, GraphQLObjectTypeConfig } from 'graphql';
+import { connectionDefinitions, globalIdField } from 'graphql-relay';
+import type { ConnectionConfig } from 'graphql-relay';
+import _ from 'lodash';
 
 // eslint-disable-next-line import/no-cycle
-import { getConfig } from '../config';
-import Resource from '../resources/Resource';
-import resolveThunk from '../utils/resolveThunk';
-import { Obj } from '../utils/typing';
+import { getConfig } from '../config.js';
+import type { Context } from './Context.js';
+import Resource from '../resources/Resource.js';
+import resolveThunk from '../utils/resolveThunk.js';
+import type { Obj } from '../utils/typing.js';
 
 export interface NodeTypeConfig<
   R extends Resource,
@@ -36,7 +30,7 @@ export interface NodeTypeConfig<
 function getLocalIdFieldName(name: string, localIdFieldName?: string | null) {
   if (localIdFieldName !== undefined) return localIdFieldName;
 
-  return `${camelCase(name)}Id`;
+  return `${_.camelCase(name)}Id`;
 }
 
 export default class NodeType<
@@ -172,7 +166,10 @@ export default class NodeType<
     this.makeId = makeId || (({ id }: TSource) => id);
     this.makeObjectStub = makeObjectStub;
 
-    config.nodeTypesByName.set(name, this);
+    config.nodeTypesByName.set(
+      name,
+      this as unknown as NodeType<Resource<Context>, any>,
+    );
   }
 
   getResource(context: R['context']) {
