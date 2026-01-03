@@ -1,5 +1,5 @@
-import Resource from '../resources/Resource';
 import { Context, RESOURCE_CACHE_KEY } from './Context';
+import Resource from '../resources/Resource';
 
 export default class ResourceCache {
   cache = new WeakMap<any, Map<string, Resource<any>>>();

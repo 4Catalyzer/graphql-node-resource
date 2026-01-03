@@ -1,8 +1,8 @@
 import mockedFetch from 'node-fetch';
 
 import { HttpContext, RESOURCE_CACHE_KEY } from '../src';
-import PaginatedHttpResource from '../src/resources/PaginatedHttpResource';
 import { TestHttpApi } from './helpers';
+import PaginatedHttpResource from '../src/resources/PaginatedHttpResource';
 
 describe('PaginatedHttpResource', () => {
   let mockContext: HttpContext<any>;
@@ -163,7 +163,7 @@ describe('PaginatedHttpResource', () => {
 
       await expect(
         resource.getConnection({ after: 'asfs', before: 'afasf' }),
-      ).rejects.toThrowError(
+      ).rejects.toThrow(
         '`after` and `before` cursors cannot be specified together',
       );
     });

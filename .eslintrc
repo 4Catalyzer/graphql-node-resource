@@ -12,6 +12,13 @@
   "rules": {
     "prettier/prettier": "error",
     "global-require": "off",
-    "import/no-dynamic-require": "off"
+    "import/no-dynamic-require": "off",
+    "no-empty-function": "off",
+    "@typescript-eslint/no-empty-function": [
+      "error",
+      {
+        "allow": ["constructors"]
+      }
+    ]
   }
 }
