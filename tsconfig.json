@@ -1,7 +1,23 @@
 {
-  "extends": "@4c/tsconfig/node",
   "compilerOptions": {
-    "rootDir": "src"
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "outDir": "lib",
+    "rootDir": "src",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+    "noImplicitAny": true,
+    "noUnusedParameters": true,
+    "types": ["node"]
   },
   "include": ["src/**/*.ts"]
 }

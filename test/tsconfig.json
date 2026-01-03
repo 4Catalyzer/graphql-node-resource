@@ -1,6 +1,9 @@
 {
   "extends": "@4c/tsconfig/node",
   "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "verbatimModuleSyntax": true,
     "noImplicitAny": false,
     "types": ["jest", "node"]
   },
