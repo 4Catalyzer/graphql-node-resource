@@ -1,8 +1,8 @@
-import Resource from './Resource';
 import HttpApi, { Args, Data } from '../api/HttpApi';
 import { Context } from '../types/Context';
 import { Maybe, Obj } from '../utils/typing';
 import urlJoin from '../utils/urlJoin';
+import Resource from './Resource';
 
 export type Endpoint = string | ((id?: string) => string);
 

@@ -1,5 +1,5 @@
-import HttpResource from './HttpResource';
 import HttpApi, { Args } from '../api/HttpApi';
+import HttpResource from './HttpResource';
 
 export default class PaginatedHttpResource<
   TApi extends HttpApi = HttpApi,

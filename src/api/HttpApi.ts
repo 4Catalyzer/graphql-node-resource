@@ -12,9 +12,9 @@ import flatten from 'lodash/flatten';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 
-import { HttpMethod } from './fetch';
 import { Maybe, Obj } from '../utils/typing';
 import urlJoin from '../utils/urlJoin';
+import { HttpMethod } from './fetch';
 
 const PAGINATION_ARG_KEYS = Object.keys(forwardConnectionArgs);
 
@@ -60,11 +60,11 @@ export default abstract class HttpApi {
   /** The serializer and deserializer used for query parameters */
   readonly qs: QueryString = querystring;
 
-  /**
-   * DataLoader requests with many keys will be split into multiple
-   * requests to avoid hitting URL size limits. The default works well for
-   * chunking UUID keys
-   */
+  /** 
+  DataLoader requests with many keys will be split into multiple 
+  requests to avoid hitting URL size limits. The default works well for 
+  chunking UUID keys
+  */
   readonly numKeysPerChunk: number = 25;
 
   constructor({ apiBase, origin, externalOrigin }: HttpApiOptions) {

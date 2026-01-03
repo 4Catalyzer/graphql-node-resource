@@ -1,8 +1,8 @@
 import { connectionFromArray } from 'graphql-relay';
 import mockedFetch from 'node-fetch';
 
-import { TestHttpApi } from './helpers';
 import HttpResource from '../src/resources/HttpResource';
+import { TestHttpApi } from './helpers';
 
 describe('HttpResource', () => {
   let mockContext;

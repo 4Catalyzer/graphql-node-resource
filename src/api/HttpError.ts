@@ -49,7 +49,7 @@ export default class HttpError extends Error {
           errors: this.errors,
         },
       };
-    } catch {
+    } catch (e) {
       this.errors = [];
     }
 

@@ -8,10 +8,10 @@ import {
 import mockedFetch from 'node-fetch';
 
 import { HttpResource } from '../src';
-import { MockContext, TestHttpApi, TestHttpResource } from './helpers';
 import { getConfig, setup } from '../src/config';
 import NodeType from '../src/types/NodeType';
 import createResolve from '../src/types/createResolve';
+import { MockContext, TestHttpApi, TestHttpResource } from './helpers';
 
 function mockResponses() {
   mockedFetch.getOnce('https://gateway/v1/widgets/1', {
