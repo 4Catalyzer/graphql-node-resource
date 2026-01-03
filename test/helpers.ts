@@ -21,7 +21,12 @@ export class TestHttpApi extends HttpApi {
 
   async request<T>(method: HttpMethod, url: string, data?: Data) {
     console.log('FETCHING');
-    const resp = await apiFetch({ method, url, data: { data } });
+    const canHaveBody = method !== 'GET' && method !== 'HEAD';
+    const resp = await apiFetch({
+      method,
+      url,
+      data: canHaveBody ? { data } : undefined,
+    });
     if (resp.status === 204) return null;
 
     if (!resp.ok) throw await new HttpError(resp).init();
