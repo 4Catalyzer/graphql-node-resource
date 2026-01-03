@@ -19,8 +19,10 @@ import Resource from '../resources/Resource';
 import resolveThunk from '../utils/resolveThunk';
 import { Obj } from '../utils/typing';
 
-export interface NodeTypeConfig<R extends Resource, TSource>
-  extends GraphQLObjectTypeConfig<TSource, R['context']> {
+export interface NodeTypeConfig<
+  R extends Resource,
+  TSource,
+> extends GraphQLObjectTypeConfig<TSource, R['context']> {
   localIdFieldName?: string | null | undefined;
   createResource: (context: R['context']) => R;
 
