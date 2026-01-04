@@ -77,7 +77,7 @@
     "fetch-mock": "^9.11.0",
     "graphql": "^16.6.0",
     "graphql-relay": "^0.10.0",
-    "hookem": "^2.0.1",
+    "hookem": "^3.0.4",
     "jest": "^27.5.1",
     "lint-staged": "^12.5.0",
     "prettier": "^2.7.1",
