@@ -48,7 +48,7 @@
     "express": "^4.17.3",
     "form-data": "^4.0.0",
     "lodash": "^4.17.21",
-    "node-fetch": "^2.6.1",
+    "node-fetch": "^2.6.7",
     "pluralize": "^8.0.0",
     "utility-types": "^3.10.0"
   },
@@ -70,7 +70,7 @@
     "eslint-config-4catalyzer": "^1.5.0",
     "eslint-config-4catalyzer-jest": "^2.3.0",
     "eslint-config-4catalyzer-typescript": "^3.3.0",
-    "eslint-config-prettier": "^8.5.0",
+    "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-jest": "^25.7.0",
     "eslint-plugin-prettier": "^5.5.4",
