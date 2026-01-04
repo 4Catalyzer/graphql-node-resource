@@ -13,10 +13,8 @@ import Resource from '../resources/Resource.js';
 import resolveThunk from '../utils/resolveThunk.js';
 import type { Obj } from '../utils/typing.js';
 
-export interface NodeTypeConfig<
-  R extends Resource,
-  TSource,
-> extends GraphQLObjectTypeConfig<TSource, R['context']> {
+export interface NodeTypeConfig<R extends Resource, TSource>
+  extends GraphQLObjectTypeConfig<TSource, R['context']> {
   localIdFieldName?: string | null | undefined;
   createResource: (context: R['context']) => R;
 
