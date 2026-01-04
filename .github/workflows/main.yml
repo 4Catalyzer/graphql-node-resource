@@ -19,4 +19,5 @@ jobs:
       - run: corepack enable
       - run: yarn install --immutable
       - run: yarn test --coverage
-      - run: node_modules/.bin/codecov
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
