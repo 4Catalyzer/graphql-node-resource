@@ -6,10 +6,7 @@ export default function asType<T, SubT extends T>(
   klass: Class<SubT>,
 ): SubT {
   if (!(obj instanceof klass)) {
-    const ctor =
-      _.isObject(obj) &&
-      (obj as object).constructor &&
-      (obj as object).constructor.name;
+    const ctor = _.isObject(obj) && obj.constructor && obj.constructor.name;
     throw new Error(
       `"${String(ctor || obj)}" is not an instance of ${String(klass)}`,
     );
