@@ -1,7 +1,7 @@
-import { GraphQLResolveInfo } from 'graphql';
+import type { GraphQLResolveInfo } from 'graphql';
 
-import getParentNodeType from './getParentNodeType';
-import { Context } from './types/Context';
+import getParentNodeType from './getParentNodeType.js';
+import type { Context } from './types/Context.js';
 
 export default function getNodeResource(
   context: Context,

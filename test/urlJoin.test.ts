@@ -1,4 +1,4 @@
-import urlJoin from '../src/utils/urlJoin';
+import urlJoin from '../src/utils/urlJoin.js';
 
 describe('urlJoin', () => {
   it('should join urls', () => {

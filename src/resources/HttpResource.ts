@@ -1,8 +1,9 @@
-import Resource from './Resource';
-import HttpApi, { Args, Data } from '../api/HttpApi';
-import { Context } from '../types/Context';
-import { Maybe, Obj } from '../utils/typing';
-import urlJoin from '../utils/urlJoin';
+import Resource from './Resource.js';
+import HttpApi from '../api/HttpApi.js';
+import type { Args, Data } from '../api/HttpApi.js';
+import type { Context } from '../types/Context.js';
+import type { Maybe, Obj } from '../utils/typing.js';
+import urlJoin from '../utils/urlJoin.js';
 
 export type Endpoint = string | ((id?: string) => string);
 

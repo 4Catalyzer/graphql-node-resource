@@ -1,4 +1,4 @@
-import resolveThunk from '../src/utils/resolveThunk';
+import resolveThunk from '../src/utils/resolveThunk.js';
 
 describe('resolveThunk', () => {
   it('should return non functions', () => {

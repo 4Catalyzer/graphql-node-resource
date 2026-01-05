@@ -1,21 +1,20 @@
 import FormData from 'form-data';
-import mockedFetch, { Response } from 'node-fetch';
+import fetchMock from '@fetch-mock/jest';
 
-import { fetch } from '../src';
+import { fetch } from '../src/index.js';
 
 describe('fetch', () => {
   afterEach(() => {
-    mockedFetch.restore();
+    fetchMock.mockReset();
   });
 
   it('should return a response', async () => {
-    mockedFetch.get(
+    fetchMock.get(
       'https://example.com/foo',
-      { body: {}, status: 200 },
+      { body: { foo: 42 }, status: 200 },
       {
         headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
+          Accept: 'application/json',
         },
       },
     );
@@ -23,14 +22,13 @@ describe('fetch', () => {
     const resp = await fetch({
       method: 'GET',
       url: 'https://example.com/foo',
-      data: {},
     });
 
     expect(resp instanceof Response).toEqual(true);
   });
 
   it('should handle files', async () => {
-    mockedFetch.get(
+    fetchMock.post(
       'https://example.com/foo',
       { body: {}, status: 200 },
       {
@@ -41,7 +39,7 @@ describe('fetch', () => {
     );
 
     await fetch({
-      method: 'GET',
+      method: 'POST',
       url: 'https://example.com/foo',
       data: { foo: 'bar' },
       files: [
@@ -53,8 +51,8 @@ describe('fetch', () => {
       ],
     });
 
-    const lastCall = mockedFetch.lastCall();
-    const body = lastCall?.[1]?.body;
+    const lastCall = fetchMock.callHistory.lastCall();
+    const body = lastCall?.options?.body;
     expect(body instanceof FormData).toEqual(true);
   });
 });
