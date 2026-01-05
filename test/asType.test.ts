@@ -21,11 +21,11 @@ describe('asType', () => {
     const value = new Bar();
 
     expect(() => asType(value, Foo)).toThrow(
-      '"Bar" is not an instance of class Foo {}',
+      '"Bar" is not an instance of class Foo',
     );
 
     expect(() => asType('foo', Foo as any)).toThrow(
-      '"foo" is not an instance of class Foo {}',
+      '"foo" is not an instance of class Foo',
     );
   });
 });
