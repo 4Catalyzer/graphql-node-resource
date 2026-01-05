@@ -1,9 +1,10 @@
-import { GraphQLFieldConfig, GraphQLFieldResolver } from 'graphql';
+import type { GraphQLFieldConfig, GraphQLFieldResolver } from 'graphql';
 
-import NodeType from './NodeType';
+import NodeType from './NodeType.js';
+import type { Obj } from '../utils/typing.js';
 
 export default function createResolve<
-  TSource,
+  TSource extends Obj,
   TContext,
   TField extends string,
 >(

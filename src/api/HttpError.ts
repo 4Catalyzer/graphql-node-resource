@@ -1,7 +1,5 @@
 import util from 'util';
 
-import { Response } from 'node-fetch';
-
 export interface JsonApiError {
   detail?: string;
   code: string;
@@ -49,7 +47,7 @@ export default class HttpError extends Error {
           errors: this.errors,
         },
       };
-    } catch (e) {
+    } catch {
       this.errors = [];
     }
 

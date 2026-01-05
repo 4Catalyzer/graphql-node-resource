@@ -1,5 +1,6 @@
-import Resource from '../resources/Resource';
-import { Context, RESOURCE_CACHE_KEY } from './Context';
+import type { Context } from './Context.js';
+import { RESOURCE_CACHE_KEY } from './Context.js';
+import Resource from '../resources/Resource.js';
 
 export default class ResourceCache {
   cache = new WeakMap<any, Map<string, Resource<any>>>();

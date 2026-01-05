@@ -5,23 +5,24 @@ import {
   GraphQLString,
   graphql,
 } from 'graphql';
-import mockedFetch from 'node-fetch';
+import fetchMock from '@fetch-mock/jest';
 
-import { HttpResource } from '../src';
-import { getConfig, setup } from '../src/config';
-import NodeType from '../src/types/NodeType';
-import createResolve from '../src/types/createResolve';
-import { MockContext, TestHttpApi, TestHttpResource } from './helpers';
+import { HttpResource } from '../src/index.js';
+import type { MockContext } from './helpers.js';
+import { TestHttpApi, TestHttpResource } from './helpers.js';
+import { getConfig, setup } from '../src/config.js';
+import NodeType from '../src/types/NodeType.js';
+import createResolve from '../src/types/createResolve.js';
 
 function mockResponses() {
-  mockedFetch.getOnce('https://gateway/v1/widgets/1', {
+  fetchMock.getOnce('https://gateway/v1/widgets/1', {
     status: 200,
     body: {
       data: { id: '1', name: 'Floofh', number: 5, user: { id: '2' } },
     },
   });
 
-  mockedFetch.getOnce('https://gateway/v1/users/2', {
+  fetchMock.getOnce('https://gateway/v1/users/2', {
     status: 200,
     body: {
       data: { id: '2', name: 'Johan Schmidt', favoriteColor: 'blue' },
@@ -114,7 +115,7 @@ describe('NodeType', () => {
       });
 
       afterEach(() => {
-        mockedFetch.reset();
+        fetchMock.mockReset();
       });
 
       it('should fetch node', async () => {
@@ -166,8 +167,8 @@ describe('NodeType', () => {
           );
 
           expect(result.node).toEqual({ id: nodeId });
-          expect(mockedFetch.done()).toBe(true);
-          expect(mockedFetch.calls()).toHaveLength(0);
+          expect(fetchMock.callHistory.done()).toBe(true);
+          expect(fetchMock.callHistory.calls()).toHaveLength(0);
         });
       }
 

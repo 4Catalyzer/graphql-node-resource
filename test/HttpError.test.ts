@@ -1,6 +1,4 @@
-import { Response } from 'node-fetch';
-
-import { HttpError } from '../src';
+import { HttpError } from '../src/index.js';
 
 describe('HttpError', () => {
   it('should add status', () => {

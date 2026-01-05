@@ -1,15 +1,13 @@
-import { GraphQLFieldConfig, GraphQLInterfaceType } from 'graphql';
-import {
-  ConnectionConfig,
-  fromGlobalId,
-  nodeDefinitions,
-} from 'graphql-relay';
+import { GraphQLInterfaceType } from 'graphql';
+import type { GraphQLFieldConfig } from 'graphql';
+import { fromGlobalId, nodeDefinitions } from 'graphql-relay';
+import type { ConnectionConfig } from 'graphql-relay';
 
-import Resource from './resources/Resource';
-import { Context } from './types/Context';
+import Resource from './resources/Resource.js';
+import type { Context } from './types/Context.js';
 // eslint-disable-next-line import/no-cycle
-import NodeType from './types/NodeType';
-import ResourceCache from './types/ResourceCache';
+import NodeType from './types/NodeType.js';
+import ResourceCache from './types/ResourceCache.js';
 
 type Config = {
   nodeField: GraphQLFieldConfig<any, Context>;

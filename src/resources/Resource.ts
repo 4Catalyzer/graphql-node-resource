@@ -1,4 +1,4 @@
-import { Maybe, Obj } from '../utils/typing';
+import type { Maybe, Obj } from '../utils/typing.js';
 
 export default abstract class Resource<TContext = any> {
   protected constructor(public readonly context: TContext) {}

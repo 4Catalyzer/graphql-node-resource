@@ -1,5 +1,6 @@
-import HttpApi, { Args } from '../api/HttpApi';
-import HttpResource from './HttpResource';
+import HttpResource from './HttpResource.js';
+import HttpApi from '../api/HttpApi.js';
+import type { Args } from '../api/HttpApi.js';
 
 export default class PaginatedHttpResource<
   TApi extends HttpApi = HttpApi,

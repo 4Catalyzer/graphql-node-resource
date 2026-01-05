@@ -1,6 +1,6 @@
-import camelCase from 'lodash/camelCase';
+import camelCase from 'lodash/camelCase.js';
 
-import translateKeys from '../src/utils/translateKeys';
+import translateKeys from '../src/utils/translateKeys.js';
 
 describe('translateKeys', () => {
   it('should translate keys', () => {
