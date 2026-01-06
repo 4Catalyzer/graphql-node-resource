@@ -93,8 +93,8 @@
     "@swc/core": "^1.10.0",
     "@swc/jest": "^0.2.37",
     "@types/jest": "^30.0.0",
-    "@typescript-eslint/eslint-plugin": "^8.51.0",
-    "@typescript-eslint/parser": "^8.51.0",
+    "@typescript-eslint/eslint-plugin": "^8.52.0",
+    "@typescript-eslint/parser": "^8.52.0",
     "eslint-config-4catalyzer": "^1.5.0",
     "eslint-config-4catalyzer-jest": "^2.3.0",
     "eslint-config-4catalyzer-typescript": "^3.3.0",
@@ -106,7 +106,7 @@
     "hookem": "^3.0.4",
     "jest": "^30.2.0",
     "lint-staged": "^16.2.7",
-    "prettier": "^3.7.4",
+    "ts-jest": "^29.2.5",
     "typescript": "^5.9.3"
   },
   "engines": {
