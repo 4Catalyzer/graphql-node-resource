@@ -89,6 +89,8 @@ __metadata:
     "@4c/tsconfig": "npm:^0.4.1"
     "@fetch-mock/jest": "npm:^0.2.20"
     "@jest/globals": "npm:^30.0.1"
+    "@swc/core": "npm:^1.10.0"
+    "@swc/jest": "npm:^0.2.37"
     "@types/jest": "npm:^30.0.0"
     "@types/lodash": "npm:^4.17.21"
     "@types/node": "npm:^25.0.3"
@@ -948,6 +950,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@jest/create-cache-key-function@npm:^30.0.0":
+  version: 30.2.0
+  resolution: "@jest/create-cache-key-function@npm:30.2.0"
+  dependencies:
+    "@jest/types": "npm:30.2.0"
+  checksum: 10c0/0485bd42456494f640e2c29df71e8319f27053815609a209366fa8e9bb314f08c0b5828e0b733edb3670a33e9731ee2158288b73269045796c625d6b5c69cabe
+  languageName: node
+  linkType: hard
+
 "@jest/diff-sequences@npm:30.0.1":
   version: 30.0.1
   resolution: "@jest/diff-sequences@npm:30.0.1"
@@ -1434,6 +1445,151 @@ __metadata:
   dependencies:
     "@sinonjs/commons": "npm:^3.0.1"
   checksum: 10c0/a707476efd523d2138ef6bba916c83c4a377a8372ef04fad87499458af9f01afc58f4f245c5fd062793d6d70587309330c6f96947b5bd5697961c18004dc3e26
+  languageName: node
+  linkType: hard
+
+"@swc/core-darwin-arm64@npm:1.15.8":
+  version: 1.15.8
+  resolution: "@swc/core-darwin-arm64@npm:1.15.8"
+  conditions: os=darwin & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@swc/core-darwin-x64@npm:1.15.8":
+  version: 1.15.8
+  resolution: "@swc/core-darwin-x64@npm:1.15.8"
+  conditions: os=darwin & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@swc/core-linux-arm-gnueabihf@npm:1.15.8":
+  version: 1.15.8
+  resolution: "@swc/core-linux-arm-gnueabihf@npm:1.15.8"
+  conditions: os=linux & cpu=arm
+  languageName: node
+  linkType: hard
+
+"@swc/core-linux-arm64-gnu@npm:1.15.8":
+  version: 1.15.8
+  resolution: "@swc/core-linux-arm64-gnu@npm:1.15.8"
+  conditions: os=linux & cpu=arm64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@swc/core-linux-arm64-musl@npm:1.15.8":
+  version: 1.15.8
+  resolution: "@swc/core-linux-arm64-musl@npm:1.15.8"
+  conditions: os=linux & cpu=arm64 & libc=musl
+  languageName: node
+  linkType: hard
+
+"@swc/core-linux-x64-gnu@npm:1.15.8":
+  version: 1.15.8
+  resolution: "@swc/core-linux-x64-gnu@npm:1.15.8"
+  conditions: os=linux & cpu=x64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@swc/core-linux-x64-musl@npm:1.15.8":
+  version: 1.15.8
+  resolution: "@swc/core-linux-x64-musl@npm:1.15.8"
+  conditions: os=linux & cpu=x64 & libc=musl
+  languageName: node
+  linkType: hard
+
+"@swc/core-win32-arm64-msvc@npm:1.15.8":
+  version: 1.15.8
+  resolution: "@swc/core-win32-arm64-msvc@npm:1.15.8"
+  conditions: os=win32 & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@swc/core-win32-ia32-msvc@npm:1.15.8":
+  version: 1.15.8
+  resolution: "@swc/core-win32-ia32-msvc@npm:1.15.8"
+  conditions: os=win32 & cpu=ia32
+  languageName: node
+  linkType: hard
+
+"@swc/core-win32-x64-msvc@npm:1.15.8":
+  version: 1.15.8
+  resolution: "@swc/core-win32-x64-msvc@npm:1.15.8"
+  conditions: os=win32 & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@swc/core@npm:^1.10.0":
+  version: 1.15.8
+  resolution: "@swc/core@npm:1.15.8"
+  dependencies:
+    "@swc/core-darwin-arm64": "npm:1.15.8"
+    "@swc/core-darwin-x64": "npm:1.15.8"
+    "@swc/core-linux-arm-gnueabihf": "npm:1.15.8"
+    "@swc/core-linux-arm64-gnu": "npm:1.15.8"
+    "@swc/core-linux-arm64-musl": "npm:1.15.8"
+    "@swc/core-linux-x64-gnu": "npm:1.15.8"
+    "@swc/core-linux-x64-musl": "npm:1.15.8"
+    "@swc/core-win32-arm64-msvc": "npm:1.15.8"
+    "@swc/core-win32-ia32-msvc": "npm:1.15.8"
+    "@swc/core-win32-x64-msvc": "npm:1.15.8"
+    "@swc/counter": "npm:^0.1.3"
+    "@swc/types": "npm:^0.1.25"
+  peerDependencies:
+    "@swc/helpers": ">=0.5.17"
+  dependenciesMeta:
+    "@swc/core-darwin-arm64":
+      optional: true
+    "@swc/core-darwin-x64":
+      optional: true
+    "@swc/core-linux-arm-gnueabihf":
+      optional: true
+    "@swc/core-linux-arm64-gnu":
+      optional: true
+    "@swc/core-linux-arm64-musl":
+      optional: true
+    "@swc/core-linux-x64-gnu":
+      optional: true
+    "@swc/core-linux-x64-musl":
+      optional: true
+    "@swc/core-win32-arm64-msvc":
+      optional: true
+    "@swc/core-win32-ia32-msvc":
+      optional: true
+    "@swc/core-win32-x64-msvc":
+      optional: true
+  peerDependenciesMeta:
+    "@swc/helpers":
+      optional: true
+  checksum: 10c0/929f334a224776fdb3c4a8aaba68f07666ff56fae7502a9459bc9666cb73d94e65f042ce8c4ef4e6746a8bb3f8255cbe8599bef6e3181269caf761c8e55513cf
+  languageName: node
+  linkType: hard
+
+"@swc/counter@npm:^0.1.3":
+  version: 0.1.3
+  resolution: "@swc/counter@npm:0.1.3"
+  checksum: 10c0/8424f60f6bf8694cfd2a9bca45845bce29f26105cda8cf19cdb9fd3e78dc6338699e4db77a89ae449260bafa1cc6bec307e81e7fb96dbf7dcfce0eea55151356
+  languageName: node
+  linkType: hard
+
+"@swc/jest@npm:^0.2.37":
+  version: 0.2.39
+  resolution: "@swc/jest@npm:0.2.39"
+  dependencies:
+    "@jest/create-cache-key-function": "npm:^30.0.0"
+    "@swc/counter": "npm:^0.1.3"
+    jsonc-parser: "npm:^3.2.0"
+  peerDependencies:
+    "@swc/core": "*"
+  checksum: 10c0/2df5f215bb7a3f31e1db606e3ac01c4e67900e8db004b38dbfaa09f87bcc2b054070211086e095eddcd174ee561b696fcf679ea38263fa6daf69fee37dacbdc9
+  languageName: node
+  linkType: hard
+
+"@swc/types@npm:^0.1.25":
+  version: 0.1.25
+  resolution: "@swc/types@npm:0.1.25"
+  dependencies:
+    "@swc/counter": "npm:^0.1.3"
+  checksum: 10c0/847a5b20b131281f89d640a7ed4887fb65724807d53d334b230e84b98c21097aa10cd28a074f9ed287a6ce109e443dd4bafbe7dcfb62333d7806c4ea3e7f8aca
   languageName: node
   linkType: hard
 
@@ -8648,6 +8804,13 @@ __metadata:
   bin:
     json5: lib/cli.js
   checksum: 10c0/5a04eed94810fa55c5ea138b2f7a5c12b97c3750bc63d11e511dcecbfef758003861522a070c2272764ee0f4e3e323862f386945aeb5b85b87ee43f084ba586c
+  languageName: node
+  linkType: hard
+
+"jsonc-parser@npm:^3.2.0":
+  version: 3.3.1
+  resolution: "jsonc-parser@npm:3.3.1"
+  checksum: 10c0/269c3ae0a0e4f907a914bf334306c384aabb9929bd8c99f909275ebd5c2d3bc70b9bcd119ad794f339dec9f24b6a4ee9cd5a8ab2e6435e730ad4075388fc2ab6
   languageName: node
   linkType: hard
 
