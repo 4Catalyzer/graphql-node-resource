@@ -17,7 +17,8 @@
   },
   "license": "MIT",
   "scripts": {
-    "build": "tsc",
+    "clean": "node -e \"require('fs').rmSync('lib',{ recursive:true, force:true })\"",
+    "build": "yarn run clean && tsc",
     "prepublishOnly": "yarn run build",
     "tdd": "yarn testonly --watch",
     "test": "yarn lint && yarn typecheck && yarn testonly",
