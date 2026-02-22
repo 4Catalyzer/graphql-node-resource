@@ -66,8 +66,8 @@
     "conventionalCommits": true
   },
   "dependencies": {
-    "@types/lodash": "^4.17.21",
-    "@types/node": "^25.0.3",
+    "@types/lodash": "^4.17.23",
+    "@types/node": "^25.3.0",
     "@types/pluralize": "^0.0.33",
     "dataloader": "^2.2.3",
     "express": "^5.2.1",
@@ -87,8 +87,8 @@
     "@fetch-mock/jest": "^0.2.20",
     "@jest/globals": "^30.2.0",
     "@types/jest": "^30.0.0",
-    "@typescript-eslint/eslint-plugin": "^8.55.0",
-    "@typescript-eslint/parser": "^8.55.0",
+    "@typescript-eslint/eslint-plugin": "^8.56.0",
+    "@typescript-eslint/parser": "^8.56.0",
     "eslint-config-4catalyzer": "^1.5.0",
     "eslint-config-4catalyzer-jest": "^2.3.0",
     "eslint-config-4catalyzer-typescript": "^3.3.0",
