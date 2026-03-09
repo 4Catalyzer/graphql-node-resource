@@ -95,11 +95,11 @@
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-jest": "^29.15.0",
-    "graphql": "^16.13.0",
+    "graphql": "^16.13.1",
     "graphql-relay": "^0.10.2",
     "hookem": "^3.0.4",
     "jest": "^30.2.0",
-    "lint-staged": "^16.3.1",
+    "lint-staged": "^16.3.2",
     "ts-jest": "^29.4.6",
     "typescript": "^5.9.3"
   },
