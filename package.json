@@ -87,8 +87,8 @@
     "@fetch-mock/jest": "^0.2.20",
     "@jest/globals": "^30.3.0",
     "@types/jest": "^30.0.0",
-    "@typescript-eslint/eslint-plugin": "^8.57.2",
-    "@typescript-eslint/parser": "^8.57.2",
+    "@typescript-eslint/eslint-plugin": "^8.58.0",
+    "@typescript-eslint/parser": "^8.58.0",
     "eslint-config-4catalyzer": "^1.5.0",
     "eslint-config-4catalyzer-jest": "^2.3.0",
     "eslint-config-4catalyzer-typescript": "^3.3.0",
@@ -100,7 +100,7 @@
     "hookem": "^3.0.4",
     "jest": "^30.3.0",
     "lint-staged": "^16.4.0",
-    "ts-jest": "^29.4.6",
+    "ts-jest": "^29.4.9",
     "typescript": "^5.9.3"
   },
   "engines": {
