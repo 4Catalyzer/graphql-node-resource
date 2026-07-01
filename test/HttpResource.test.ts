@@ -135,4 +135,23 @@ describe('HttpResource', () => {
 
     expect(await resource.delete('5')).toEqual(null);
   });
+
+  it('should throw an error if an empty string is provided and the option is enabled', async () => {
+    const data = [{ spicy: true }, { spicy: true }, { spicy: true }];
+    mockedFetch.get('https://gateway/v1/salads', {
+      status: 200,
+      body: { data },
+    });
+
+    const resource = new HttpResource(mockContext, { endpoint: 'salads' });
+    expect(await resource.get('')).toEqual(data);
+
+    mockContext.options = { throwOnEmptyStringPaths: true };
+    expect(() => {
+      resource.get('');
+    }).toThrowErrorMatchingInlineSnapshot(
+      `"id can't be an empty string; pass a value or undefined"`,
+    );
+    expect(await resource.get()).toEqual(data);
+  });
 });
