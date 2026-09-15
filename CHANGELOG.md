@@ -1,3 +1,44 @@
+# [6.0.0](https://github.com/4Catalyzer/graphql-node-resource/compare/v5.1.0...v6.0.0) (2026-09-15)
+
+
+### Features
+
+* publish an ESM-only package with an export map and a root-level `lib/**` layout containing runtime JavaScript and TypeScript declarations ([#524](https://github.com/4Catalyzer/graphql-node-resource/pull/524)) ([#531](https://github.com/4Catalyzer/graphql-node-resource/pull/531))
+* replace `node-fetch` with the native Node.js `fetch` implementation ([#524](https://github.com/4Catalyzer/graphql-node-resource/pull/524))
+* build the published package directly with TypeScript and include generated declaration files ([#524](https://github.com/4Catalyzer/graphql-node-resource/pull/524))
+* update Express to 5.x ([#522](https://github.com/4Catalyzer/graphql-node-resource/pull/522))
+
+
+### Security
+
+* update `form-data` to 4.0.6 to prevent CRLF injection through multipart field names and filenames ([#584](https://github.com/4Catalyzer/graphql-node-resource/pull/584))
+
+
+### BREAKING CHANGES
+
+* Node.js 22 or newer is required.
+* The package is ESM-only and must be loaded with ESM `import` syntax. Root and subpath imports now resolve through the package export map.
+* HTTP requests now use the native Node.js `fetch` implementation instead of `node-fetch`.
+* Express 5 is now the supported Express dependency.
+
+
+
+
+## [6.0.0-beta.2](https://github.com/4Catalyzer/graphql-node-resource/compare/v6.0.0-beta.0...v6.0.0-beta.2) (2026-02-13)
+
+
+### Bug Fixes
+
+* publish from the package root and include `lib/**`, `CHANGELOG.md`, and `LICENSE` so export-map paths resolve correctly ([#531](https://github.com/4Catalyzer/graphql-node-resource/pull/531))
+
+
+### Security
+
+* update `lodash` to 4.17.23, `@isaacs/brace-expansion` to 5.0.1, and `js-yaml` to 3.14.2 for dependency security fixes ([#535](https://github.com/4Catalyzer/graphql-node-resource/pull/535)) ([#538](https://github.com/4Catalyzer/graphql-node-resource/pull/538)) ([#540](https://github.com/4Catalyzer/graphql-node-resource/pull/540))
+
+
+
+
 # [5.1.0](https://github.com/4Catalyzer/graphql-node-resource/compare/v5.0.1...v5.1.0) (2022-02-16)
 
 
